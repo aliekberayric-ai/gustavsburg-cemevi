@@ -1,1 +1,54 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gustavsburg Cem Evi</title>
 
+  <!-- CSS split for maintainability -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+
+  <!-- Optional: clean modern font (free) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="brand" data-i18n="brand.title">Gustavsburg Cem Evi</div>
+
+    <nav class="nav">
+      <a href="#/" class="nav__link" data-i18n="nav.home">Start</a>
+      <a href="#/gallery" class="nav__link" data-i18n="nav.gallery">Galerie</a>
+      <a href="#/calendar" class="nav__link" data-i18n="nav.calendar">Kalender</a>
+      <a href="#/people" class="nav__link" data-i18n="nav.people">Team</a>
+      <a href="#/forms" class="nav__link" data-i18n="nav.forms">Formulare</a>
+      <a href="#/admin" class="nav__link nav__link--pill">Admin</a>
+    </nav>
+
+    <div class="lang">
+      <!-- Language switch -->
+      <button class="chip" data-lang="de">DE</button>
+      <button class="chip" data-lang="tr">TR</button>
+      <button class="chip" data-lang="en">EN</button>
+    </div>
+  </header>
+
+  <!-- Animated page container -->
+  <main id="app" class="app">
+    <!-- router injects views here -->
+  </main>
+
+  <!-- Toasts / modal root -->
+  <div id="overlay-root"></div>
+
+  <!-- JS split by responsibility -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
