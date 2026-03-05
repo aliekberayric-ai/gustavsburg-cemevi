@@ -1,1 +1,40 @@
+/* layout.css: header + app frame */
 
+.topbar{
+  position: sticky;
+  top:0;
+  z-index: 20;
+  display:flex;
+  gap: 14px;
+  align-items:center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+  background: rgba(11,13,18,0.55);
+}
+
+.brand{
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+}
+
+.nav{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  flex-wrap: wrap;
+}
+
+.topbar__right{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+
+.app{
+  min-height: calc(100vh - 64px);
+}
