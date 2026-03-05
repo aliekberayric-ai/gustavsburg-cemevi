@@ -1,6 +1,7 @@
 /**
  * router.js
- * Simple hash router with animated transitions
+ * - hash router
+ * - animated transitions
  */
 
 import { renderHome } from "./views/home.js";
@@ -19,34 +20,31 @@ const routes = {
   "/admin": renderAdmin,
 };
 
-function getPath() {
+function getPath(){
   const hash = location.hash.replace("#", "") || "/";
   return hash.startsWith("/") ? hash : "/";
 }
 
-export function initRouter() {
+export function initRouter(){
   window.addEventListener("hashchange", navigate);
   navigate();
 }
 
-async function navigate() {
+async function navigate(){
   const app = document.querySelector("#app");
   const path = getPath();
   const view = routes[path] ?? routes["/"];
 
-  // Transition out
   app.classList.add("fade-out");
   await sleep(140);
 
-  // Render new
   app.innerHTML = "";
   await view(app);
 
-  // Transition in
   app.classList.remove("fade-out");
   app.classList.add("fade-in");
   await sleep(180);
   app.classList.remove("fade-in");
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
