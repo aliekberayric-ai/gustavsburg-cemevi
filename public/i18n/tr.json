@@ -1,1 +1,69 @@
+{
+  "brand": { "title": "Gustavsburg Cem Evi" },
+  "nav": { "home": "Ana Sayfa", "gallery": "Galeri", "calendar": "Takvim", "people": "Ekip", "forms": "Formlar" },
 
+  "home": {
+    "h1": "Gustavsburg Cem Evi — modern, çok dilli, düzenli.",
+    "p": "Bu site V1: 3 dil, animasyonlar, etkinlik takvimi, ekip sayfası, herkese açık formlar + rol ve kayıt (audit) olan admin paneli.",
+    "cta1": "Etkinliklere bak",
+    "cta2": "Formları aç",
+    "cta3": "Galeriler",
+    "card1": { "t": "Modern UI", "p": "Yumuşak animasyonlar & sayfa geçişleri." },
+    "card2": { "t": "Admin & Roller", "p": "Editor/Admin düzenler — her şey kaydedilir." },
+    "card3": { "t": "Arşiv", "p": "Formlar ve içerikler düzenli saklanır." }
+  },
+
+  "calendar": { "h1": "Takvim", "p": "Tüm etkinlikler burada. Değişiklikler admin panelinden yapılır.", "th1": "Tarih", "th2": "Başlık", "th3": "Yer" },
+
+  "gallery": { "h1": "Galeri", "p": "Galeriler aktif veya arşiv olabilir. İçerik/sıralama admin tarafından yönetilir.", "active": "Aktif", "archived": "Arşiv", "hintAdmin": "V2: yükleme ve sürükle-bırak sıralama (Storage)." },
+
+  "people": { "h1": "Ekip", "p": "Önizleme görseli, görevler ve açıklama.", "tasks": "Görevler" },
+
+  "forms": {
+    "h1": "Formlar",
+    "p": "Online doldur ve direkt arşivle (Supabase).",
+    "member": { "h": "Üyelik Başvurusu", "p": "Kaydedilir; sonra filtrelenip yazdırılabilir." },
+    "funeral": { "h": "Cenaze Ön Planlama", "p": "İstekleri güvenle sakla, sonra düzenle." },
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "fullName": "Ad Soyad",
+    "email": "Email",
+    "phone": "Telefon",
+    "memberType": "Üyelik tipi",
+    "types": { "family": "Aile", "spouse": "Eş", "single": "Bekar", "pensioner": "Emekli" },
+    "notes": "Notlar",
+    "birthdate": "Doğum tarihi (opsiyonel)",
+    "ageGroup": "Yaş grubu",
+    "funeralWishes": "İstekler / Notlar",
+    "send": "Gönder",
+    "hint": "Not: Admin daha sonra kontrol eder, filtreler ve yazdırır.",
+    "sent": "Gönderildi ✅"
+  },
+
+  "admin": {
+    "login": "Giriş",
+    "signIn": "Giriş yap",
+    "signOut": "Çıkış yap",
+    "loginHint": "Admin/Editor hesapları Supabase Auth ile oluşturulur.",
+    "sections": "Bölümler",
+    "rolesHint": "Viewer: okur • Editor: ekler/değiştirir • Admin: siler + audit log",
+    "add": "Yeni",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "readOnly": "Sadece okuma",
+    "title": "Başlık",
+    "status": "Durum",
+    "name": "İsim",
+    "visible": "Görünür",
+    "type": "Tür",
+    "created": "Oluşturma",
+    "payload": "İçerik",
+    "print": "Yazdır",
+    "formsHint": "Gönderilen tüm formlar burada.",
+    "auditHint": "Audit log: kim ne zaman neyi değiştirdi/sildi.",
+    "action": "İşlem",
+    "table": "Tablo",
+    "actor": "Kullanıcı",
+    "galleryItemsNote": "V1: galeriler. V2: görsel yükleme/sıralama (Storage)."
+  }
+}
