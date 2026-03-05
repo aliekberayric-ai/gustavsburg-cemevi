@@ -1,1 +1,69 @@
+{
+  "brand": { "title": "Gustavsburg Cem Evi" },
+  "nav": { "home": "Home", "gallery": "Gallery", "calendar": "Calendar", "people": "Team", "forms": "Forms" },
 
+  "home": {
+    "h1": "Gustavsburg Cem Evi — modern, multilingual, organized.",
+    "p": "This is V1: 3 languages, animations, event calendar, team page, public forms + an admin area with roles and audit logging.",
+    "cta1": "View events",
+    "cta2": "Open forms",
+    "cta3": "Galleries",
+    "card1": { "t": "Hip UI", "p": "Soft animations & screen transitions." },
+    "card2": { "t": "Admin & Roles", "p": "Editor/Admin manages content — everything is logged." },
+    "card3": { "t": "Archive", "p": "Forms and content stored in a structured way." }
+  },
+
+  "calendar": { "h1": "Calendar", "p": "All events are shown here. Changes happen in Admin.", "th1": "Date", "th2": "Title", "th3": "Location" },
+
+  "gallery": { "h1": "Gallery", "p": "Galleries can be active or archived. Admin manages items and sorting.", "active": "Active", "archived": "Archived", "hintAdmin": "V2: per-item upload + drag&drop ordering (Storage)." },
+
+  "people": { "h1": "Team", "p": "People with preview image, tasks and description.", "tasks": "Tasks" },
+
+  "forms": {
+    "h1": "Forms",
+    "p": "Fill online and store directly (Supabase).",
+    "member": { "h": "Membership", "p": "Saved so it can be filtered and printed later." },
+    "funeral": { "h": "Funeral planning", "p": "Store wishes safely and edit later." },
+    "firstName": "First name",
+    "lastName": "Last name",
+    "fullName": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "memberType": "Member type",
+    "types": { "family": "Family", "spouse": "Spouse", "single": "Single", "pensioner": "Pensioner" },
+    "notes": "Notes",
+    "birthdate": "Birthdate (optional)",
+    "ageGroup": "Age group",
+    "funeralWishes": "Wishes / Notes",
+    "send": "Send",
+    "hint": "Note: Admin can review, filter and print submissions later.",
+    "sent": "Sent ✅"
+  },
+
+  "admin": {
+    "login": "Login",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "loginHint": "Admin/Editor accounts are created in Supabase Auth.",
+    "sections": "Sections",
+    "rolesHint": "Viewer: read • Editor: create/update • Admin: delete + audit logs",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "readOnly": "Read only",
+    "title": "Title",
+    "status": "Status",
+    "name": "Name",
+    "visible": "Visible",
+    "type": "Type",
+    "created": "Created",
+    "payload": "Payload",
+    "print": "Print",
+    "formsHint": "All submitted forms appear here.",
+    "auditHint": "Audit log shows who changed/deleted what and when.",
+    "action": "Action",
+    "table": "Table",
+    "actor": "User",
+    "galleryItemsNote": "V1 shows galleries. V2 adds per-item uploads & ordering (Storage)."
+  }
+}
