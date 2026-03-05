@@ -1,1 +1,85 @@
+{
+  "brand": { "title": "Gustavsburg Cem Evi" },
+  "nav": { "home": "Start", "gallery": "Galerie", "calendar": "Kalender", "people": "Team", "forms": "Formulare" },
 
+  "home": {
+    "h1": "Gustavsburg Cem Evi — modern, mehrsprachig, organisiert.",
+    "p": "Diese Website ist V1: 3 Sprachen, Animationen, Kalender-Events, Team-Seite, öffentliche Formulare + Admin-Bereich mit Rollen und Audit-Log.",
+    "cta1": "Events ansehen",
+    "cta2": "Formulare öffnen",
+    "cta3": "Galerien",
+    "card1": { "t": "Hip UI", "p": "Sanfte Animationen & Screen-Transitions." },
+    "card2": { "t": "Admin & Rollen", "p": "Editor/Admin darf pflegen — alles wird geloggt." },
+    "card3": { "t": "Archiv", "p": "Formulare & Inhalte strukturiert speicherbar." }
+  },
+
+  "calendar": {
+    "h1": "Kalender",
+    "p": "Alle Events werden hier angezeigt. Änderungen laufen über den Admin-Bereich.",
+    "th1": "Datum",
+    "th2": "Titel",
+    "th3": "Ort"
+  },
+
+  "gallery": {
+    "h1": "Galerie",
+    "p": "Galerien können aktiv oder archiviert sein. Inhalte/Sortierung pflegt der Admin.",
+    "active": "Aktiv",
+    "archived": "Archiv",
+    "hintAdmin": "Items-Upload & Sortierung folgt in V2 (Storage + Drag&Drop)."
+  },
+
+  "people": {
+    "h1": "Team",
+    "p": "Personen mit Vorschaubild, Aufgaben und Beschreibung.",
+    "tasks": "Aufgaben"
+  },
+
+  "forms": {
+    "h1": "Formulare",
+    "p": "Online ausfüllen und direkt archivieren (Supabase).",
+    "member": { "h": "Mitgliedsanmeldung", "p": "Daten werden gespeichert und können später gefiltert/gedruckt werden." },
+    "funeral": { "h": "Bestattungsvorsorge", "p": "Vorsorge-Wünsche sicher ablegen und später bearbeiten." },
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "fullName": "Vor- und Nachname",
+    "email": "Email",
+    "phone": "Telefon",
+    "memberType": "Mitgliedstyp",
+    "types": { "family": "Familie", "spouse": "Ehepartner", "single": "Single", "pensioner": "Rentner" },
+    "notes": "Notizen",
+    "birthdate": "Geburtsdatum (optional)",
+    "ageGroup": "Altersgruppe",
+    "funeralWishes": "Wünsche / Hinweise",
+    "send": "Senden",
+    "hint": "Hinweis: Admin kann die Einträge später prüfen, filtern und drucken.",
+    "sent": "Gesendet ✅"
+  },
+
+  "admin": {
+    "login": "Login",
+    "signIn": "Einloggen",
+    "signOut": "Ausloggen",
+    "loginHint": "Admin/Editor Accounts werden in Supabase Auth angelegt.",
+    "sections": "Bereiche",
+    "rolesHint": "Viewer: lesen • Editor: erstellen/ändern • Admin: löschen + Audit Logs",
+    "add": "Neu",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "readOnly": "Nur Lesen",
+    "title": "Titel",
+    "status": "Status",
+    "name": "Name",
+    "visible": "Sichtbar",
+    "type": "Typ",
+    "created": "Erstellt",
+    "payload": "Inhalt",
+    "print": "Drucken",
+    "formsHint": "Hier siehst du alle eingereichten Formulare (Archiv).",
+    "auditHint": "Audit Log zeigt wer wann was geändert/gelöscht hat.",
+    "action": "Aktion",
+    "table": "Tabelle",
+    "actor": "User",
+    "galleryItemsNote": "V1 zeigt Galerien. In V2 kommen Upload/Sortierung pro Galerie-Item (Storage)."
+  }
+}
