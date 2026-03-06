@@ -15,6 +15,7 @@ const routes = {
   "/": renderHome,
   "/gallery": renderGallery,
   "/calendar": renderCalendar,
+  "/team": renderTeam,
   "/people": renderPeople,
   "/forms": renderForms,
   "/admin": renderAdmin,
