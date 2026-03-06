@@ -2,7 +2,11 @@ import { t, getLang } from "../i18n.js";
 import { listPeoplePublic } from "../modules/people.js";
 import { escapeHtml } from "../ui.js";
 
-export async function renderPeople(root){
+/* export async function renderPeople(root){
+  const people = await listPeoplePublic();
+  const lang = getLang(); */
+
+export async function renderPeople(root = document.getElementById("app")) {
   const people = await listPeoplePublic();
   const lang = getLang();
 
@@ -10,7 +14,8 @@ export async function renderPeople(root){
     <div class="page">
       <h1 data-i18n="people.h1">${t("people.h1")}</h1>
       <p data-i18n="people.p">${t("people.p")}</p>
-
+   </div>';}
+   
       <div class="grid grid-3" style="margin-top:12px">
         ${
           people.filter(p=>p.is_visible).map(p=>{
