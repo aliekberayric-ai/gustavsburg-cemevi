@@ -1,5 +1,5 @@
 import { t, getLang } from "../i18n.js";
-import { listGalleriesPublic } from "../modules/galleries.js";
+import { listGalleriesPublic } from "../modules/gallery.js";
 import { escapeHtml } from "../ui.js";
 
 export async function renderGallery(root){
