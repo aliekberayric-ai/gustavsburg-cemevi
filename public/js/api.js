@@ -14,4 +14,4 @@ export const SUPABASE_ANON_KEY = "sb_publishable_CQhc7cbuR0ypSfEJ7MHGmw_4v7rCy5f
  * - Put URL + anon key from your Supabase project settings
  * - Never put service_role key into frontend!
  */
-export const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
