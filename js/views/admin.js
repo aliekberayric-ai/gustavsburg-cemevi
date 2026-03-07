@@ -437,51 +437,117 @@ export async function renderAdmin(root) {
   }
 
   // People CRUD
-  if (isEditor) {
-    root.querySelector("#addPersonBtn")?.addEventListener("click", async () => {
-      const name = prompt("Name?");
-      if (!name) return;
+// People CRUD
+if (isEditor) {
+  root.querySelector("#addPersonBtn")?.addEventListener("click", async () => {
+    try {
+      const name = root.querySelector("#personName")?.value.trim() || "";
+      const avatarUrl = root.querySelector("#personImage")?.value.trim() || "";
+
+      const roleDe = root.querySelector("#personRoleDe")?.value.trim() || "";
+      const roleTr = root.querySelector("#personRoleTr")?.value.trim() || "";
+      const roleEn = root.querySelector("#personRoleEn")?.value.trim() || "";
+
+      const bioDe = root.querySelector("#personBioDe")?.value.trim() || "";
+      const bioTr = root.querySelector("#personBioTr")?.value.trim() || "";
+      const bioEn = root.querySelector("#personBioEn")?.value.trim() || "";
+
+      const sortOrderRaw = root.querySelector("#personSortOrder")?.value || "0";
+      const sortOrder = Number(sortOrderRaw) || 0;
+
+      const isVisible = !!root.querySelector("#personVisible")?.checked;
+
+      if (!name) {
+        toast("Name fehlt", "bad");
+        return;
+      }
 
       await createPerson({
         name,
-        role_title: { de: "", tr: "", en: "" },
-        bio: { de: "", tr: "", en: "" },
-        avatar_url: "",
-        tasks: [],
-        sort_order: 0,
-        is_visible: true
+        role_title: {
+          de: roleDe,
+          tr: roleTr,
+          en: roleEn
+        },
+        bio: {
+          de: bioDe,
+          tr: bioTr,
+          en: bioEn
+        },
+        avatar_url: avatarUrl,
+        sort_order: sortOrder,
+        is_visible: isVisible
       });
 
-      toast("Person erstellt", "ok");
+      toast("Teammitglied erstellt", "ok");
+      location.hash = "#/admin";
+    } catch (err) {
+      console.error(err);
+      toast("Teammitglied konnte nicht erstellt werden", "bad");
+    }
+  });
+
+  root.querySelectorAll("[data-edit-person]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        const id = btn.getAttribute("data-edit-person");
+        if (!id) return;
+
+        const name = prompt("Name?") ?? "";
+        if (!name) return;
+
+        const roleDe = prompt("Aufgabe DE?", "") ?? "";
+        const roleTr = prompt("Aufgabe TR?", "") ?? "";
+        const roleEn = prompt("Aufgabe EN?", "") ?? "";
+
+        const bioDe = prompt("Beschreibung DE?", "") ?? "";
+        const bioTr = prompt("Beschreibung TR?", "") ?? "";
+        const bioEn = prompt("Beschreibung EN?", "") ?? "";
+
+        const avatarUrl = prompt("Bild-URL?", "") ?? "";
+        const sortOrder = Number(prompt("Reihenfolge?", "0") ?? "0") || 0;
+        const visibleText = prompt("Sichtbar? (yes/no)", "yes") ?? "yes";
+
+        await updatePerson(id, {
+          name,
+          role_title: {
+            de: roleDe,
+            tr: roleTr,
+            en: roleEn
+          },
+          bio: {
+            de: bioDe,
+            tr: bioTr,
+            en: bioEn
+          },
+          avatar_url: avatarUrl,
+          sort_order: sortOrder,
+          is_visible: visibleText.toLowerCase() === "yes"
+        });
+
+        toast("Teammitglied aktualisiert", "ok");
+        location.hash = "#/admin";
+      } catch (err) {
+        console.error(err);
+        toast("Teammitglied konnte nicht aktualisiert werden", "bad");
+      }
+    });
+  });
+}
+
+if (isAdmin) {
+  root.querySelectorAll("[data-del-person]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-del-person");
+      const ok = await confirmBox("Löschen?", `Person ${id} wirklich löschen?`);
+      if (!ok) return;
+
+      await deletePerson(id);
+      toast("Teammitglied gelöscht", "ok");
       location.hash = "#/admin";
     });
-
-    root.querySelectorAll("[data-edit-person]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const id = btn.getAttribute("data-edit-person");
-        const vis = prompt("Sichtbar? (yes/no)", "yes");
-        if (!vis) return;
-
-        await updatePerson(id, { is_visible: vis === "yes" });
-        toast("Person aktualisiert", "ok");
-        location.hash = "#/admin";
-      });
-    });
-  }
-
-  if (isAdmin) {
-    root.querySelectorAll("[data-del-person]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const id = btn.getAttribute("data-del-person");
-        const ok = await confirmBox("Löschen?", `Person ${id} wirklich löschen?`);
-        if (!ok) return;
-
-        await deletePerson(id);
-        toast("Person gelöscht", "ok");
-        location.hash = "#/admin";
-      });
-    });
-  }
+  });
+}
 
   // Forms status + print
   if (isEditor) {
