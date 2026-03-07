@@ -167,7 +167,28 @@ export async function renderAdmin(root) {
           <div id="admin-people" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
               <h2 style="margin:0">Team</h2>
-              ${isEditor ? `<button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+             ${isEditor ? `
+      <div style="display:grid;gap:8px;width:100%;margin-top:12px">
+        <input id="personName" class="input" placeholder="Name" />
+        <input id="personImage" class="input" placeholder="Bild-URL" />
+
+        <input id="personRoleDe" class="input" placeholder="Aufgabe DE" />
+        <input id="personRoleTr" class="input" placeholder="Aufgabe TR" />
+        <input id="personRoleEn" class="input" placeholder="Aufgabe EN" />
+
+        <textarea id="personBioDe" class="input" placeholder="Beschreibung DE" rows="4"></textarea>
+        <textarea id="personBioTr" class="input" placeholder="Beschreibung TR" rows="4"></textarea>
+        <textarea id="personBioEn" class="input" placeholder="Beschreibung EN" rows="4"></textarea>
+
+        <input id="personSortOrder" class="input" type="number" placeholder="Reihenfolge (z.B. 1, 2, 3)" />
+        <label style="display:flex;align-items:center;gap:8px">
+          <input id="personVisible" type="checkbox" checked />
+          Sichtbar
+        </label>
+
+        <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
+      </div>
+    ` : ""}
             </div>
 
             <table class="table" style="margin-top:10px">
