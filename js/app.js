@@ -4,8 +4,6 @@
  */
 
 console.log("app.js geladen");
-document.getElementById("app").innerHTML="<h1 style='color:white'>TEST LÄUFT</h1>;
-
 
 import { initI18n, setLangFromStorage, bindLangButtons } from "./i18n.js";
 import { initAuth } from "./auth.js";
