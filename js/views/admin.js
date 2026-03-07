@@ -329,7 +329,7 @@ export async function renderAdmin(root) {
 
           const newTr = prompt("Neuer Titel TR?", "") ?? "";
           const newEn = prompt("Neuer Titel EN?", "") ?? "";
-          const newDate = prompt("Neues Datum (YYYY-MM-DD)?", "2026-03-10");
+          const newDate = prompt("Neues Datum (DD-MM-YYYY)?", "01-03-2026");
           if (!newDate) return;
 
           const newTime = prompt("Neue Uhrzeit (HH:MM)?", "18:00");
