@@ -3,8 +3,6 @@
  * entry point
  */
 
-console.log("app.js geladen");
-
 import { initI18n, setLangFromStorage, bindLangButtons } from "./i18n.js";
 import { initAuth } from "./auth.js";
 import { initRouter } from "./router.js";
