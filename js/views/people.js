@@ -2,53 +2,70 @@ import { t, getLang } from "../i18n.js";
 import { listPeoplePublic } from "../modules/people.js";
 import { escapeHtml } from "../ui.js";
 
-/* export async function renderPeople(root){
-  const people = await listPeoplePublic();
-  const lang = getLang(); */
+function getLocalizedField(obj, lang) {
+  if (!obj || typeof obj !== "object") return "";
+  return (
+    (obj[lang] && String(obj[lang]).trim()) ||
+    (obj.de && String(obj.de).trim()) ||
+    (obj.tr && String(obj.tr).trim()) ||
+    (obj.en && String(obj.en).trim()) ||
+    ""
+  );
+}
 
-export async function renderPeople(root = document.getElementById("app")) {
-  const people = await listPeoplePublic();
+export async function renderPeople(root) {
   const lang = getLang();
+  const people = await listPeoplePublic();
+
+  const visiblePeople = (people ?? [])
+    .filter((p) => p.is_visible)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
   root.innerHTML = `
-    <div class="page">
-      <h1 data-i18n="people.h1">${t("people.h1")}</h1>
-      <p data-i18n="people.p">${t("people.p")}</p>
-   </div>';}
-   
-      <div class="grid grid-3" style="margin-top:12px">
-        ${
-          people.filter(p=>p.is_visible).map(p=>{
-            const roleTitle = p.role_title?.[lang] ?? p.role_title?.de ?? "";
-            const bio = p.bio?.[lang] ?? p.bio?.de ?? "";
-            const tasks = Array.isArray(p.tasks) ? p.tasks : [];
-
-            return `
-              <div class="card card__pad">
-                <div style="display:flex;gap:12px;align-items:center">
-                  <div style="width:54px;height:54px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,0.04);overflow:hidden">
-                    ${p.avatar_url ? `<img src="${escapeHtml(p.avatar_url)}" style="width:100%;height:100%;object-fit:cover" />` : ""}
-                  </div>
-                  <div>
-                    <div style="font-weight:820">${escapeHtml(p.name)}</div>
-                    <div style="color:var(--muted)">${escapeHtml(roleTitle)}</div>
-                  </div>
-                </div>
-
-                <div style="margin-top:10px;color:var(--muted)">${escapeHtml(bio)}</div>
-
-                ${tasks.length ? `
-                  <hr />
-                  <div style="font-weight:700;margin-bottom:6px">${t("people.tasks")}</div>
-                  <ul style="margin:0;padding-left:18px;color:var(--muted)">
-                    ${tasks.map(x=>`<li>${escapeHtml(String(x))}</li>`).join("")}
-                  </ul>
-                ` : ""}
-              </div>
-            `;
-          }).join("")
-        }
-      </div>
-    </div>
+    <section class="page team-section">
+      <h1>${t("nav.team") || "Team"}</h1>
+      <div id="teamList" class="team-list"></div>
+    </section>
   `;
+
+  const teamList = root.querySelector("#teamList");
+  if (!teamList) return;
+
+  if (!visiblePeople.length) {
+    teamList.innerHTML = `
+      <div class="team-empty">
+        ${t("team.empty") || "Noch keine Teammitglieder vorhanden."}
+      </div>
+    `;
+    return;
+  }
+
+  teamList.innerHTML = visiblePeople.map((p) => {
+    const role = getLocalizedField(p.role_title, lang);
+    const bio = getLocalizedField(p.bio, lang);
+    const image = (p.avatar_url && String(p.avatar_url).trim())
+      ? p.avatar_url
+      : "assets/team-placeholder.png";
+
+    return `
+      <article class="team-card">
+        <div class="team-card__media">
+          <div class="team-card__image-wrap">
+            <img
+              src="${escapeHtml(image)}"
+              alt="${escapeHtml(p.name || "")}"
+              class="team-card__image"
+              loading="lazy"
+            />
+          </div>
+          <div class="team-card__name">${escapeHtml(p.name || "-")}</div>
+        </div>
+
+        <div class="team-card__content">
+          <div class="team-card__role">${escapeHtml(role || "-")}</div>
+          <div class="team-card__bio">${escapeHtml(bio || "")}</div>
+        </div>
+      </article>
+    `;
+  }).join("");
 }
