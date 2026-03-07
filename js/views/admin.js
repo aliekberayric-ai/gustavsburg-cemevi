@@ -272,13 +272,30 @@ export async function renderAdmin(root){
       if(!de) return;
       const tr = prompt("Titel TR?") ?? "";
       const en = prompt("Titel EN?") ?? "";
-      const start = prompt("Start ISO (z.B. 2026-03-10T18:00:00+01:00)?");
+      
+     /* const start = prompt("Start ISO (z.B. 2026-03-10T18:00:00+01:00)?");
       if(!start) return;
       const loc = prompt("Ort?") ?? "";
       await createEvent({ title:{de,tr,en}, start_time:start, location:loc, description:{de:"",tr:"",en:""} });
       toast("Event erstellt", "ok");
-      location.hash="#/admin";
-    });
+      location.hash="#/admin"; 
+    }); */
+
+      const date = prompt("Datum (YYYY-MM-DD)?", "2026-03-10");
+      if(!date) return;
+
+     const time = prompt("Uhrzeit (HH:MM)?", "18:00");
+      if(!time) return;
+
+const start = new Date(`${date}T${time}:00`).toISOString();
+const loc = prompt("Ort?") ?? "";
+
+await createEvent({
+  title:{de,tr,en},
+  start_time:start,
+  location:loc,
+  description:{de:"", tr:"", en:""}
+});
 
     root.querySelectorAll("[data-edit-event]").forEach(btn=>{
       btn.addEventListener("click", async ()=>{
