@@ -8,13 +8,13 @@ import { listPeoplePublic, createPerson, updatePerson, deletePerson } from "../m
 import { listFormSubmissions, updateFormStatus } from "../modules/forms.js";
 import { listAuditLogs } from "../modules/audit.js";
 
-export async function renderAdmin(root){
+export async function renderAdmin(root) {
   const auth = getAuth();
-  const isEditor = requireRole(["admin","editor"]);
+  const isEditor = requireRole(["admin", "editor"]);
   const isAdmin = requireRole(["admin"]);
 
-  // Not logged in: show login card
-  if(!auth.user){
+  // Not logged in
+  if (!auth.user) {
     root.innerHTML = `
       <div class="page">
         <h1>Admin</h1>
@@ -30,17 +30,16 @@ export async function renderAdmin(root){
       </div>
     `;
 
-    root.querySelector("#loginForm").addEventListener("submit", async (e)=>{
+    root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
       await signIn(fd.get("email"), fd.get("password"));
-      location.hash = "#/admin"; // re-render
+      location.hash = "#/admin";
     });
 
     return;
   }
 
-  // Logged in: admin dashboard
   const lang = getLang();
   const [events, galleries, people, forms, audits] = await Promise.all([
     listEventsPublic(),
@@ -77,12 +76,25 @@ export async function renderAdmin(root){
         </div>
 
         <div class="grid" style="gap:14px">
+
           <!-- EVENTS -->
           <div id="admin-events" class="card card__pad">
-            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Events</h2>
-              ${isEditor ? `<button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+              ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
             </div>
+
+            ${isEditor ? `
+              <div class="grid" style="gap:8px;margin-top:12px">
+                <input id="eventTitleDe" class="input" placeholder="Titel DE" />
+                <input id="eventTitleTr" class="input" placeholder="Titel TR" />
+                <input id="eventTitleEn" class="input" placeholder="Titel EN" />
+                <input id="eventDate" class="input" type="date" />
+                <input id="eventTime" class="input" type="time" />
+                <input id="eventLocation" class="input" placeholder="Ort" />
+                <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
+              </div>
+            ` : ""}
 
             <table class="table" style="margin-top:10px">
               <thead>
@@ -95,7 +107,7 @@ export async function renderAdmin(root){
                 </tr>
               </thead>
               <tbody>
-                ${events.map(e=>{
+                ${events.map((e) => {
                   const title = e.title?.[lang] ?? e.title?.de ?? "—";
                   return `
                     <tr>
@@ -131,7 +143,7 @@ export async function renderAdmin(root){
                 </tr>
               </thead>
               <tbody>
-                ${galleries.map(g=>{
+                ${galleries.map((g) => {
                   const title = g.title?.[lang] ?? g.title?.de ?? "—";
                   return `
                     <tr>
@@ -168,19 +180,17 @@ export async function renderAdmin(root){
                 </tr>
               </thead>
               <tbody>
-                ${people.map(p=>{
-                  return `
-                    <tr>
-                      <td>${escapeHtml(p.name)}</td>
-                      <td>${p.is_visible ? `<span class="badge badge--ok">yes</span>` : `<span class="badge badge--warn">no</span>`}</td>
-                      <td class="mono">${escapeHtml(p.id)}</td>
-                      <td style="white-space:nowrap">
-                        ${isEditor ? `<button class="btn" data-edit-person="${p.id}">${t("admin.edit")}</button>` : ""}
-                        ${isAdmin ? `<button class="btn btn--danger" data-del-person="${p.id}">${t("admin.delete")}</button>` : ""}
-                      </td>
-                    </tr>
-                  `;
-                }).join("")}
+                ${people.map((p) => `
+                  <tr>
+                    <td>${escapeHtml(p.name)}</td>
+                    <td>${p.is_visible ? `<span class="badge badge--ok">yes</span>` : `<span class="badge badge--warn">no</span>`}</td>
+                    <td class="mono">${escapeHtml(p.id)}</td>
+                    <td style="white-space:nowrap">
+                      ${isEditor ? `<button class="btn" data-edit-person="${p.id}">${t("admin.edit")}</button>` : ""}
+                      ${isAdmin ? `<button class="btn btn--danger" data-del-person="${p.id}">${t("admin.delete")}</button>` : ""}
+                    </td>
+                  </tr>
+                `).join("")}
               </tbody>
             </table>
           </div>
@@ -202,12 +212,12 @@ export async function renderAdmin(root){
                   </tr>
                 </thead>
                 <tbody>
-                  ${forms.map(f=>`
+                  ${forms.map((f) => `
                     <tr>
                       <td>${escapeHtml(f.form_type)}</td>
                       <td class="mono">${escapeHtml(fmtDateTime(f.created_at))}</td>
                       <td>${escapeHtml(f.status)}</td>
-                      <td class="mono">${escapeHtml(JSON.stringify(f.payload).slice(0,160))}…</td>
+                      <td class="mono">${escapeHtml(JSON.stringify(f.payload).slice(0, 160))}…</td>
                       <td style="white-space:nowrap">
                         <button class="btn" data-form-status="${f.id}" data-next="in_review">in_review</button>
                         <button class="btn" data-form-status="${f.id}" data-next="done">done</button>
@@ -241,7 +251,7 @@ export async function renderAdmin(root){
                   </tr>
                 </thead>
                 <tbody>
-                  ${audits.map(a=>`
+                  ${audits.map((a) => `
                     <tr>
                       <td class="mono">${escapeHtml(fmtDateTime(a.created_at))}</td>
                       <td>${escapeHtml(a.action)}</td>
@@ -259,223 +269,213 @@ export async function renderAdmin(root){
     </div>
   `;
 
-  // logout
-  root.querySelector("#logoutBtn").addEventListener("click", async ()=>{
+  // Logout
+  root.querySelector("#logoutBtn")?.addEventListener("click", async () => {
     await signOut();
     location.hash = "#/admin";
   });
 
-  /*    +++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Events CRUD UI (simple prompt-based for V1)
-  if(isEditor){
-    root.querySelector("#addEventBtn")?.addEventListener("click", async ()=>{
-      const de = prompt("Titel DE?");
-      if(!de) return;
-      const tr = prompt("Titel TR?") ?? "";
-      const en = prompt("Titel EN?") ?? "";
-      
-      const start = prompt("Start ISO (z.B. 2026-03-10T18:00:00+01:00)?");
-      if(!start) return;
-      const loc = prompt("Ort?") ?? "";
-      await createEvent({ title:{de,tr,en}, start_time:start, location:loc, description:{de:"",tr:"",en:""} });
-      toast("Event erstellt", "ok");
-      location.hash="#/admin"; 
-    }); 
-
-    root.querySelectorAll("[data-edit-event]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const id = btn.getAttribute("data-edit-event");
-        const newDe = prompt("Neuer Titel DE?");
-        if(!newDe) return;
-        await updateEvent(id, { title: { de:newDe, tr:"", en:"" } });
-        toast("Event updated", "ok");
-        location.hash="#/admin";
-      });
-    });
-  }
-
-  */
-
-
-  // Events CRUD UI
-if (isEditor) {
-  root.querySelector("#addEventBtn")?.addEventListener("click", async () => {
-    try {
-      const de = prompt("Titel DE?");
-      if (!de) return;
-
-      const tr = prompt("Titel TR?") ?? "";
-      const en = prompt("Titel EN?") ?? "";
-
-      const date = prompt("Datum (YYYY-MM-DD)?", "2026-03-10");
-      if (!date) return;
-
-      const time = prompt("Uhrzeit (HH:MM)?", "18:00");
-      if (!time) return;
-
-      const start = new Date(`${date}T${time}:00`).toISOString();
-
-      const loc = prompt("Ort?") ?? "";
-
-      await createEvent({
-        title: { de, tr, en },
-        start_time: start,
-        location: loc,
-        description: { de: "", tr: "", en: "" }
-      });
-
-      toast("Event erstellt", "ok");
-      location.hash = "#/admin";
-    } catch (err) {
-      console.error(err);
-      toast("Ungültiges Datum oder Uhrzeit", "bad");
-    }
-  });
-
-  root.querySelectorAll("[data-edit-event]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
+  // Events CRUD
+  if (isEditor) {
+    root.querySelector("#addEventBtn")?.addEventListener("click", async () => {
       try {
-        const id = btn.getAttribute("data-edit-event");
-        if (!id) return;
+        const de = root.querySelector("#eventTitleDe")?.value.trim() || "";
+        const tr = root.querySelector("#eventTitleTr")?.value.trim() || "";
+        const en = root.querySelector("#eventTitleEn")?.value.trim() || "";
+        const date = root.querySelector("#eventDate")?.value || "";
+        const time = root.querySelector("#eventTime")?.value || "";
+        const loc = root.querySelector("#eventLocation")?.value.trim() || "";
 
-        const newDe = prompt("Neuer Titel DE?");
-        if (!newDe) return;
+        if (!de) {
+          toast("Titel DE fehlt", "bad");
+          return;
+        }
 
-        const newTr = prompt("Neuer Titel TR?", "") ?? "";
-        const newEn = prompt("Neuer Titel EN?", "") ?? "";
+        if (!date) {
+          toast("Datum fehlt", "bad");
+          return;
+        }
 
-        const newDate = prompt("Neues Datum (YYYY-MM-DD)?", "2026-03-10");
-        if (!newDate) return;
+        if (!time) {
+          toast("Uhrzeit fehlt", "bad");
+          return;
+        }
 
-        const newTime = prompt("Neue Uhrzeit (HH:MM)?", "18:00");
-        if (!newTime) return;
+        const start = new Date(`${date}T${time}:00`).toISOString();
 
-        const newStart = new Date(`${newDate}T${newTime}:00`).toISOString();
-
-        const newLoc = prompt("Neuer Ort?", "") ?? "";
-
-        await updateEvent(id, {
-          title: { de: newDe, tr: newTr, en: newEn },
-          start_time: newStart,
-          location: newLoc
+        await createEvent({
+          title: { de, tr, en },
+          start_time: start,
+          location: loc,
+          description: { de: "", tr: "", en: "" }
         });
 
-        toast("Event aktualisiert", "ok");
+        toast("Event erstellt", "ok");
         location.hash = "#/admin";
       } catch (err) {
         console.error(err);
         toast("Ungültiges Datum oder Uhrzeit", "bad");
       }
     });
-  });
-}
 
-  if(isAdmin){
-    root.querySelectorAll("[data-del-event]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
+    root.querySelectorAll("[data-edit-event]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          const id = btn.getAttribute("data-edit-event");
+          if (!id) return;
+
+          const newDe = prompt("Neuer Titel DE?");
+          if (!newDe) return;
+
+          const newTr = prompt("Neuer Titel TR?", "") ?? "";
+          const newEn = prompt("Neuer Titel EN?", "") ?? "";
+          const newDate = prompt("Neues Datum (YYYY-MM-DD)?", "2026-03-10");
+          if (!newDate) return;
+
+          const newTime = prompt("Neue Uhrzeit (HH:MM)?", "18:00");
+          if (!newTime) return;
+
+          const newLoc = prompt("Neuer Ort?", "") ?? "";
+          const newStart = new Date(`${newDate}T${newTime}:00`).toISOString();
+
+          await updateEvent(id, {
+            title: { de: newDe, tr: newTr, en: newEn },
+            start_time: newStart,
+            location: newLoc
+          });
+
+          toast("Event aktualisiert", "ok");
+          location.hash = "#/admin";
+        } catch (err) {
+          console.error(err);
+          toast("Ungültiges Datum oder Uhrzeit", "bad");
+        }
+      });
+    });
+  }
+
+  if (isAdmin) {
+    root.querySelectorAll("[data-del-event]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-del-event");
         const ok = await confirmBox("Löschen?", `Event ${id} wirklich löschen?`);
-        if(!ok) return;
+        if (!ok) return;
+
         await deleteEvent(id);
         toast("Event gelöscht", "ok");
-        location.hash="#/admin";
+        location.hash = "#/admin";
       });
     });
   }
 
   // Galleries CRUD
-  if(isEditor){
-    root.querySelector("#addGalleryBtn")?.addEventListener("click", async ()=>{
+  if (isEditor) {
+    root.querySelector("#addGalleryBtn")?.addEventListener("click", async () => {
       const de = prompt("Galerie Titel DE?");
-      if(!de) return;
+      if (!de) return;
+
       const tr = prompt("Titel TR?") ?? "";
       const en = prompt("Titel EN?") ?? "";
-      await createGallery({ title:{de,tr,en}, description:{de:"",tr:"",en:""}, status:"active", sort_order:0 });
+
+      await createGallery({
+        title: { de, tr, en },
+        description: { de: "", tr: "", en: "" },
+        status: "active",
+        sort_order: 0
+      });
+
       toast("Galerie erstellt", "ok");
-      location.hash="#/admin";
+      location.hash = "#/admin";
     });
 
-    root.querySelectorAll("[data-edit-gallery]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
+    root.querySelectorAll("[data-edit-gallery]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-edit-gallery");
         const status = prompt("Status (active/archived)?", "active");
-        if(!status) return;
+        if (!status) return;
+
         await updateGallery(id, { status });
-        toast("Galerie updated", "ok");
-        location.hash="#/admin";
+        toast("Galerie aktualisiert", "ok");
+        location.hash = "#/admin";
       });
     });
   }
 
-  if(isAdmin){
-    root.querySelectorAll("[data-del-gallery]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
+  if (isAdmin) {
+    root.querySelectorAll("[data-del-gallery]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-del-gallery");
         const ok = await confirmBox("Löschen?", `Galerie ${id} wirklich löschen?`);
-        if(!ok) return;
+        if (!ok) return;
+
         await deleteGallery(id);
         toast("Galerie gelöscht", "ok");
-        location.hash="#/admin";
+        location.hash = "#/admin";
       });
     });
   }
 
   // People CRUD
-  if(isEditor){
-    root.querySelector("#addPersonBtn")?.addEventListener("click", async ()=>{
+  if (isEditor) {
+    root.querySelector("#addPersonBtn")?.addEventListener("click", async () => {
       const name = prompt("Name?");
-      if(!name) return;
+      if (!name) return;
+
       await createPerson({
         name,
-        role_title:{de:"",tr:"",en:""},
-        bio:{de:"",tr:"",en:""},
-        avatar_url:"",
-        tasks:[],
-        sort_order:0,
-        is_visible:true
+        role_title: { de: "", tr: "", en: "" },
+        bio: { de: "", tr: "", en: "" },
+        avatar_url: "",
+        tasks: [],
+        sort_order: 0,
+        is_visible: true
       });
+
       toast("Person erstellt", "ok");
-      location.hash="#/admin";
+      location.hash = "#/admin";
     });
 
-    root.querySelectorAll("[data-edit-person]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
+    root.querySelectorAll("[data-edit-person]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-edit-person");
         const vis = prompt("Sichtbar? (yes/no)", "yes");
-        if(!vis) return;
+        if (!vis) return;
+
         await updatePerson(id, { is_visible: vis === "yes" });
-        toast("Person updated", "ok");
-        location.hash="#/admin";
+        toast("Person aktualisiert", "ok");
+        location.hash = "#/admin";
       });
     });
   }
 
-  if(isAdmin){
-    root.querySelectorAll("[data-del-person]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
+  if (isAdmin) {
+    root.querySelectorAll("[data-del-person]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-del-person");
         const ok = await confirmBox("Löschen?", `Person ${id} wirklich löschen?`);
-        if(!ok) return;
+        if (!ok) return;
+
         await deletePerson(id);
         toast("Person gelöscht", "ok");
-        location.hash="#/admin";
+        location.hash = "#/admin";
       });
     });
   }
 
   // Forms status + print
-  if(isEditor){
-    root.querySelectorAll("[data-form-status]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
+  if (isEditor) {
+    root.querySelectorAll("[data-form-status]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-form-status");
         const next = btn.getAttribute("data-next");
+
         await updateFormStatus(id, next);
         toast("Status gesetzt", "ok");
-        location.hash="#/admin";
+        location.hash = "#/admin";
       });
     });
 
-    root.querySelector("#printFormsBtn")?.addEventListener("click", ()=>{
+    root.querySelector("#printFormsBtn")?.addEventListener("click", () => {
       window.print();
     });
   }
