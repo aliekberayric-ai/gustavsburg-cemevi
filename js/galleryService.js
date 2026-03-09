@@ -21,27 +21,6 @@ export async function fetchGalleryItems(galleryId) {
   }));
 }
 
-export async function fetchGalleryItems(galleryId) {
-  const { data, error } = await supabase
-    .from("gallery_items")
-    .select("*")
-    .eq("gallery_id", galleryId)
-    .order("sort_order", { ascending: true });
-
-  if (error) {
-    console.error("Gallery items error:", error);
-    return [];
-  }
-
-  return (data || []).map((item) => ({
-    ...item,
-    localized_caption:
-      item.caption?.de || item.caption?.en || item.caption?.tr || "",
-    public_url: item.file_url || "",
-    thumb_public_url: item.thumb_url || item.file_url || ""
-  }));
-}
-
 export async function createGalleryWithFiles({ title, status = "active", files = [] }) {
   if (!title?.trim()) {
     throw new Error("Bitte einen Galerietitel eingeben.");
