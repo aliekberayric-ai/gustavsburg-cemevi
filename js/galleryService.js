@@ -1,43 +1,94 @@
-let lightboxItems = [];
-let lightboxIndex = 0;
+import { supabase } from "./api.js";
 
-function qs(id) {
-  return document.getElementById(id);
+export async function fetchGalleryItems(galleryId) {
+  const { data, error } = await supabase
+    .from("gallery_items")
+    .select("*")
+    .eq("gallery_id", galleryId)
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Gallery items error:", error);
+    return [];
+  }
+
+  return (data || []).map((item) => ({
+    ...item,
+    localized_caption:
+      item.caption?.de || item.caption?.en || item.caption?.tr || "",
+    public_url: item.file_url || "",
+    thumb_public_url: item.thumb_url || item.file_url || ""
+  }));
 }
 
-function renderLightboxImage() {
-  const current = lightboxItems[lightboxIndex];
-  if (!current) return;
+export async function createGalleryWithFiles({ title, status = "active", files = [] }) {
+  if (!title?.trim()) {
+    throw new Error("Bitte einen Galerietitel eingeben.");
+  }
 
-  qs("lightboxImage").src = current.public_url;
-  qs("lightboxCaption").textContent = current.localized_caption || "";
-  qs("lightboxCounter").textContent =
-    `${lightboxIndex + 1} / ${lightboxItems.length}`;
-}
+  if (!files.length) {
+    throw new Error("Bitte mindestens ein Bild auswählen.");
+  }
 
-export function openLightbox(items, index = 0) {
-  lightboxItems = items;
-  lightboxIndex = index;
+  const { data: gallery, error: galleryError } = await supabase
+    .from("galleries")
+    .insert({
+      title: { de: title.trim(), tr: title.trim(), en: title.trim() },
+      description: { de: "", tr: "", en: "" },
+      status,
+      sort_order: 0
+    })
+    .select()
+    .single();
 
-  qs("lightbox").classList.remove("hidden");
-  renderLightboxImage();
-}
+  if (galleryError) {
+    console.error("Galerie-Fehler:", galleryError);
+    throw galleryError;
+  }
 
-export function initLightbox() {
-  qs("lightboxClose")?.addEventListener("click", () => {
-    qs("lightbox").classList.add("hidden");
-  });
+  let successCount = 0;
 
-  qs("lightboxNext")?.addEventListener("click", () => {
-    lightboxIndex =
-      (lightboxIndex + 1) % lightboxItems.length;
-    renderLightboxImage();
-  });
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const safeName = file.name.replace(/\s+/g, "-");
+    const filePath = `${gallery.id}/${Date.now()}-${i}-${safeName}`;
 
-  qs("lightboxPrev")?.addEventListener("click", () => {
-    lightboxIndex =
-      (lightboxIndex - 1 + lightboxItems.length) %
-      lightboxItems.length;
-    renderLightboxImage();
-  });
+    const { error: uploadError } = await supabase.storage
+      .from("gallery")
+      .upload(filePath, file, { upsert: false });
+
+    if (uploadError) {
+      console.error("Upload-Fehler:", uploadError);
+      continue;
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("gallery")
+      .getPublicUrl(filePath);
+
+    const publicUrl = publicUrlData?.publicUrl || "";
+
+    const { error: itemError } = await supabase
+      .from("gallery_items")
+      .insert({
+        gallery_id: gallery.id,
+        caption: { de: file.name, tr: file.name, en: file.name },
+        file_url: publicUrl,
+        thumb_url: publicUrl,
+        sort_order: i
+      });
+
+    if (itemError) {
+      console.error("gallery_items Fehler:", itemError);
+      continue;
+    }
+
+    successCount++;
+  }
+
+  if (successCount === 0) {
+    throw new Error("Kein Bild konnte gespeichert werden. Bitte Storage und gallery_items prüfen.");
+  }
+
+  return gallery.id;
 }
