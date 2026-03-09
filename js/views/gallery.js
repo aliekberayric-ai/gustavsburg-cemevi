@@ -1,7 +1,7 @@
 import { t, getLang } from "../i18n.js";
 import { listGalleriesPublic } from "../modules/gallery.js";
 import { fetchGalleryItems } from "../js/galleryService.js";
-import { openLightbox, initLightbox } from "../js/lightbox.js";
+import { openLightbox, initLightbox } from "../lightbox.js";
 import { escapeHtml } from "../ui.js";
 
 async function openGalleryDetail(root, gallery) {
