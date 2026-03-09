@@ -14,9 +14,9 @@ function renderLightboxImage() {
   const caption = qs("lightboxCaption");
 
   img.src = current.public_url;
-  img.alt = current.title || "";
+  img.alt = current.localized_caption || "";
   counter.textContent = `${lightboxIndex + 1} / ${lightboxItems.length}`;
-  caption.textContent = current.title || "";
+  caption.textContent = current.localized_caption || "";
 }
 
 export function openLightbox(items, startIndex = 0) {
