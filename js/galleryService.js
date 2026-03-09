@@ -1,22 +1,13 @@
 import { supabase } from "./api.js";
 
-export function slugify(text = "") {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
+export function getCurrentLang() {
+  return document.documentElement.lang || "de";
 }
 
-export function getPublicUrl(path) {
-  if (!path) return "";
-  const { data } = supabase.storage.from("gallery").getPublicUrl(path);
-  return data?.publicUrl || "";
+export function pickLocalizedText(value, lang = "de") {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value[lang] || value.de || value.en || value.tr || "";
 }
 
 export async function fetchGalleries() {
@@ -31,23 +22,31 @@ export async function fetchGalleries() {
     return [];
   }
 
+  const lang = getCurrentLang();
   const galleries = data || [];
 
   const galleriesWithCount = await Promise.all(
     galleries.map(async (gallery) => {
-      const { count, error: countError } = await supabase
+      const { data: items, error: itemsError, count } = await supabase
         .from("gallery_items")
-        .select("id", { count: "exact", head: true })
-        .eq("gallery_id", gallery.id);
+        .select("*", { count: "exact" })
+        .eq("gallery_id", gallery.id)
+        .order("sort_order", { ascending: true })
+        .limit(1);
 
-      if (countError) {
-        console.error("Fehler beim Zählen:", countError);
+      if (itemsError) {
+        console.error("Fehler beim Laden der Galerie-Items:", itemsError);
       }
+
+      const firstItem = items?.[0] || null;
+      const coverUrl = firstItem?.thumb_url || firstItem?.file_url || "";
 
       return {
         ...gallery,
+        localized_title: pickLocalizedText(gallery.title, lang),
+        localized_description: pickLocalizedText(gallery.description, lang),
         image_count: count || 0,
-        cover_url: getPublicUrl(gallery.cover_image_path)
+        cover_url: coverUrl
       };
     })
   );
@@ -68,9 +67,13 @@ export async function fetchGalleryItems(galleryId) {
     return [];
   }
 
+  const lang = getCurrentLang();
+
   return (data || []).map((item) => ({
     ...item,
-    public_url: getPublicUrl(item.image_path)
+    localized_caption: pickLocalizedText(item.caption, lang),
+    public_url: item.file_url || "",
+    thumb_public_url: item.thumb_url || item.file_url || ""
   }));
 }
 
@@ -83,15 +86,21 @@ export async function createGalleryWithFiles({ title, status = "active", files =
     throw new Error("Bitte mindestens ein Bild auswählen.");
   }
 
-  const slugBase = slugify(title);
-  const slug = `${slugBase}-${Date.now()}`;
-
   const { data: gallery, error: galleryError } = await supabase
     .from("galleries")
     .insert({
-      title: title.trim(),
-      slug,
-      status
+      title: {
+        de: title.trim(),
+        tr: title.trim(),
+        en: title.trim()
+      },
+      description: {
+        de: "",
+        tr: "",
+        en: ""
+      },
+      status,
+      sort_order: 0
     })
     .select()
     .single();
@@ -100,8 +109,6 @@ export async function createGalleryWithFiles({ title, status = "active", files =
     console.error(galleryError);
     throw new Error("Galerie konnte nicht angelegt werden.");
   }
-
-  let firstImagePath = null;
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
@@ -117,32 +124,28 @@ export async function createGalleryWithFiles({ title, status = "active", files =
       continue;
     }
 
-    if (!firstImagePath) {
-      firstImagePath = filePath;
-    }
+    const { data: publicUrlData } = supabase.storage
+      .from("gallery")
+      .getPublicUrl(filePath);
+
+    const publicUrl = publicUrlData?.publicUrl || "";
 
     const { error: itemError } = await supabase
       .from("gallery_items")
       .insert({
         gallery_id: gallery.id,
-        title: file.name,
-        image_path: filePath,
+        caption: {
+          de: file.name,
+          tr: file.name,
+          en: file.name
+        },
+        file_url: publicUrl,
+        thumb_url: publicUrl,
         sort_order: i
       });
 
     if (itemError) {
       console.error("Fehler bei gallery_items:", itemError);
-    }
-  }
-
-  if (firstImagePath) {
-    const { error: coverError } = await supabase
-      .from("galleries")
-      .update({ cover_image_path: firstImagePath })
-      .eq("id", gallery.id);
-
-    if (coverError) {
-      console.error("Fehler beim Coverbild:", coverError);
     }
   }
 
