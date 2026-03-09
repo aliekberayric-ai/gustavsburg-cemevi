@@ -48,6 +48,22 @@
   <main id="app" class="app"></main>
   <div id="overlay-root"></div>
 
+<div id="lightbox" class="lightbox hidden">
+  <button id="lightboxClose" class="lightbox-close" type="button">×</button>
+
+  <button id="lightboxPrev" class="lightbox-nav lightbox-prev" type="button">‹</button>
+
+  <div class="lightbox-content">
+    <img id="lightboxImage" src="" alt="">
+    <div class="lightbox-info">
+      <span id="lightboxCounter">1 / 1</span>
+      <span id="lightboxCaption"></span>
+    </div>
+  </div>
+
+  <button id="lightboxNext" class="lightbox-nav lightbox-next" type="button">›</button>
+</div>
+  
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
