@@ -4,12 +4,12 @@
  * - animated transitions
  */
 
-import { renderHome } from "../views/home.js";
-import { renderGallery } from "../views/gallery.js";
-import { renderCalendar } from "../views/calendar.js";
-import { renderPeople } from "../views/people.js";
-import { renderForms } from "../views/forms.js";
-import { renderAdmin } from "../views/admin.js";
+import { renderHome } from "./views/home.js";
+import { renderGallery } from "./views/gallery.js";
+import { renderCalendar } from "./views/calendar.js";
+import { renderPeople } from "./views/people.js";
+import { renderForms } from "./views/forms.js";
+import { renderAdmin } from "./views/admin.js";
 
 const routes = {
   "/": renderHome,
