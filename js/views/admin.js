@@ -551,9 +551,10 @@ export async function renderAdmin(root) {
         toast("Galerie erstellt", "ok");
         location.hash = "#/admin";
       } catch (err) {
-        console.error(err);
-        toast("Galerie konnte nicht erstellt werden", "bad");
-      }
+  console.error(err);
+  alert(err.message || JSON.stringify(err));
+  toast("Galerie konnte nicht erstellt werden", "bad");
+}
     });
 
     root.querySelectorAll("[data-edit-gallery]").forEach((btn) => {
