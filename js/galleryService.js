@@ -106,5 +106,19 @@ export async function createGalleryWithFiles({ title, status = "active", files =
     }
   }
 
+  export async function updateGalleryItemOrder(items = []) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+
+    const { error } = await supabase
+      .from("gallery_items")
+      .update({ sort_order: i })
+      .eq("id", item.id);
+
+    if (error) {
+      console.error("Sortierung Fehler:", error);
+    }
+  }
+}
   return gallery.id;
 }
