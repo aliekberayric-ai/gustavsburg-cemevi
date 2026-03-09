@@ -37,13 +37,13 @@ export async function renderGalleryOverview() {
 
     card.innerHTML = `
       <div class="gallery-card-image-wrap">
-        <img class="gallery-card-image" src="${cover}" alt="${gallery.title}">
+        <img class="gallery-card-image" src="${cover}" alt="${gallery.localized_title}">
         <span class="gallery-status-badge ${gallery.status === "archived" ? "archived" : "active"}">
           ${badgeLabel(gallery.status)}
         </span>
       </div>
       <div class="gallery-card-body">
-        <h3 class="gallery-card-title">${gallery.title}</h3>
+        <h3 class="gallery-card-title">${gallery.localized_title}</h3>
         <div class="gallery-card-meta">
           <span>${gallery.image_count} Bilder</span>
         </div>
@@ -51,7 +51,12 @@ export async function renderGalleryOverview() {
     `;
 
     card.addEventListener("click", async () => {
-      await renderGalleryItems(gallery.id, gallery.title, gallery.image_count);
+      await renderGalleryItems(
+        gallery.id,
+        gallery.localized_title,
+        gallery.image_count
+      );
+
       document.getElementById("galleryDetail")?.scrollIntoView({
         behavior: "smooth",
         block: "start"
@@ -87,7 +92,7 @@ export async function renderGalleryItems(galleryId, title = "", imageCount = 0) 
     btn.className = "gallery-thumb";
     btn.type = "button";
     btn.innerHTML = `
-      <img src="${item.public_url}" alt="${item.title || ""}">
+      <img src="${item.thumb_public_url}" alt="${item.localized_caption || ""}">
       <span class="gallery-thumb-overlay">Ansehen</span>
     `;
 
