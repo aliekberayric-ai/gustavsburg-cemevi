@@ -5,7 +5,7 @@ import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
 import { listEventsPublic, createEvent, updateEvent, deleteEvent } from "../modules/events.js";
 import { listGalleriesPublic, updateGallery, deleteGallery } from "../modules/gallery.js";
 import { listPeoplePublic, createPerson, updatePerson, deletePerson } from "../modules/people.js";
-import { createGalleryWithFiles, fetchGalleryItems } from "../modules/galleryService.js";
+import { createGalleryWithFiles, fetchGalleryItems } from "../galleryService.js";
 import { openLightbox } from "../lightbox.js";
 import { listFormSubmissions, updateFormStatus } from "../modules/forms.js";
 import { listAuditLogs } from "../modules/audit.js";
