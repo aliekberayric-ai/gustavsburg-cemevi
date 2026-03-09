@@ -508,23 +508,52 @@ export async function renderAdmin(root) {
   }
 
   // Galleries CRUD
+  await fillGalleryCounts(root, galleries);
+
+  root.querySelectorAll("[data-open-gallery]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-open-gallery");
+      const gallery = galleries.find((g) => g.id === id);
+      if (!gallery) return;
+
+      await openAdminGallery(root, gallery);
+    });
+  });
+
   if (isEditor) {
-    root.querySelector("#addGalleryBtn")?.addEventListener("click", async () => {
-      const de = prompt("Galerie Titel DE?");
-      if (!de) return;
+    root.querySelector("#galleryFiles")?.addEventListener("change", (e) => {
+      previewSelectedGalleryFiles(root, e.target.files);
+    });
 
-      const tr = prompt("Titel TR?") ?? "";
-      const en = prompt("Titel EN?") ?? "";
+    root.querySelector("#gallerySaveButton")?.addEventListener("click", async () => {
+      try {
+        const title = root.querySelector("#galleryTitle")?.value.trim() || "";
+        const status = root.querySelector("#galleryStatus")?.value || "active";
+        const files = Array.from(root.querySelector("#galleryFiles")?.files || []);
+        const statusEl = root.querySelector("#galleryUploadStatus");
+        const saveBtn = root.querySelector("#gallerySaveButton");
 
-      await createGallery({
-        title: { de, tr, en },
-        description: { de: "", tr: "", en: "" },
-        status: "active",
-        sort_order: 0
-      });
+        if (!title) {
+          toast("Galerietitel fehlt", "bad");
+          return;
+        }
 
-      toast("Galerie erstellt", "ok");
-      location.hash = "#/admin";
+        if (!files.length) {
+          toast("Bitte Bilder auswählen", "bad");
+          return;
+        }
+
+        if (saveBtn) saveBtn.disabled = true;
+        if (statusEl) statusEl.textContent = "Bilder werden hochgeladen ...";
+
+        await createGalleryWithFiles({ title, status, files });
+
+        toast("Galerie erstellt", "ok");
+        location.hash = "#/admin";
+      } catch (err) {
+        console.error(err);
+        toast("Galerie konnte nicht erstellt werden", "bad");
+      }
     });
 
     root.querySelectorAll("[data-edit-gallery]").forEach((btn) => {
@@ -539,7 +568,7 @@ export async function renderAdmin(root) {
       });
     });
   }
-
+  
   if (isAdmin) {
     root.querySelectorAll("[data-del-gallery]").forEach((btn) => {
       btn.addEventListener("click", async () => {
