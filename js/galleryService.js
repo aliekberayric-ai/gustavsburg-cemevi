@@ -21,6 +21,29 @@ export async function fetchGalleryItems(galleryId) {
   }));
 }
 
+import { supabase } from "./api.js";
+
+export async function fetchGalleryItems(galleryId) {
+  const { data, error } = await supabase
+    .from("gallery_items")
+    .select("*")
+    .eq("gallery_id", galleryId)
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Gallery items error:", error);
+    return [];
+  }
+
+  return (data || []).map((item) => ({
+    ...item,
+    localized_caption:
+      item.caption?.de || item.caption?.en || item.caption?.tr || "",
+    public_url: item.file_url || "",
+    thumb_public_url: item.thumb_url || item.file_url || ""
+  }));
+}
+
 export async function createGalleryWithFiles({ title, status = "active", files = [] }) {
   if (!title?.trim()) {
     throw new Error("Bitte einen Galerietitel eingeben.");
@@ -47,6 +70,7 @@ export async function createGalleryWithFiles({ title, status = "active", files =
   }
 
   let successCount = 0;
+  let firstPublicUrl = "";
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
@@ -68,6 +92,10 @@ export async function createGalleryWithFiles({ title, status = "active", files =
 
     const publicUrl = publicUrlData?.publicUrl || "";
 
+    if (!firstPublicUrl) {
+      firstPublicUrl = publicUrl;
+    }
+
     const { error: itemError } = await supabase
       .from("gallery_items")
       .insert({
@@ -88,6 +116,17 @@ export async function createGalleryWithFiles({ title, status = "active", files =
 
   if (successCount === 0) {
     throw new Error("Kein Bild konnte gespeichert werden. Bitte Storage und gallery_items prüfen.");
+  }
+
+  if (firstPublicUrl) {
+    const { error: coverError } = await supabase
+      .from("galleries")
+      .update({ cover_url: firstPublicUrl })
+      .eq("id", gallery.id);
+
+    if (coverError) {
+      console.error("Coverbild Fehler:", coverError);
+    }
   }
 
   return gallery.id;
