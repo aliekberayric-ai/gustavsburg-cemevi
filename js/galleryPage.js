@@ -17,6 +17,28 @@ function getEmptyCover() {
   `);
 }
 
+export function getGalleryPageHtml() {
+  return `
+    <section class="gallery-section">
+      <div class="section-head">
+        <h2>Galerie</h2>
+        <p>Einblicke in Veranstaltungen, Begegnungen und besondere Momente.</p>
+      </div>
+
+      <div id="galleryList" class="gallery-grid"></div>
+
+      <div id="galleryDetail" class="gallery-detail hidden">
+        <div class="gallery-detail-head">
+          <h3 id="galleryDetailTitle">Galerie</h3>
+          <p id="galleryDetailMeta">0 Bilder</p>
+        </div>
+
+        <div id="galleryItems" class="gallery-items-grid"></div>
+      </div>
+    </section>
+  `;
+}
+
 export async function renderGalleryOverview() {
   const list = document.getElementById("galleryList");
   if (!list) return;
