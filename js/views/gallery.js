@@ -70,11 +70,15 @@ export async function renderGallery(root) {
             return `
               <article class="gallery-card" data-gallery-id="${escapeHtml(g.id)}">
                 <div class="gallery-card-image-wrap">
-                  <div class="gallery-card-image" style="background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));display:flex;align-items:center;justify-content:center;">
-                    <span style="opacity:.75;font-weight:700">${escapeHtml(title)}</span>
-                  </div>
-                  ${badge}
-                </div>
+  ${
+    g.cover_url
+      ? `<img class="gallery-card-image" src="${escapeHtml(g.cover_url)}" alt="${escapeHtml(title)}">`
+      : `<div class="gallery-card-image" style="background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));display:flex;align-items:center;justify-content:center;">
+           <span style="opacity:.75;font-weight:700">${escapeHtml(title)}</span>
+         </div>`
+  }
+  ${badge}
+</div>
 
                 <div class="gallery-card-body">
                   <h3 class="gallery-card-title">${escapeHtml(title)}</h3>
