@@ -29,6 +29,67 @@ function previewSelectedFiles(fileList) {
   });
 }
 
+export function getAdminGalleryPageHtml() {
+  return `
+    <section class="admin-gallery-panel">
+      <div class="section-head">
+        <h2>Neue Galerie anlegen</h2>
+        <p>Titel eingeben, Bilder auswählen und direkt als Galerie speichern.</p>
+      </div>
+
+      <form id="galleryCreateForm" class="glass-form">
+        <div class="form-row">
+          <label for="galleryTitle">Galerietitel</label>
+          <input id="galleryTitle" type="text" placeholder="z. B. Weltfrauentag 2026" required>
+        </div>
+
+        <div class="form-row">
+          <label for="galleryStatus">Status</label>
+          <select id="galleryStatus">
+            <option value="active">Aktiv</option>
+            <option value="archived">Archiv</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="galleryFiles">Bilder auswählen</label>
+          <input id="galleryFiles" type="file" accept="image/*" multiple required>
+          <div id="galleryFileCount" class="muted-text">0 Bilder ausgewählt</div>
+        </div>
+
+        <div id="galleryFilePreview" class="upload-preview-grid"></div>
+
+        <div class="form-actions">
+          <button id="gallerySaveButton" type="submit" class="primary-btn">
+            Galerie speichern
+          </button>
+          <span id="galleryUploadStatus" class="muted-text"></span>
+        </div>
+      </form>
+
+      <div class="gallery-admin-divider"></div>
+
+      <section class="gallery-section">
+        <div class="section-head">
+          <h2>Vorhandene Galerien</h2>
+          <p>Hier siehst du die aktuellen Galerien mit Bildanzahl.</p>
+        </div>
+
+        <div id="galleryList" class="gallery-grid"></div>
+
+        <div id="galleryDetail" class="gallery-detail hidden">
+          <div class="gallery-detail-head">
+            <h3 id="galleryDetailTitle">Galerie</h3>
+            <p id="galleryDetailMeta">0 Bilder</p>
+          </div>
+
+          <div id="galleryItems" class="gallery-items-grid"></div>
+        </div>
+      </section>
+    </section>
+  `;
+}
+
 export function initAdminGalleryPage() {
   const fileInput = document.getElementById("galleryFiles");
   const form = document.getElementById("galleryCreateForm");
