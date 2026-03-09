@@ -5,8 +5,88 @@ import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
 import { listEventsPublic, createEvent, updateEvent, deleteEvent } from "../modules/events.js";
 import { listGalleriesPublic, createGallery, updateGallery, deleteGallery } from "../modules/gallery.js";
 import { listPeoplePublic, createPerson, updatePerson, deletePerson } from "../modules/people.js";
+import { createGalleryWithFiles, fetchGalleryItems, pickLocalizedText } from "../js/galleryService.js";
+import { openLightbox } from "../js/lightbox.js";
 import { listFormSubmissions, updateFormStatus } from "../modules/forms.js";
 import { listAuditLogs } from "../modules/audit.js";
+
+function previewSelectedGalleryFiles(root, fileList) {
+  const preview = root.querySelector("#galleryFilePreview");
+  const counter = root.querySelector("#galleryFileCount");
+
+  if (!preview || !counter) return;
+
+  preview.innerHTML = "";
+  const files = Array.from(fileList || []);
+
+  counter.textContent = `${files.length} Bild${files.length === 1 ? "" : "er"} ausgewählt`;
+
+  files.forEach((file) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const div = document.createElement("div");
+      div.className = "upload-preview-card";
+      div.innerHTML = `
+        <img src="${e.target.result}" alt="${escapeHtml(file.name)}">
+        <span title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+      `;
+      preview.appendChild(div);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+async function fillGalleryCounts(root, galleries) {
+  await Promise.all(
+    galleries.map(async (g) => {
+      const countCell = root.querySelector(`[data-gallery-count="${g.id}"]`);
+      if (!countCell) return;
+
+      const items = await fetchGalleryItems(g.id);
+      countCell.textContent = String(items.length);
+    })
+  );
+}
+
+async function openAdminGallery(root, gallery) {
+  const lang = getLang();
+  const items = await fetchGalleryItems(gallery.id);
+
+  const detail = root.querySelector("#adminGalleryDetail");
+  const titleEl = root.querySelector("#adminGalleryDetailTitle");
+  const metaEl = root.querySelector("#adminGalleryDetailMeta");
+  const wrap = root.querySelector("#adminGalleryItems");
+
+  if (!detail || !titleEl || !metaEl || !wrap) return;
+
+  detail.classList.remove("hidden");
+  titleEl.textContent = gallery.title?.[lang] ?? gallery.title?.de ?? "Galerie";
+  metaEl.textContent = `${items.length} Bilder`;
+  wrap.innerHTML = "";
+
+  if (!items.length) {
+    wrap.innerHTML = `<div class="empty-state">In dieser Galerie sind noch keine Bilder.</div>`;
+    return;
+  }
+
+  items.forEach((item, index) => {
+    const btn = document.createElement("button");
+    btn.className = "gallery-thumb";
+    btn.type = "button";
+    btn.innerHTML = `
+      <img src="${item.thumb_public_url}" alt="${escapeHtml(item.localized_caption || "")}">
+      <span class="gallery-thumb-overlay">Ansehen</span>
+    `;
+
+    btn.addEventListener("click", () => {
+      openLightbox(items, index);
+    });
+
+    wrap.appendChild(btn);
+  });
+}
 
 export async function renderAdmin(root) {
   const auth = getAuth();
@@ -128,16 +208,41 @@ export async function renderAdmin(root) {
 
           <!-- GALLERIES -->
           <div id="admin-galleries" class="card card__pad">
-            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Galerien</h2>
-              ${isEditor ? `<button id="addGalleryBtn" class="btn btn--accent">${t("admin.add")}</button>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+              ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
             </div>
 
-            <table class="table" style="margin-top:10px">
+            ${isEditor ? `
+              <div class="grid" style="gap:10px;margin-top:14px">
+                <input id="galleryTitle" class="input" placeholder="Galerietitel" />
+                
+                <select id="galleryStatus" class="input">
+                  <option value="active">Aktiv</option>
+                  <option value="archived">Archiv</option>
+                </select>
+
+                <input id="galleryFiles" class="input" type="file" accept="image/*" multiple />
+
+                <div id="galleryFileCount" class="mono">0 Bilder ausgewählt</div>
+
+                <div id="galleryFilePreview" class="upload-preview-grid"></div>
+
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                  <button id="gallerySaveButton" class="btn btn--accent" type="button">
+                    Galerie speichern
+                  </button>
+                  <span id="galleryUploadStatus" class="mono"></span>
+                </div>
+              </div>
+            ` : ""}
+
+            <table class="table" style="margin-top:16px">
               <thead>
                 <tr>
                   <th>${t("admin.title")}</th>
                   <th>${t("admin.status")}</th>
+                  <th>Bilder</th>
                   <th class="mono">ID</th>
                   <th></th>
                 </tr>
@@ -147,8 +252,13 @@ export async function renderAdmin(root) {
                   const title = g.title?.[lang] ?? g.title?.de ?? "—";
                   return `
                     <tr>
-                      <td>${escapeHtml(title)}</td>
+                      <td>
+                        <button class="btn" type="button" data-open-gallery="${g.id}">
+                          ${escapeHtml(title)}
+                        </button>
+                      </td>
                       <td>${escapeHtml(g.status)}</td>
+                      <td class="mono" data-gallery-count="${g.id}">…</td>
                       <td class="mono">${escapeHtml(g.id)}</td>
                       <td style="white-space:nowrap">
                         ${isEditor ? `<button class="btn" data-edit-gallery="${g.id}">${t("admin.edit")}</button>` : ""}
@@ -160,9 +270,17 @@ export async function renderAdmin(root) {
               </tbody>
             </table>
 
+            <div id="adminGalleryDetail" class="gallery-detail hidden" style="margin-top:16px">
+              <div class="gallery-detail-head">
+                <h3 id="adminGalleryDetailTitle">Galerie</h3>
+                <p id="adminGalleryDetailMeta">0 Bilder</p>
+              </div>
+              <div id="adminGalleryItems" class="gallery-items-grid"></div>
+            </div>
+
             <p class="mono" style="margin-top:10px">${t("admin.galleryItemsNote")}</p>
           </div>
-
+  
           <!-- PEOPLE -->
           <div id="admin-people" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
