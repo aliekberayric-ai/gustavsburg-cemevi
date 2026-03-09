@@ -6,7 +6,7 @@ import { listEventsPublic, createEvent, updateEvent, deleteEvent } from "../modu
 import { listGalleriesPublic, updateGallery, deleteGallery } from "../modules/gallery.js";
 import { listPeoplePublic, createPerson, updatePerson, deletePerson } from "../modules/people.js";
 import { createGalleryWithFiles, fetchGalleryItems, pickLocalizedText } from "../js/galleryService.js";
-import { openLightbox } from "../js/lightbox.js";
+import { openLightbox } from "../lightbox.js";
 import { listFormSubmissions, updateFormStatus } from "../modules/forms.js";
 import { listAuditLogs } from "../modules/audit.js";
 
