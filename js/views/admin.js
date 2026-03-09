@@ -88,6 +88,168 @@ async function openAdminGallery(root, gallery) {
   });
 }
 
+
+function previewSelectedGalleryFiles(root, fileList) {
+  const preview = root.querySelector("#galleryFilePreview");
+  const counter = root.querySelector("#galleryFileCount");
+
+  if (!preview || !counter) return;
+
+  preview.innerHTML = "";
+  const files = Array.from(fileList || []);
+
+  counter.textContent = `${files.length} Bild${files.length === 1 ? "" : "er"} ausgewählt`;
+
+  files.forEach((file) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const div = document.createElement("div");
+      div.className = "upload-preview-card";
+      div.innerHTML = `
+        <img src="${e.target.result}" alt="${escapeHtml(file.name)}">
+        <span title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+      `;
+      preview.appendChild(div);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+function bindGalleryDropzone(root) {
+  const dropzone = root.querySelector("#galleryDropzone");
+  const fileInput = root.querySelector("#galleryFiles");
+
+  if (!dropzone || !fileInput) return;
+
+  ["dragenter", "dragover"].forEach((eventName) => {
+    dropzone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.add("is-dragover");
+    });
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    dropzone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove("is-dragover");
+    });
+  });
+
+  dropzone.addEventListener("drop", (e) => {
+    const files = e.dataTransfer?.files;
+    if (!files?.length) return;
+
+    fileInput.files = files;
+    previewSelectedGalleryFiles(root, files);
+  });
+
+  dropzone.addEventListener("click", () => {
+    fileInput.click();
+  });
+}
+
+async function fillGalleryCounts(root, galleries) {
+  await Promise.all(
+    galleries.map(async (g) => {
+      const countCell = root.querySelector(`[data-gallery-count="${g.id}"]`);
+      if (!countCell) return;
+
+      const items = await fetchGalleryItems(g.id);
+      countCell.textContent = String(items.length);
+    })
+  );
+}
+
+function bindGallerySorting(root, gallery, items) {
+  const wrap = root.querySelector("#adminGalleryItems");
+  if (!wrap) return;
+
+  let draggedId = null;
+
+  wrap.querySelectorAll(".admin-gallery-sort-card").forEach((card) => {
+    card.addEventListener("dragstart", () => {
+      draggedId = card.dataset.id;
+      card.classList.add("is-dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+      card.classList.remove("is-dragging");
+    });
+
+    card.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    });
+
+    card.addEventListener("drop", async (e) => {
+      e.preventDefault();
+
+      const targetId = card.dataset.id;
+      if (!draggedId || !targetId || draggedId === targetId) return;
+
+      const draggedIndex = items.findIndex((x) => x.id === draggedId);
+      const targetIndex = items.findIndex((x) => x.id === targetId);
+
+      if (draggedIndex < 0 || targetIndex < 0) return;
+
+      const moved = items.splice(draggedIndex, 1)[0];
+      items.splice(targetIndex, 0, moved);
+
+      await updateGalleryItemOrder(items);
+      await openAdminGallery(root, gallery);
+    });
+  });
+}
+
+async function openAdminGallery(root, gallery) {
+  const lang = getLang();
+  const items = await fetchGalleryItems(gallery.id);
+
+  const detail = root.querySelector("#adminGalleryDetail");
+  const titleEl = root.querySelector("#adminGalleryDetailTitle");
+  const metaEl = root.querySelector("#adminGalleryDetailMeta");
+  const wrap = root.querySelector("#adminGalleryItems");
+
+  if (!detail || !titleEl || !metaEl || !wrap) return;
+
+  detail.classList.remove("hidden");
+  titleEl.textContent = gallery.title?.[lang] ?? gallery.title?.de ?? "Galerie";
+  metaEl.textContent = `${items.length} Bilder`;
+  wrap.innerHTML = "";
+
+  if (!items.length) {
+    wrap.innerHTML = `<div class="empty-state">In dieser Galerie sind noch keine Bilder.</div>`;
+    return;
+  }
+
+  items.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "admin-gallery-sort-card";
+    card.draggable = true;
+    card.dataset.index = String(index);
+    card.dataset.id = item.id;
+
+    card.innerHTML = `
+      <div class="admin-gallery-sort-card__image-wrap">
+        <img src="${item.thumb_public_url}" alt="${escapeHtml(item.localized_caption || "")}">
+        <button class="admin-gallery-sort-card__view btn" type="button">Ansehen</button>
+      </div>
+      <div class="admin-gallery-sort-card__caption">${escapeHtml(item.localized_caption || "")}</div>
+    `;
+
+    card.querySelector(".admin-gallery-sort-card__view")?.addEventListener("click", () => {
+      openLightbox(items, index);
+    });
+
+    wrap.appendChild(card);
+  });
+
+  bindGallerySorting(root, gallery, items);
+}
+
 export async function renderAdmin(root) {
   const auth = getAuth();
   const isEditor = requireRole(["admin", "editor"]);
@@ -206,7 +368,7 @@ export async function renderAdmin(root) {
             </table>
           </div>
 
-          <!-- GALLERIES -->
+                    <!-- GALLERIES -->
           <div id="admin-galleries" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Galerien</h2>
@@ -216,11 +378,18 @@ export async function renderAdmin(root) {
             ${isEditor ? `
               <div class="grid" style="gap:10px;margin-top:14px">
                 <input id="galleryTitle" class="input" placeholder="Galerietitel" />
-                
+
                 <select id="galleryStatus" class="input">
                   <option value="active">Aktiv</option>
                   <option value="archived">Archiv</option>
                 </select>
+
+                <div id="galleryDropzone" class="gallery-dropzone">
+                  <div class="gallery-dropzone__inner">
+                    <strong>Bilder hier hineinziehen</strong>
+                    <span>oder unten auswählen</span>
+                  </div>
+                </div>
 
                 <input id="galleryFiles" class="input" type="file" accept="image/*" multiple />
 
@@ -240,6 +409,7 @@ export async function renderAdmin(root) {
             <table class="table" style="margin-top:16px">
               <thead>
                 <tr>
+                  <th>Cover</th>
                   <th>${t("admin.title")}</th>
                   <th>${t("admin.status")}</th>
                   <th>Bilder</th>
@@ -252,6 +422,13 @@ export async function renderAdmin(root) {
                   const title = g.title?.[lang] ?? g.title?.de ?? "—";
                   return `
                     <tr>
+                      <td>
+                        ${
+                          g.cover_url
+                            ? `<img src="${escapeHtml(g.cover_url)}" alt="Cover" style="width:72px;height:52px;object-fit:cover;border-radius:10px;">`
+                            : `—`
+                        }
+                      </td>
                       <td>
                         <button class="btn" type="button" data-open-gallery="${g.id}">
                           ${escapeHtml(title)}
@@ -507,7 +684,7 @@ export async function renderAdmin(root) {
     });
   }
 
-  // Galleries CRUD
+    // Galleries CRUD
   await fillGalleryCounts(root, galleries);
 
   root.querySelectorAll("[data-open-gallery]").forEach((btn) => {
@@ -521,6 +698,8 @@ export async function renderAdmin(root) {
   });
 
   if (isEditor) {
+    bindGalleryDropzone(root);
+
     root.querySelector("#galleryFiles")?.addEventListener("change", (e) => {
       previewSelectedGalleryFiles(root, e.target.files);
     });
@@ -551,10 +730,10 @@ export async function renderAdmin(root) {
         toast("Galerie erstellt", "ok");
         location.hash = "#/admin";
       } catch (err) {
-  console.error(err);
-  alert(err.message || JSON.stringify(err));
-  toast("Galerie konnte nicht erstellt werden", "bad");
-}
+        console.error(err);
+        alert(err.message || "Fehler beim Galerie-Upload");
+        toast("Galerie konnte nicht erstellt werden", "bad");
+      }
     });
 
     root.querySelectorAll("[data-edit-gallery]").forEach((btn) => {
@@ -569,7 +748,7 @@ export async function renderAdmin(root) {
       });
     });
   }
-  
+
   if (isAdmin) {
     root.querySelectorAll("[data-del-gallery]").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -583,6 +762,8 @@ export async function renderAdmin(root) {
       });
     });
   }
+
+  initLightbox();
 
   // People CRUD
 // People CRUD
