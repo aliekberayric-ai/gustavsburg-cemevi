@@ -6,6 +6,8 @@
 import { initI18n, setLangFromStorage, bindLangButtons } from "./i18n.js";
 import { initAuth } from "./auth.js";
 import { initRouter } from "./router.js";
+import { getGalleryPageHtml, initGalleryPage } from "./galleryPage.js";
+import { getAdminGalleryPageHtml, initAdminGalleryPage } from "./adminGalleryPage.js";
 
 async function main(){
   await initI18n();
