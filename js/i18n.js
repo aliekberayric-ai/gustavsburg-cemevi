@@ -8,7 +8,7 @@
 let dicts = {};
 let currentLang = "de";
 
-export async function initI18n(){
+export async function initi18n(){
   const [de,tr,en] = await Promise.all([
     fetch("i18n/de.json").then(r=>r.json()),
     fetch("i18n/tr.json").then(r=>r.json()),
