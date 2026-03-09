@@ -4,6 +4,51 @@ import { fetchGalleryItems } from "../js/galleryService.js";
 import { openLightbox } from "../js/lightbox.js";
 import { escapeHtml } from "../ui.js";
 
+async function openGalleryDetail(root, gallery) {
+  const lang = getLang();
+  const items = await fetchGalleryItems(gallery.id);
+
+  const detail = root.querySelector("#galleryDetail");
+  const titleEl = root.querySelector("#galleryDetailTitle");
+  const metaEl = root.querySelector("#galleryDetailMeta");
+  const wrap = root.querySelector("#galleryItems");
+
+  if (!detail || !titleEl || !metaEl || !wrap) return;
+
+  const title = gallery.title?.[lang] ?? gallery.title?.de ?? "Galerie";
+
+  detail.classList.remove("hidden");
+  titleEl.textContent = title;
+  metaEl.textContent = `${items.length} Bilder`;
+  wrap.innerHTML = "";
+
+  if (!items.length) {
+    wrap.innerHTML = `<div class="empty-state">In dieser Galerie sind noch keine Bilder.</div>`;
+    return;
+  }
+
+  items.forEach((item, index) => {
+    const btn = document.createElement("button");
+    btn.className = "gallery-thumb";
+    btn.type = "button";
+    btn.innerHTML = `
+      <img src="${item.thumb_public_url}" alt="${escapeHtml(item.localized_caption || "")}">
+      <span class="gallery-thumb-overlay">Ansehen</span>
+    `;
+
+    btn.addEventListener("click", () => {
+      openLightbox(items, index);
+    });
+
+    wrap.appendChild(btn);
+  });
+
+  detail.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
 export async function renderGallery(root){
   const galleries = await listGalleriesPublic();
 
