@@ -1,62 +1,43 @@
-import { supabase } from "./api.js";
+let lightboxItems = [];
+let lightboxIndex = 0;
 
-export async function fetchGalleryItems(galleryId) {
-  const { data, error } = await supabase
-    .from("gallery_items")
-    .select("*")
-    .eq("gallery_id", galleryId)
-    .order("sort_order", { ascending: true });
-
-  if (error) {
-    console.error("Gallery items error:", error);
-    return [];
-  }
-
-  return (data || []).map((item) => ({
-    ...item,
-    localized_caption:
-      item.caption?.de || item.caption?.en || item.caption?.tr || "",
-    public_url: item.file_url,
-    thumb_public_url: item.thumb_url || item.file_url
-  }));
+function qs(id) {
+  return document.getElementById(id);
 }
 
-export async function createGalleryWithFiles({ title, status, files }) {
-  const { data: gallery, error } = await supabase
-    .from("galleries")
-    .insert({
-      title: { de: title, tr: title, en: title },
-      description: { de: "", tr: "", en: "" },
-      status,
-      sort_order: 0
-    })
-    .select()
-    .single();
+function renderLightboxImage() {
+  const current = lightboxItems[lightboxIndex];
+  if (!current) return;
 
-  if (error) throw error;
+  qs("lightboxImage").src = current.public_url;
+  qs("lightboxCaption").textContent = current.localized_caption || "";
+  qs("lightboxCounter").textContent =
+    `${lightboxIndex + 1} / ${lightboxItems.length}`;
+}
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const filePath = `${gallery.id}/${Date.now()}-${file.name}`;
+export function openLightbox(items, index = 0) {
+  lightboxItems = items;
+  lightboxIndex = index;
 
-    const { error: uploadError } = await supabase.storage
-      .from("gallery")
-      .upload(filePath, file);
+  qs("lightbox").classList.remove("hidden");
+  renderLightboxImage();
+}
 
-    if (uploadError) continue;
+export function initLightbox() {
+  qs("lightboxClose")?.addEventListener("click", () => {
+    qs("lightbox").classList.add("hidden");
+  });
 
-    const { data } = supabase.storage
-      .from("gallery")
-      .getPublicUrl(filePath);
+  qs("lightboxNext")?.addEventListener("click", () => {
+    lightboxIndex =
+      (lightboxIndex + 1) % lightboxItems.length;
+    renderLightboxImage();
+  });
 
-    await supabase.from("gallery_items").insert({
-      gallery_id: gallery.id,
-      caption: { de: file.name, tr: file.name, en: file.name },
-      file_url: data.publicUrl,
-      thumb_url: data.publicUrl,
-      sort_order: i
-    });
-  }
-
-  return gallery.id;
+  qs("lightboxPrev")?.addEventListener("click", () => {
+    lightboxIndex =
+      (lightboxIndex - 1 + lightboxItems.length) %
+      lightboxItems.length;
+    renderLightboxImage();
+  });
 }
