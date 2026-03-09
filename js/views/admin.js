@@ -3,7 +3,7 @@ import { getAuth, signIn, signOut, requireRole } from "../auth.js";
 import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
 
 import { listEventsPublic, createEvent, updateEvent, deleteEvent } from "../modules/events.js";
-import { listGalleriesPublic, createGallery, updateGallery, deleteGallery } from "../modules/gallery.js";
+import { listGalleriesPublic, updateGallery, deleteGallery } from "../modules/gallery.js";
 import { listPeoplePublic, createPerson, updatePerson, deletePerson } from "../modules/people.js";
 import { createGalleryWithFiles, fetchGalleryItems, pickLocalizedText } from "../js/galleryService.js";
 import { openLightbox } from "../js/lightbox.js";
