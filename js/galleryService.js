@@ -21,8 +21,6 @@ export async function fetchGalleryItems(galleryId) {
   }));
 }
 
-import { supabase } from "./api.js";
-
 export async function fetchGalleryItems(galleryId) {
   const { data, error } = await supabase
     .from("gallery_items")
