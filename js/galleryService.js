@@ -104,6 +104,7 @@ export async function createGalleryWithFiles({ title, status = "active", files =
     if (coverError) {
       console.error("Coverbild Fehler:", coverError);
     }
+    return gallery.id;
   }
 
   export async function updateGalleryItemOrder(items = []) {
