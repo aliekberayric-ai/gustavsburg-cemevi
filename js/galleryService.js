@@ -122,5 +122,4 @@ export async function createGalleryWithFiles({ title, status = "active", files =
     }
   }
 }
-  return gallery.id;
-}
+  
