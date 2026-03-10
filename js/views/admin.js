@@ -2,10 +2,12 @@ import { t, getLang } from "../i18n.js";
 import { getAuth, signIn, signOut, requireRole } from "../auth.js";
 import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
 
+import { openLightbox, initLightbox } from "../lightbox.js";
+
 import { listEventsPublic, createEvent, updateEvent, deleteEvent } from "../modules/events.js";
 import { listGalleriesPublic, updateGallery, deleteGallery } from "../modules/gallery.js";
 import { listPeoplePublic, createPerson, updatePerson, deletePerson } from "../modules/people.js";
-import { createGalleryWithFiles, fetchGalleryItems } from "../galleryService.js";
+import { createGalleryWithFiles, fetchGalleryItems, updateGalleryItemOrder } from "../galleryService.js";
 import { openLightbox } from "../lightbox.js";
 import { listFormSubmissions, updateFormStatus } from "../modules/forms.js";
 import { listAuditLogs } from "../modules/audit.js";
@@ -50,43 +52,6 @@ async function fillGalleryCounts(root, galleries) {
   );
 }
 
-async function openAdminGallery(root, gallery) {
-  const lang = getLang();
-  const items = await fetchGalleryItems(gallery.id);
-
-  const detail = root.querySelector("#adminGalleryDetail");
-  const titleEl = root.querySelector("#adminGalleryDetailTitle");
-  const metaEl = root.querySelector("#adminGalleryDetailMeta");
-  const wrap = root.querySelector("#adminGalleryItems");
-
-  if (!detail || !titleEl || !metaEl || !wrap) return;
-
-  detail.classList.remove("hidden");
-  titleEl.textContent = gallery.title?.[lang] ?? gallery.title?.de ?? "Galerie";
-  metaEl.textContent = `${items.length} Bilder`;
-  wrap.innerHTML = "";
-
-  if (!items.length) {
-    wrap.innerHTML = `<div class="empty-state">In dieser Galerie sind noch keine Bilder.</div>`;
-    return;
-  }
-
-  items.forEach((item, index) => {
-    const btn = document.createElement("button");
-    btn.className = "gallery-thumb";
-    btn.type = "button";
-    btn.innerHTML = `
-      <img src="${item.thumb_public_url}" alt="${escapeHtml(item.localized_caption || "")}">
-      <span class="gallery-thumb-overlay">Ansehen</span>
-    `;
-
-    btn.addEventListener("click", () => {
-      openLightbox(items, index);
-    });
-
-    wrap.appendChild(btn);
-  });
-}
 
 function bindGalleryDropzone(root) {
   const dropzone = root.querySelector("#galleryDropzone");
@@ -206,7 +171,7 @@ async function openAdminGallery(root, gallery) {
     wrap.appendChild(card);
   });
 
- function bindGallerySorting(root, gallery, items);
+ bindGallerySorting(root, gallery, items);
 }
 
 export async function renderAdmin(root) {
