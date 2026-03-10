@@ -123,18 +123,6 @@ function bindGalleryDropzone(root) {
   });
 }
 
-async function fillGalleryCounts(root, galleries) {
-  await Promise.all(
-    galleries.map(async (g) => {
-      const countCell = root.querySelector(`[data-gallery-count="${g.id}"]`);
-      if (!countCell) return;
-
-      const items = await fetchGalleryItems(g.id);
-      countCell.textContent = String(items.length);
-    })
-  );
-}
-
 function bindGallerySorting(root, gallery, items) {
   const wrap = root.querySelector("#adminGalleryItems");
   if (!wrap) return;
