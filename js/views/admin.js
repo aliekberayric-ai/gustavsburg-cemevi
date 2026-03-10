@@ -206,7 +206,7 @@ async function openAdminGallery(root, gallery) {
     wrap.appendChild(card);
   });
 
-  bindGallerySorting(root, gallery, items);
+ function bindGallerySorting(root, gallery, items);
 }
 
 export async function renderAdmin(root) {
