@@ -88,35 +88,6 @@ async function openAdminGallery(root, gallery) {
   });
 }
 
-
-function previewSelectedGalleryFiles(root, fileList) {
-  const preview = root.querySelector("#galleryFilePreview");
-  const counter = root.querySelector("#galleryFileCount");
-
-  if (!preview || !counter) return;
-
-  preview.innerHTML = "";
-  const files = Array.from(fileList || []);
-
-  counter.textContent = `${files.length} Bild${files.length === 1 ? "" : "er"} ausgewählt`;
-
-  files.forEach((file) => {
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const div = document.createElement("div");
-      div.className = "upload-preview-card";
-      div.innerHTML = `
-        <img src="${e.target.result}" alt="${escapeHtml(file.name)}">
-        <span title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
-      `;
-      preview.appendChild(div);
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
-
 function bindGalleryDropzone(root) {
   const dropzone = root.querySelector("#galleryDropzone");
   const fileInput = root.querySelector("#galleryFiles");
