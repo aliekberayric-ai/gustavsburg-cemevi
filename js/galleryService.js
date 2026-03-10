@@ -69,7 +69,7 @@ export async function createGalleryWithFiles({ title, status = "active", files =
 
     const publicUrl = publicUrlData?.publicUrl || "";
 
-    if (!firstPublicUrl) {
+    if (firstPublicUrl) {
       firstPublicUrl = publicUrl;
     }
 
