@@ -535,7 +535,8 @@ root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => 
         const date = root.querySelector("#eventDate")?.value || "";
         const time = root.querySelector("#eventTime")?.value || "";
         const loc = root.querySelector("#eventLocation")?.value.trim() || "";
-        const previewImageUrl = root.querySelector("#eventPreviewImage")?.value.trim() || "";
+        const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
+        
 
         if (!de) {
           toast("Titel DE fehlt", "bad");
@@ -554,13 +555,19 @@ root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => 
 
         const start = new Date(`${date}T${time}:00`).toISOString();
 
-        await createEvent({
-         title: { de, tr, en },
-         start_time: start,
-         location: loc,
-         preview_image_url: previewImageUrl,
-         description: { de: "", tr: "", en: "" }
-         });
+        let previewImageUrl = "";
+
+if (previewImageFile) {
+  previewImageUrl = await uploadEventPreviewImage(previewImageFile);
+}
+
+await createEvent({
+  title: { de, tr, en },
+  start_time: start,
+  location: loc,
+  preview_image_url: previewImageUrl,
+  description: { de: "", tr: "", en: "" }
+});
 
         toast("Event erstellt", "ok");
         location.hash = "#/admin";
@@ -599,6 +606,13 @@ root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => 
            });
 
           toast("Event aktualisiert", "ok");
+
+const previewFileInput = root.querySelector("#eventPreviewImageFile");
+const previewInfo = root.querySelector("#eventPreviewImageInfo");
+
+if (previewFileInput) previewFileInput.value = "";
+if (previewInfo) previewInfo.textContent = "Kein Bild ausgewählt";
+          
           location.hash = "#/admin";
         } catch (err) {
           console.error(err);
