@@ -582,7 +582,7 @@ root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => 
       title: { de, tr, en },
       start_time: startISO,
       location: loc,
-      preview_image_url: previewImageUrl,
+      preview_image_url: null,
       description: { de: "", tr: "", en: "" }
     });
 
