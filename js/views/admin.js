@@ -11,7 +11,7 @@ import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
 
 import { openLightbox, initLightbox } from "../lightbox.js";
 
-import { listEventsPublic, createEvent, updateEvent, deleteEvent } from "../modules/events.js";
+// import { listEventsPublic, createEvent, updateEvent, deleteEvent } from "../modules/events.js"; //
 import { listGalleriesPublic, updateGallery, deleteGallery } from "../modules/gallery.js";
 import { listPeoplePublic, createPerson, updatePerson, deletePerson } from "../modules/people.js";
 import { createGalleryWithFiles, fetchGalleryItems, updateGalleryItemOrder } from "../galleryService.js";
