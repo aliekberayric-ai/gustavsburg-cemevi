@@ -650,7 +650,22 @@ export async function renderAdmin(root) {
 
         await createGalleryWithFiles({ title, status, files });
 
-          toast("Galerie erstellt", "ok");
+           toast("Galerie erstellt", "ok");
+
+           const titleInput = root.querySelector("#galleryTitle");
+           const statusInput = root.querySelector("#galleryStatus");
+           const filesInput = root.querySelector("#galleryFiles");
+           const preview = root.querySelector("#galleryFilePreview");
+           const count = root.querySelector("#galleryFileCount");
+           const statusEl = root.querySelector("#galleryUploadStatus");
+
+           if (titleInput) titleInput.value = "";
+           if (statusInput) statusInput.value = "active";
+           if (filesInput) filesInput.value = "";
+           if (preview) preview.innerHTML = "";
+           if (count) count.textContent = "0 Bilder ausgewählt";
+           if (statusEl) statusEl.textContent = "";
+
           await renderAdmin(root);
         return;
         
