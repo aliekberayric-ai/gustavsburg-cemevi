@@ -72,3 +72,25 @@ export async function uploadEventPreviewImage(file) {
 
   return data.publicUrl;
 }
+
+export async function uploadEventPreviewImage(file) {
+  if (!file) return "";
+
+  const safeName = file.name.replace(/\s+/g, "-");
+  const filePath = `events/${Date.now()}-${safeName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("events")
+    .upload(filePath, file, { upsert: false });
+
+  if (uploadError) {
+    console.error("Event image upload error:", uploadError);
+    throw uploadError;
+  }
+
+  const { data } = supabase.storage
+    .from("events")
+    .getPublicUrl(filePath);
+
+  return data?.publicUrl || "";
+}
