@@ -657,7 +657,7 @@ export async function renderAdmin(root) {
            const filesInput = root.querySelector("#galleryFiles");
            const preview = root.querySelector("#galleryFilePreview");
            const count = root.querySelector("#galleryFileCount");
-           const statusEl = root.querySelector("#galleryUploadStatus");
+           let statusEl = root.querySelector("#galleryUploadStatus");
 
            if (titleInput) titleInput.value = "";
            if (statusInput) statusInput.value = "active";
