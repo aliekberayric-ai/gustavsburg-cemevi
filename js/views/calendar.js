@@ -2,7 +2,9 @@ import { t, getLang } from "../i18n.js";
 import { listEventsPublic } from "../modules/events.js";
 import { fmtDateTime, escapeHtml } from "../ui.js";
 
-export async function renderCalendar(root){
+const EVENT_PLACEHOLDER = "assets/img/team-placeholder.png";
+
+export async function renderCalendar(root) {
   const events = await listEventsPublic();
 
   root.innerHTML = `
@@ -17,18 +19,38 @@ export async function renderCalendar(root){
               <th data-i18n="calendar.th1">${t("calendar.th1")}</th>
               <th data-i18n="calendar.th2">${t("calendar.th2")}</th>
               <th data-i18n="calendar.th3">${t("calendar.th3")}</th>
+              <th>Bild</th>
             </tr>
           </thead>
           <tbody>
             ${
-              events.map(e=>{
+              events.map((e) => {
                 const lang = getLang();
                 const title = e.title?.[lang] ?? e.title?.de ?? "—";
-                return `<tr>
-                  <td class="mono">${escapeHtml(fmtDateTime(e.start_time))}</td>
-                  <td>${escapeHtml(title)}</td>
-                  <td>${escapeHtml(e.location ?? "")}</td>
-                </tr>`;
+                const previewImage = e.preview_image_url || EVENT_PLACEHOLDER;
+
+                return `
+                  <tr>
+                    <td class="mono">${escapeHtml(fmtDateTime(e.start_time))}</td>
+                    <td>${escapeHtml(title)}</td>
+                    <td>${escapeHtml(e.location ?? "")}</td>
+                    <td>
+                      <div class="calendar-preview-wrap">
+                        <img
+                          class="calendar-preview-thumb"
+                          src="${escapeHtml(previewImage)}"
+                          alt="${escapeHtml(title)}"
+                        >
+                        <div class="calendar-preview-popup">
+                          <img
+                            src="${escapeHtml(previewImage)}"
+                            alt="${escapeHtml(title)}"
+                          >
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                `;
               }).join("")
             }
           </tbody>
