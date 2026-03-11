@@ -686,7 +686,7 @@
 
 .calendar-preview-popup {
   position: absolute;
-  left: 78px;
+  left: -300px;
   top: 50%;
   transform: translateY(-50%) scale(.96);
   opacity: 0;
