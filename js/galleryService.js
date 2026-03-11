@@ -69,7 +69,7 @@ export async function createGalleryWithFiles({ title, status = "active", files =
 
     const publicUrl = publicUrlData?.publicUrl || "";
 
-    if (!firstPublicUrl) {
+    if (!firstPublicUrl && publicUrl) {
       firstPublicUrl = publicUrl;
     }
 
@@ -105,10 +105,11 @@ export async function createGalleryWithFiles({ title, status = "active", files =
       console.error("Coverbild Fehler:", coverError);
     }
   }
-    return gallery.id;
-  }
 
-  export async function updateGalleryItemOrder(items = []) {
+  return gallery.id;
+}
+
+export async function updateGalleryItemOrder(items = []) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
 
@@ -122,4 +123,3 @@ export async function createGalleryWithFiles({ title, status = "active", files =
     }
   }
 }
-  
