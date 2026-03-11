@@ -673,6 +673,12 @@
   display: inline-block;
 }
 
+.calendar-preview-container {
+  position: relative;
+  display: inline-block;
+}
+
+  
 .calendar-preview-thumb {
   width: 64px;
   height: 44px;
