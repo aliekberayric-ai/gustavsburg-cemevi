@@ -511,6 +511,14 @@ export async function renderAdmin(root) {
     </div>
   `;
 
+root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => {
+  const info = root.querySelector("#eventPreviewImageInfo");
+  const file = e.target.files?.[0];
+
+  if (!info) return;
+  info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
+});
+  
   // Logout
   root.querySelector("#logoutBtn")?.addEventListener("click", async () => {
     await signOut();
