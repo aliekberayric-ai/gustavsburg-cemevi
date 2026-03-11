@@ -392,7 +392,8 @@ export async function renderAdmin(root) {
              ${isEditor ? `
       <div style="display:grid;gap:8px;width:100%;margin-top:12px">
         <input id="personName" class="input" placeholder="Name" />
-        <input id="personImage" class="input" placeholder="Bild-URL" />
+        <input id="personImageFile" class="input" type="file" accept="image/*" />
+        <div id"personImageInfo" class="mono">Kein Bild ausgewählt</div>
 
         <input id="personRoleDe" class="input" placeholder="Aufgabe DE" />
         <input id="personRoleTr" class="input" placeholder="Aufgabe TR" />
