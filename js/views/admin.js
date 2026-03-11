@@ -257,8 +257,10 @@ export async function renderAdmin(root) {
               <input id="eventDate" class="input" type="date" />
               <input id="eventTime" class="input" type="time" />
               <input id="eventLocation" class="input" placeholder="Ort" />
-              <input id="eventPreviewImage" class="input" placeholder="Vorschaubild-URL" />
-              <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
+              <input id="eventPreviewImageFile" class="input" type="file" accept="image/*" />
+              
+<div id="eventPreviewImageInfo" class="mono">Kein Bild ausgewählt</div>
+<button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
               </div>
             ` : ""}
 
