@@ -40,12 +40,12 @@ export async function renderCalendar(root) {
                           class="calendar-preview-thumb"
                           src="${escapeHtml(previewImage)}"
                           alt="${escapeHtml(title)}"
-                        >
+                        />
                         <div class="calendar-preview-popup">
                           <img
                             src="${escapeHtml(previewImage)}"
                             alt="${escapeHtml(title)}"
-                          >
+                          />
                         </div>
                       </div>
                     </td>
