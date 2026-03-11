@@ -54,3 +54,26 @@ export async function deletePerson(id) {
     throw error;
   }
 }
+
+/** People - Select image */
+export async function uploadPersonImage(file) {
+  if (!file) return "";
+
+  const safeName = file.name.replace(/\s+/g, "-");
+  const filePath = `people/${Date.now()}-${safeName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("people")
+    .upload(filePath, file, { upsert: false });
+
+  if (uploadError) {
+    console.error("Person image upload error:", uploadError);
+    throw uploadError;
+  }
+
+  const { data } = supabase.storage
+    .from("people")
+    .getPublicUrl(filePath);
+
+  return data?.publicUrl || "";
+}
