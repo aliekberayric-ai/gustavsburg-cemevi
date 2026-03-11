@@ -534,6 +534,14 @@ root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => 
         const en = root.querySelector("#eventTitleEn")?.value.trim() || "";
         const date = root.querySelector("#eventDate")?.value || "";
         const time = root.querySelector("#eventTime")?.value || "";
+        // Datum + Uhrzeit sauber erzeugen
+        const strat = new Date('$(date) $(time)');
+
+        If (isNaN(start.getTime())) { toast("Ungültiges Datum oder Uhrzeit","BAD");
+            return;
+                                    }
+        const startISO = start.tolSOString();
+        
         const loc = root.querySelector("#eventLocation")?.value.trim() || "";
         const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
         
@@ -563,7 +571,7 @@ if (previewImageFile) {
 
 await createEvent({
   title: { de, tr, en },
-  start_time: start,
+  start_time: startISO,
   location: loc,
   preview_image_url: previewImageUrl,
   description: { de: "", tr: "", en: "" }
