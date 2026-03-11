@@ -713,3 +713,50 @@
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
+
+
+.calendar-preview-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.calendar-preview-thumb {
+  width: 64px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  display: block;
+  background: rgba(255,255,255,0.04);
+}
+
+.calendar-preview-popup {
+  position: absolute;
+  left: 78px;
+  top: 50%;
+  transform: translateY(-50%) scale(.96);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 30;
+  background: rgba(15,15,20,0.96);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+
+.calendar-preview-popup img {
+  width: 280px;
+  max-width: 40vw;
+  height: auto;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.calendar-preview-wrap:hover .calendar-preview-popup {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
