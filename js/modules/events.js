@@ -57,18 +57,15 @@ export async function uploadEventPreviewImage(file) {
   const safeName = file.name.replace(/\s+/g, "-");
   const filePath = `events/${Date.now()}-${safeName}`;
 
-  const { error: uploadError } = await supabase.storage
+  const { error } = await supabase.storage
     .from("events")
-    .upload(filePath, file, { upsert: false });
+    .upload(filePath, file);
 
-  if (uploadError) {
-    console.error("Event image upload error:", uploadError);
-    throw uploadError;
-  }
+  if (error) throw error;
 
   const { data } = supabase.storage
     .from("events")
     .getPublicUrl(filePath);
 
-  return data?.publicUrl || "";
+  return data?.publicUrl;
 }
