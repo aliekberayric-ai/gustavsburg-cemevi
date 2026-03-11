@@ -650,8 +650,10 @@ export async function renderAdmin(root) {
 
         await createGalleryWithFiles({ title, status, files });
 
-        toast("Galerie erstellt", "ok");
-        location.hash = "#/admin";
+          toast("Galerie erstellt", "ok");
+          await renderAdmin(root);
+        return;
+        
       } catch (err) {
         console.error(err);
         alert(err.message || "Fehler beim Galerie-Upload");
