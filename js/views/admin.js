@@ -589,8 +589,8 @@ root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => 
     toast("Event erstellt", "ok");
     await renderAdmin(root);
   } catch (err) {
-    console.error(err);
-    toast("Event konnte nicht erstellt werden", "bad");
+    console.error("EVENT ERROR:", err);
+    toast(err.message || "Event konnte nicht erstellt werden", "bad");
   }
 });
 
