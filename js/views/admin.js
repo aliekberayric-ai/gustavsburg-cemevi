@@ -525,6 +525,7 @@ export async function renderAdmin(root) {
         const date = root.querySelector("#eventDate")?.value || "";
         const time = root.querySelector("#eventTime")?.value || "";
         const loc = root.querySelector("#eventLocation")?.value.trim() || "";
+        const previewImageUrl = root.querySelector("#eventPreviewImage")?.value.trim() || "";
 
         if (!de) {
           toast("Titel DE fehlt", "bad");
@@ -544,11 +545,12 @@ export async function renderAdmin(root) {
         const start = new Date(`${date}T${time}:00`).toISOString();
 
         await createEvent({
-          title: { de, tr, en },
-          start_time: start,
-          location: loc,
-          description: { de: "", tr: "", en: "" }
-        });
+         title: { de, tr, en },
+         start_time: start,
+         location: loc,
+         preview_image_url: previewImageUrl,
+         description: { de: "", tr: "", en: "" }
+         });
 
         toast("Event erstellt", "ok");
         location.hash = "#/admin";
@@ -576,13 +578,15 @@ export async function renderAdmin(root) {
           if (!newTime) return;
 
           const newLoc = prompt("Neuer Ort?", "") ?? "";
+          const newPreviewImage = prompt("Neue Bild-URL?", "") ?? "";
           const newStart = new Date(`${newDate}T${newTime}:00`).toISOString();
 
-          await updateEvent(id, {
-            title: { de: newDe, tr: newTr, en: newEn },
-            start_time: newStart,
-            location: newLoc
-          });
+           await updateEvent(id, {
+           title: { de: newDe, tr: newTr, en: newEn },
+           start_time: newStart,
+           location: newLoc,
+           preview_image_url: newPreviewImage
+           });
 
           toast("Event aktualisiert", "ok");
           location.hash = "#/admin";
