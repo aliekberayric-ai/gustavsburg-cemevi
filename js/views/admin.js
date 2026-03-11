@@ -1,4 +1,3 @@
-import { uploadEventPreviewImage } from "../modules/eventImages.js";
 import {
   listEventsPublic,
   createEvent,
