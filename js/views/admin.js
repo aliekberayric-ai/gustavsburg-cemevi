@@ -1,10 +1,4 @@
-import {
-  listEventsPublic,
-  createEvent,
-  updateEvent,
-  deleteEvent,
-  uploadEventPreviewImage
-} from "../modules/events.js";
+import { listEventsPublic, createEvent, updateEvent, deleteEvent, uploadEventPreviewImage } from "../modules/events.js";
 import { t, getLang } from "../i18n.js";
 import { getAuth, signIn, signOut, requireRole } from "../auth.js";
 import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
