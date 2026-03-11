@@ -251,14 +251,14 @@ export async function renderAdmin(root) {
 
             ${isEditor ? `
               <div class="grid" style="gap:8px;margin-top:12px">
-                <input id="eventTitleDe" class="input" placeholder="Titel DE" />
-                <input id="eventTitleTr" class="input" placeholder="Titel TR" />
-                <input id="eventTitleEn" class="input" placeholder="Titel EN" />
-                <input id="eventDate" class="input" type="date" />
-                <input id="eventTime" class="input" type="time" />
-                <input id="eventLocation" class="input" placeholder="Ort" />
-                <input id="eventPreviewImage" class="input" placeholder="Vorschaubild-URL" />
-                <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
+              <input id="eventTitleDe" class="input" placeholder="Titel DE" />
+              <input id="eventTitleTr" class="input" placeholder="Titel TR" />
+              <input id="eventTitleEn" class="input" placeholder="Titel EN" />
+              <input id="eventDate" class="input" type="date" />
+              <input id="eventTime" class="input" type="time" />
+              <input id="eventLocation" class="input" placeholder="Ort" />
+              <input id="eventPreviewImage" class="input" placeholder="Vorschaubild-URL" />
+              <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
               </div>
             ` : ""}
 
