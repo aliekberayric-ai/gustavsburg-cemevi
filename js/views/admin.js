@@ -527,63 +527,72 @@ root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => 
 
   // Events CRUD
   if (isEditor) {
+
     root.querySelector("#addEventBtn")?.addEventListener("click", async () => {
-      try {
-        const de = root.querySelector("#eventTitleDe")?.value.trim() || "";
-        const tr = root.querySelector("#eventTitleTr")?.value.trim() || "";
-        const en = root.querySelector("#eventTitleEn")?.value.trim() || "";
-        const date = root.querySelector("#eventDate")?.value || "";
-        const time = root.querySelector("#eventTime")?.value || "";
-        // Datum + Uhrzeit sauber erzeugen
-        const strat = new Date('$(date) $(time)');
+  try {
+    const de = root.querySelector("#eventTitleDe")?.value.trim() || "";
+    const tr = root.querySelector("#eventTitleTr")?.value.trim() || "";
+    const en = root.querySelector("#eventTitleEn")?.value.trim() || "";
+    const date = root.querySelector("#eventDate")?.value || "";
+    const time = root.querySelector("#eventTime")?.value || "";
+    const loc = root.querySelector("#eventLocation")?.value.trim() || "";
+    const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
 
-        If (isNaN(start.getTime())) { toast("Ungültiges Datum oder Uhrzeit","BAD");
-            return;
-                                    }
-        const startISO = start.tolSOString();
-        
-        const loc = root.querySelector("#eventLocation")?.value.trim() || "";
-        const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
-        
+    if (!de) {
+      toast("Titel DE fehlt", "bad");
+      return;
+    }
 
-        if (!de) {
-          toast("Titel DE fehlt", "bad");
-          return;
-        }
+    if (!date) {
+      toast("Datum fehlt", "bad");
+      return;
+    }
 
-        if (!date) {
-          toast("Datum fehlt", "bad");
-          return;
-        }
+    if (!time) {
+      toast("Uhrzeit fehlt", "bad");
+      return;
+    }
 
-        if (!time) {
-          toast("Uhrzeit fehlt", "bad");
-          return;
-        }
+    // Robust für verschiedene Browserformate
+    let parsedDate = null;
 
-        const start = new Date(`${date}T${time}:00`).toISOString();
+    if (date.includes("-") && time.includes(":")) {
+      // z.B. 2026-03-13 + 19:00
+      parsedDate = new Date(`${date}T${time}`);
+    } else {
+      // z.B. 03/13/2026 + 07:00 PM
+      parsedDate = new Date(`${date} ${time}`);
+    }
 
-        let previewImageUrl = "";
+    if (!(parsedDate instanceof Date) || isNaN(parsedDate.getTime())) {
+      console.log("DATE RAW:", date);
+      console.log("TIME RAW:", time);
+      toast("Ungültiges Datum oder Uhrzeit", "bad");
+      return;
+    }
 
-if (previewImageFile) {
-  previewImageUrl = await uploadEventPreviewImage(previewImageFile);
-}
+    const startISO = parsedDate.toISOString();
 
-await createEvent({
-  title: { de, tr, en },
-  start_time: startISO,
-  location: loc,
-  preview_image_url: previewImageUrl,
-  description: { de: "", tr: "", en: "" }
-});
+    let previewImageUrl = "";
+    if (previewImageFile) {
+      previewImageUrl = await uploadEventPreviewImage(previewImageFile);
+    }
 
-        toast("Event erstellt", "ok");
-        location.hash = "#/admin";
-      } catch (err) {
-        console.error(err);
-        toast("Ungültiges Datum oder Uhrzeit", "bad");
-      }
+    await createEvent({
+      title: { de, tr, en },
+      start_time: startISO,
+      location: loc,
+      preview_image_url: previewImageUrl,
+      description: { de: "", tr: "", en: "" }
     });
+
+    toast("Event erstellt", "ok");
+    await renderAdmin(root);
+  } catch (err) {
+    console.error(err);
+    toast("Event konnte nicht erstellt werden", "bad");
+  }
+});
 
     root.querySelectorAll("[data-edit-event]").forEach((btn) => {
       btn.addEventListener("click", async () => {
