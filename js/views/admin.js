@@ -627,55 +627,55 @@ export async function renderAdmin(root) {
       previewSelectedGalleryFiles(root, e.target.files);
     });
 
-    root.querySelector("#gallerySaveButton")?.addEventListener("click", async () => {
-      try {
-        const title = root.querySelector("#galleryTitle")?.value.trim() || "";
-        const status = root.querySelector("#galleryStatus")?.value || "active";
-        const files = Array.from(root.querySelector("#galleryFiles")?.files || []);
-        const statusEl = root.querySelector("#galleryUploadStatus");
-        const saveBtn = root.querySelector("#gallerySaveButton");
+root.querySelector("#gallerySaveButton")?.addEventListener("click", async () => {
+  const saveBtn = root.querySelector("#gallerySaveButton");
+  const statusEl = root.querySelector("#galleryUploadStatus");
+  const titleInput = root.querySelector("#galleryTitle");
+  const statusInput = root.querySelector("#galleryStatus");
+  const filesInput = root.querySelector("#galleryFiles");
+  const preview = root.querySelector("#galleryFilePreview");
+  const count = root.querySelector("#galleryFileCount");
 
-        if (!title) {
-          toast("Galerietitel fehlt", "bad");
-          return;
-        }
+  try {
+    const title = titleInput?.value.trim() || "";
+    const status = statusInput?.value || "active";
+    const files = Array.from(filesInput?.files || []);
 
-        if (!files.length) {
-          toast("Bitte Bilder auswählen", "bad");
-          return;
-        }
+    if (!title) {
+      toast("Galerietitel fehlt", "bad");
+      return;
+    }
 
-        if (saveBtn) saveBtn.disabled = true;
-        if (statusEl) statusEl.textContent = "Bilder werden hochgeladen ...";
+    if (!files.length) {
+      toast("Bitte Bilder auswählen", "bad");
+      return;
+    }
 
-        await createGalleryWithFiles({ title, status, files });
+    if (saveBtn) saveBtn.disabled = true;
+    if (statusEl) statusEl.textContent = "Bilder werden hochgeladen ...";
 
-           toast("Galerie erstellt", "ok");
+    await createGalleryWithFiles({ title, status, files });
 
-           const titleInput = root.querySelector("#galleryTitle");
-           const statusInput = root.querySelector("#galleryStatus");
-           const filesInput = root.querySelector("#galleryFiles");
-           const preview = root.querySelector("#galleryFilePreview");
-           const count = root.querySelector("#galleryFileCount");
-           
+    toast("Galerie erstellt", "ok");
 
-           if (titleInput) titleInput.value = "";
-           if (statusInput) statusInput.value = "active";
-           if (filesInput) filesInput.value = "";
-           if (preview) preview.innerHTML = "";
-           if (count) count.textContent = "0 Bilder ausgewählt";
-           if (statusEl) statusEl.textContent = "";
+    if (titleInput) titleInput.value = "";
+    if (statusInput) statusInput.value = "active";
+    if (filesInput) filesInput.value = "";
+    if (preview) preview.innerHTML = "";
+    if (count) count.textContent = "0 Bilder ausgewählt";
+    if (statusEl) statusEl.textContent = "";
 
-          await renderAdmin(root);
-        return;
-        
-      } catch (err) {
-        console.error(err);
-        alert(err.message || "Fehler beim Galerie-Upload");
-        toast("Galerie konnte nicht erstellt werden", "bad");
-      }
-    });
-
+    await renderAdmin(root);
+    return;
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Fehler beim Galerie-Upload");
+    toast("Galerie konnte nicht erstellt werden", "bad");
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
+});
+    
     root.querySelectorAll("[data-edit-gallery]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-edit-gallery");
