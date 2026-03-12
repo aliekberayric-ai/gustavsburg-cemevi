@@ -1,4 +1,5 @@
-import { t, getLang } from "../i18n.js";
+import { t } from "../i18n.js";
+import { getLang } from "../i18n.js";
 import { escapeHtml } from "../ui.js";
 import { listHomeTicker } from "../modules/homeTicker.js";
 import { listHomeTiles } from "../modules/homeTiles.js";
