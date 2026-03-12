@@ -284,14 +284,14 @@ export async function renderAdmin(root) {
 
   const lang = getLang();
   const [events, galleries, people, forms, audits, tickerItems, homeTiles] = await Promise.all([
-  listEventsPublic(),
-  listGalleriesPublic(),
-  listPeoplePublic(),
-  isEditor ? listFormSubmissions() : Promise.resolve([]),
-  isAdmin ? listAuditLogs() : Promise.resolve([]),
-  isEditor ? listHomeTickerAdmin() : Promise.resolve([]),
-  isEditor ? listHomeTilesAdmin() : Promise.resolve([])
-]);
+    listEventsPublic(),
+    listGalleriesPublic(),
+    listPeoplePublic(),
+    isEditor ? listFormSubmissions() : Promise.resolve([]),
+    isAdmin ? listAuditLogs() : Promise.resolve([]),
+    isEditor ? listHomeTickerAdmin() : Promise.resolve([]),
+    isEditor ? listHomeTilesAdmin() : Promise.resolve([])
+  ]);
 
   root.innerHTML = `
     <div class="page">
@@ -314,54 +314,10 @@ export async function renderAdmin(root) {
             <a href="#admin-events" class="btn">Events</a>
             <a href="#admin-galleries" class="btn">Galerien</a>
             <a href="#admin-people" class="btn">Team</a>
+            <a href="#admin-home-ticker" class="btn">Live-Ticker</a>
+            <a href="#admin-home-tiles" class="btn">Startseiten-Kacheln</a>
             ${isEditor ? `<a href="#admin-forms" class="btn">Formulare</a>` : ""}
             ${isAdmin ? `<a href="#admin-audit" class="btn">Audit Log</a>` : ""}
-            ${isEditor ? `
-  <div id="admin-home-ticker" class="card card__pad">
-    <h2 style="margin:0">Startseite – Live-Ticker</h2>
-
-    <div class="grid" style="gap:8px;margin-top:12px">
-      <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
-      <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
-      <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
-      <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
-      <label style="display:flex;align-items:center;gap:8px">
-        <input id="tickerActive" type="checkbox" checked />
-        Aktiv
-      </label>
-      <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
-    </div>
-
-    <table class="table" style="margin-top:14px">
-      <thead>
-        <tr>
-          <th>Text</th>
-          <th>Aktiv</th>
-          <th>Reihenfolge</th>
-          <th class="mono">ID</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tickerItems.map((item) => {
-          const text = item.text?.[lang] ?? item.text?.de ?? "";
-          return `
-            <tr>
-              <td>${escapeHtml(text)}</td>
-              <td>${item.active ? "ja" : "nein"}</td>
-              <td>${item.sort_order}</td>
-              <td class="mono">${escapeHtml(item.id)}</td>
-              <td style="white-space:nowrap">
-                <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
-                <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
-              </td>
-            </tr>
-          `;
-        }).join("")}
-      </tbody>
-    </table>
-  </div>
-` : ""}
           </div>
         </div>
 
@@ -408,65 +364,6 @@ export async function renderAdmin(root) {
                       <td>${escapeHtml(e.location ?? "")}</td>
                       <td class="mono">${escapeHtml(e.id)}</td>
                       <td style="white-space:nowrap">
-                      ${isEditor ? `
-  <div id="admin-home-tiles" class="card card__pad">
-    <h2 style="margin:0">Startseite – Kacheln</h2>
-
-    <div class="grid" style="gap:8px;margin-top:12px">
-      <input id="tileTitleDe" class="input" placeholder="Titel DE" />
-      <input id="tileTitleTr" class="input" placeholder="Titel TR" />
-      <input id="tileTitleEn" class="input" placeholder="Titel EN" />
-
-      <textarea id="tileTextDe" class="input" placeholder="Text DE" rows="3"></textarea>
-      <textarea id="tileTextTr" class="input" placeholder="Text TR" rows="3"></textarea>
-      <textarea id="tileTextEn" class="input" placeholder="Text EN" rows="3"></textarea>
-
-      <input id="tileButtonTextDe" class="input" placeholder="Button Text DE" />
-      <input id="tileButtonTextTr" class="input" placeholder="Button Text TR" />
-      <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
-
-      <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
-      <input id="tileImageUrl" class="input" placeholder="Bild-URL (optional)" />
-      <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
-
-      <label style="display:flex;align-items:center;gap:8px">
-        <input id="tileActive" type="checkbox" checked />
-        Aktiv
-      </label>
-
-      <button id="addTileBtn" class="btn btn--accent">Kachel hinzufügen</button>
-    </div>
-
-    <table class="table" style="margin-top:14px">
-      <thead>
-        <tr>
-          <th>Titel</th>
-          <th>Aktiv</th>
-          <th>Reihenfolge</th>
-          <th class="mono">ID</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${homeTiles.map((tile) => {
-          const title = tile.title?.[lang] ?? tile.title?.de ?? "";
-          return `
-            <tr>
-              <td>${escapeHtml(title)}</td>
-              <td>${tile.active ? "ja" : "nein"}</td>
-              <td>${tile.sort_order}</td>
-              <td class="mono">${escapeHtml(tile.id)}</td>
-              <td style="white-space:nowrap">
-                <button class="btn" data-edit-tile="${tile.id}">Bearbeiten</button>
-                <button class="btn btn--danger" data-del-tile="${tile.id}">Löschen</button>
-              </td>
-            </tr>
-          `;
-        }).join("")}
-      </tbody>
-    </table>
-  </div>
-` : ""}
                         ${isEditor ? `<button class="btn" data-edit-event="${e.id}">${t("admin.edit")}</button>` : ""}
                         ${isAdmin ? `<button class="btn btn--danger" data-del-event="${e.id}">${t("admin.delete")}</button>` : ""}
                       </td>
@@ -616,6 +513,115 @@ export async function renderAdmin(root) {
               </tbody>
             </table>
           </div>
+
+          <!-- LIVE TICKER -->
+          ${isEditor ? `
+            <div id="admin-home-ticker" class="card card__pad">
+              <h2 style="margin:0">Startseite – Live-Ticker</h2>
+
+              <div class="grid" style="gap:8px;margin-top:12px">
+                <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
+                <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
+                <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
+                <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input id="tickerActive" type="checkbox" checked />
+                  Aktiv
+                </label>
+                <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
+              </div>
+
+              <table class="table" style="margin-top:14px">
+                <thead>
+                  <tr>
+                    <th>Text</th>
+                    <th>Aktiv</th>
+                    <th>Reihenfolge</th>
+                    <th class="mono">ID</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tickerItems.map((item) => {
+                    const text = item.text?.[lang] ?? item.text?.de ?? "";
+                    return `
+                      <tr>
+                        <td>${escapeHtml(text)}</td>
+                        <td>${item.active ? "ja" : "nein"}</td>
+                        <td>${item.sort_order}</td>
+                        <td class="mono">${escapeHtml(item.id)}</td>
+                        <td style="white-space:nowrap">
+                          <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
+                          <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
+
+          <!-- HOME TILES -->
+          ${isEditor ? `
+            <div id="admin-home-tiles" class="card card__pad">
+              <h2 style="margin:0">Startseite – Kacheln</h2>
+
+              <div class="grid" style="gap:8px;margin-top:12px">
+                <input id="tileTitleDe" class="input" placeholder="Titel DE" />
+                <input id="tileTitleTr" class="input" placeholder="Titel TR" />
+                <input id="tileTitleEn" class="input" placeholder="Titel EN" />
+
+                <textarea id="tileTextDe" class="input" placeholder="Text DE" rows="3"></textarea>
+                <textarea id="tileTextTr" class="input" placeholder="Text TR" rows="3"></textarea>
+                <textarea id="tileTextEn" class="input" placeholder="Text EN" rows="3"></textarea>
+
+                <input id="tileButtonTextDe" class="input" placeholder="Button Text DE" />
+                <input id="tileButtonTextTr" class="input" placeholder="Button Text TR" />
+                <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
+
+                <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
+                <input id="tileImageUrl" class="input" placeholder="Bild-URL (optional)" />
+                <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input id="tileActive" type="checkbox" checked />
+                  Aktiv
+                </label>
+
+                <button id="addTileBtn" class="btn btn--accent">Kachel hinzufügen</button>
+              </div>
+
+              <table class="table" style="margin-top:14px">
+                <thead>
+                  <tr>
+                    <th>Titel</th>
+                    <th>Aktiv</th>
+                    <th>Reihenfolge</th>
+                    <th class="mono">ID</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${homeTiles.map((tile) => {
+                    const title = tile.title?.[lang] ?? tile.title?.de ?? "";
+                    return `
+                      <tr>
+                        <td>${escapeHtml(title)}</td>
+                        <td>${tile.active ? "ja" : "nein"}</td>
+                        <td>${tile.sort_order}</td>
+                        <td class="mono">${escapeHtml(tile.id)}</td>
+                        <td style="white-space:nowrap">
+                          <button class="btn" data-edit-tile="${tile.id}">Bearbeiten</button>
+                          <button class="btn btn--danger" data-del-tile="${tile.id}">Löschen</button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
 
           <!-- FORMS -->
           ${isEditor ? `
@@ -1033,6 +1039,174 @@ export async function renderAdmin(root) {
 
         await deletePerson(id);
         toast("Teammitglied gelöscht", "ok");
+        await renderAdmin(root);
+      });
+    });
+  }
+
+  /* -----------------------------------------------------------
+     HOME TICKER CRUD
+  ----------------------------------------------------------- */
+
+  if (isEditor) {
+    root.querySelector("#addTickerBtn")?.addEventListener("click", async () => {
+      try {
+        const de = root.querySelector("#tickerTextDe")?.value.trim() || "";
+        const tr = root.querySelector("#tickerTextTr")?.value.trim() || "";
+        const en = root.querySelector("#tickerTextEn")?.value.trim() || "";
+        const sortOrder = Number(root.querySelector("#tickerSortOrder")?.value || "0") || 0;
+        const active = !!root.querySelector("#tickerActive")?.checked;
+
+        if (!de) {
+          toast("Ticker Text DE fehlt", "bad");
+          return;
+        }
+
+        await createHomeTicker({
+          text: { de, tr, en },
+          sort_order: sortOrder,
+          active
+        });
+
+        toast("Ticker hinzugefügt", "ok");
+        await renderAdmin(root);
+      } catch (err) {
+        console.error(err);
+        toast("Ticker konnte nicht erstellt werden", "bad");
+      }
+    });
+
+    root.querySelectorAll("[data-edit-ticker]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-edit-ticker");
+        if (!id) return;
+
+        const de = prompt("Ticker Text DE?");
+        if (!de) return;
+
+        const tr = prompt("Ticker Text TR?", "") ?? "";
+        const en = prompt("Ticker Text EN?", "") ?? "";
+        const sortOrder = Number(prompt("Reihenfolge?", "0") ?? "0") || 0;
+        const activeText = prompt("Aktiv? (yes/no)", "yes") ?? "yes";
+
+        await updateHomeTicker(id, {
+          text: { de, tr, en },
+          sort_order: sortOrder,
+          active: activeText.toLowerCase() === "yes"
+        });
+
+        toast("Ticker aktualisiert", "ok");
+        await renderAdmin(root);
+      });
+    });
+
+    root.querySelectorAll("[data-del-ticker]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-del-ticker");
+        const ok = await confirmBox("Löschen?", `Ticker ${id} wirklich löschen?`);
+        if (!ok) return;
+
+        await deleteHomeTicker(id);
+        toast("Ticker gelöscht", "ok");
+        await renderAdmin(root);
+      });
+    });
+  }
+
+  /* -----------------------------------------------------------
+     HOME TILES CRUD
+  ----------------------------------------------------------- */
+
+  if (isEditor) {
+    root.querySelector("#addTileBtn")?.addEventListener("click", async () => {
+      try {
+        const titleDe = root.querySelector("#tileTitleDe")?.value.trim() || "";
+        const titleTr = root.querySelector("#tileTitleTr")?.value.trim() || "";
+        const titleEn = root.querySelector("#tileTitleEn")?.value.trim() || "";
+
+        const textDe = root.querySelector("#tileTextDe")?.value.trim() || "";
+        const textTr = root.querySelector("#tileTextTr")?.value.trim() || "";
+        const textEn = root.querySelector("#tileTextEn")?.value.trim() || "";
+
+        const buttonDe = root.querySelector("#tileButtonTextDe")?.value.trim() || "";
+        const buttonTr = root.querySelector("#tileButtonTextTr")?.value.trim() || "";
+        const buttonEn = root.querySelector("#tileButtonTextEn")?.value.trim() || "";
+
+        const linkUrl = root.querySelector("#tileLinkUrl")?.value.trim() || "";
+        const imageUrl = root.querySelector("#tileImageUrl")?.value.trim() || "";
+        const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
+        const active = !!root.querySelector("#tileActive")?.checked;
+
+        if (!titleDe) {
+          toast("Kachel Titel DE fehlt", "bad");
+          return;
+        }
+
+        await createHomeTile({
+          title: { de: titleDe, tr: titleTr, en: titleEn },
+          text: { de: textDe, tr: textTr, en: textEn },
+          button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
+          link_url: linkUrl,
+          image_url: imageUrl,
+          sort_order: sortOrder,
+          active
+        });
+
+        toast("Kachel hinzugefügt", "ok");
+        await renderAdmin(root);
+      } catch (err) {
+        console.error(err);
+        toast("Kachel konnte nicht erstellt werden", "bad");
+      }
+    });
+
+    root.querySelectorAll("[data-edit-tile]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-edit-tile");
+        if (!id) return;
+
+        const titleDe = prompt("Titel DE?");
+        if (!titleDe) return;
+
+        const titleTr = prompt("Titel TR?", "") ?? "";
+        const titleEn = prompt("Titel EN?", "") ?? "";
+
+        const textDe = prompt("Text DE?", "") ?? "";
+        const textTr = prompt("Text TR?", "") ?? "";
+        const textEn = prompt("Text EN?", "") ?? "";
+
+        const buttonDe = prompt("Button Text DE?", "") ?? "";
+        const buttonTr = prompt("Button Text TR?", "") ?? "";
+        const buttonEn = prompt("Button Text EN?", "") ?? "";
+
+        const linkUrl = prompt("Link URL?", "") ?? "";
+        const imageUrl = prompt("Bild-URL?", "") ?? "";
+        const sortOrder = Number(prompt("Reihenfolge?", "0") ?? "0") || 0;
+        const activeText = prompt("Aktiv? (yes/no)", "yes") ?? "yes";
+
+        await updateHomeTile(id, {
+          title: { de: titleDe, tr: titleTr, en: titleEn },
+          text: { de: textDe, tr: textTr, en: textEn },
+          button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
+          link_url: linkUrl,
+          image_url: imageUrl,
+          sort_order: sortOrder,
+          active: activeText.toLowerCase() === "yes"
+        });
+
+        toast("Kachel aktualisiert", "ok");
+        await renderAdmin(root);
+      });
+    });
+
+    root.querySelectorAll("[data-del-tile]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-del-tile");
+        const ok = await confirmBox("Löschen?", `Kachel ${id} wirklich löschen?`);
+        if (!ok) return;
+
+        await deleteHomeTile(id);
+        toast("Kachel gelöscht", "ok");
         await renderAdmin(root);
       });
     });
