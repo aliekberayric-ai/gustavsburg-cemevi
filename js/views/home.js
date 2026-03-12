@@ -1,4 +1,3 @@
-import { t } from "../i18n.js";
 import { t, getLang } from "../i18n.js";
 import { escapeHtml } from "../ui.js";
 import { listHomeTicker } from "../modules/homeTicker.js";
