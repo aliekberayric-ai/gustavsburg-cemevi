@@ -1,16 +1,76 @@
-import { listEventsPublic, createEvent, updateEvent, deleteEvent, uploadEventPreviewImage } from "../modules/events.js";
 import { t, getLang } from "../i18n.js";
 import { getAuth, signIn, signOut, requireRole } from "../auth.js";
 import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
 
-import { openLightbox, initLightbox } from "../lightbox.js";
+import {
+  listEventsPublic,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  uploadEventPreviewImage
+} from "../modules/events.js";
 
-// import { listEventsPublic, createEvent, updateEvent, deleteEvent } from "../modules/events.js"; //
-import { listGalleriesPublic, updateGallery, deleteGallery } from "../modules/gallery.js";
-import { listPeoplePublic, createPerson, updatePerson, deletePerson, uploadPersonImage } from "../modules/people.js";
-import { createGalleryWithFiles, fetchGalleryItems, updateGalleryItemOrder } from "../galleryService.js";
+import {
+  listGalleriesPublic,
+  updateGallery,
+  deleteGallery
+} from "../modules/gallery.js";
+
+import {
+  listPeoplePublic,
+  createPerson,
+  updatePerson,
+  deletePerson,
+  uploadPersonImage
+} from "../modules/people.js";
+
+import {
+  createGalleryWithFiles,
+  fetchGalleryItems,
+  updateGalleryItemOrder
+} from "../galleryService.js";
+
+import { openLightbox, initLightbox } from "../lightbox.js";
 import { listFormSubmissions, updateFormStatus } from "../modules/forms.js";
 import { listAuditLogs } from "../modules/audit.js";
+
+/* -----------------------------------------------------------
+   HELPERS
+----------------------------------------------------------- */
+
+function parseEventDateTime(date, time) {
+  if (!date || !time) return null;
+
+  const isoDate = /^\d{4}-\d{2}-\d{2}$/.test(date);
+  const isoTime = /^\d{2}:\d{2}$/.test(time);
+
+  if (isoDate && isoTime) {
+    const d = new Date(`${date}T${time}:00`);
+    return isNaN(d.getTime()) ? null : d.toISOString();
+  }
+
+  const usDate = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date);
+  const ampmTime = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(time);
+
+  if (usDate && ampmTime) {
+    const month = Number(usDate[1]);
+    const day = Number(usDate[2]);
+    const year = Number(usDate[3]);
+
+    let hour = Number(ampmTime[1]);
+    const minute = Number(ampmTime[2]);
+    const ampm = ampmTime[3].toUpperCase();
+
+    if (ampm === "PM" && hour < 12) hour += 12;
+    if (ampm === "AM" && hour === 12) hour = 0;
+
+    const d = new Date(year, month - 1, day, hour, minute, 0);
+    return isNaN(d.getTime()) ? null : d.toISOString();
+  }
+
+  const fallback = new Date(`${date} ${time}`);
+  return isNaN(fallback.getTime()) ? null : fallback.toISOString();
+}
 
 function previewSelectedGalleryFiles(root, fileList) {
   const preview = root.querySelector("#galleryFilePreview");
@@ -51,7 +111,6 @@ async function fillGalleryCounts(root, galleries) {
     })
   );
 }
-
 
 function bindGalleryDropzone(root) {
   const dropzone = root.querySelector("#galleryDropzone");
@@ -171,15 +230,18 @@ async function openAdminGallery(root, gallery) {
     wrap.appendChild(card);
   });
 
- bindGallerySorting(root, gallery, items);
+  bindGallerySorting(root, gallery, items);
 }
+
+/* -----------------------------------------------------------
+   ADMIN PAGE
+----------------------------------------------------------- */
 
 export async function renderAdmin(root) {
   const auth = getAuth();
   const isEditor = requireRole(["admin", "editor"]);
   const isAdmin = requireRole(["admin"]);
 
-  // Not logged in
   if (!auth.user) {
     root.innerHTML = `
       <div class="page">
@@ -188,7 +250,7 @@ export async function renderAdmin(root) {
           <h2 data-i18n="admin.login">${t("admin.login")}</h2>
           <form id="loginForm" class="grid" style="margin-top:10px">
             <input class="input" name="email" placeholder="Email" type="email" required />
-            <input class="input" name="password" placeholder="Password" type="password" required />
+            <input class="input" name="password" placeholder="Passwort" type="password" required />
             <button class="btn btn--accent" type="submit">${t("admin.signIn")}</button>
             <div class="mono">${t("admin.loginHint")}</div>
           </form>
@@ -252,16 +314,15 @@ export async function renderAdmin(root) {
 
             ${isEditor ? `
               <div class="grid" style="gap:8px;margin-top:12px">
-              <input id="eventTitleDe" class="input" placeholder="Titel DE" />
-              <input id="eventTitleTr" class="input" placeholder="Titel TR" />
-              <input id="eventTitleEn" class="input" placeholder="Titel EN" />
-              <input id="eventDate" class="input" type="date" />
-              <input id="eventTime" class="input" type="time" />
-              <input id="eventLocation" class="input" placeholder="Ort" />
-              <input id="eventPreviewImageFile" class="input" type="file" accept="image/*" />
-              
-<div id="eventPreviewImageInfo" class="mono">Kein Bild ausgewählt</div>
-<button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
+                <input id="eventTitleDe" class="input" placeholder="Titel DE" />
+                <input id="eventTitleTr" class="input" placeholder="Titel TR" />
+                <input id="eventTitleEn" class="input" placeholder="Titel EN" />
+                <input id="eventDate" class="input" type="date" />
+                <input id="eventTime" class="input" type="time" />
+                <input id="eventLocation" class="input" placeholder="Ort" />
+                <input id="eventPreviewImageFile" class="input" type="file" accept="image/*" />
+                <div id="eventPreviewImageInfo" class="mono">Kein Bild ausgewählt</div>
+                <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
               </div>
             ` : ""}
 
@@ -295,7 +356,7 @@ export async function renderAdmin(root) {
             </table>
           </div>
 
-                    <!-- GALLERIES -->
+          <!-- GALLERIES -->
           <div id="admin-galleries" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Galerien</h2>
@@ -319,15 +380,11 @@ export async function renderAdmin(root) {
                 </div>
 
                 <input id="galleryFiles" class="input" type="file" accept="image/*" multiple />
-
                 <div id="galleryFileCount" class="mono">0 Bilder ausgewählt</div>
-
                 <div id="galleryFilePreview" class="upload-preview-grid"></div>
 
                 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-                  <button id="gallerySaveButton" class="btn btn--accent" type="button">
-                    Galerie speichern
-                  </button>
+                  <button id="gallerySaveButton" class="btn btn--accent" type="button">Galerie speichern</button>
                   <span id="galleryUploadStatus" class="mono"></span>
                 </div>
               </div>
@@ -384,34 +441,34 @@ export async function renderAdmin(root) {
 
             <p class="mono" style="margin-top:10px">${t("admin.galleryItemsNote")}</p>
           </div>
-  
+
           <!-- PEOPLE -->
           <div id="admin-people" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
               <h2 style="margin:0">Team</h2>
-             ${isEditor ? `
-      <div style="display:grid;gap:8px;width:100%;margin-top:12px">
-        <input id="personName" class="input" placeholder="Name" />
-        <input id="personImageFile" class="input" type="file" accept="image/*" />
-        <div id"personImageInfo" class="mono">Kein Bild ausgewählt</div>
+              ${isEditor ? `
+                <div style="display:grid;gap:8px;width:100%;margin-top:12px">
+                  <input id="personName" class="input" placeholder="Name" />
+                  <input id="personImageFile" class="input" type="file" accept="image/*" />
+                  <div id="personImageInfo" class="mono">Kein Bild ausgewählt</div>
 
-        <input id="personRoleDe" class="input" placeholder="Aufgabe DE" />
-        <input id="personRoleTr" class="input" placeholder="Aufgabe TR" />
-        <input id="personRoleEn" class="input" placeholder="Aufgabe EN" />
+                  <input id="personRoleDe" class="input" placeholder="Aufgabe DE" />
+                  <input id="personRoleTr" class="input" placeholder="Aufgabe TR" />
+                  <input id="personRoleEn" class="input" placeholder="Aufgabe EN" />
 
-        <textarea id="personBioDe" class="input" placeholder="Beschreibung DE" rows="4"></textarea>
-        <textarea id="personBioTr" class="input" placeholder="Beschreibung TR" rows="4"></textarea>
-        <textarea id="personBioEn" class="input" placeholder="Beschreibung EN" rows="4"></textarea>
+                  <textarea id="personBioDe" class="input" placeholder="Beschreibung DE" rows="4"></textarea>
+                  <textarea id="personBioTr" class="input" placeholder="Beschreibung TR" rows="4"></textarea>
+                  <textarea id="personBioEn" class="input" placeholder="Beschreibung EN" rows="4"></textarea>
 
-        <input id="personSortOrder" class="input" type="number" placeholder="Reihenfolge (z.B. 1, 2, 3)" />
-        <label style="display:flex;align-items:center;gap:8px">
-          <input id="personVisible" type="checkbox" checked />
-          Sichtbar
-        </label>
+                  <input id="personSortOrder" class="input" type="number" placeholder="Reihenfolge (z.B. 1, 2, 3)" />
+                  <label style="display:flex;align-items:center;gap:8px">
+                    <input id="personVisible" type="checkbox" checked />
+                    Sichtbar
+                  </label>
 
-        <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
-      </div>
-    ` : ""}
+                  <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
+                </div>
+              ` : ""}
             </div>
 
             <table class="table" style="margin-top:10px">
@@ -513,88 +570,93 @@ export async function renderAdmin(root) {
     </div>
   `;
 
-root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => {
-  const info = root.querySelector("#eventPreviewImageInfo");
-  const file = e.target.files?.[0];
+  /* -----------------------------------------------------------
+     SIMPLE FIELD LISTENERS
+  ----------------------------------------------------------- */
 
-  if (!info) return;
-  info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
-});
-  
-  // Logout
+  root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => {
+    const info = root.querySelector("#eventPreviewImageInfo");
+    const file = e.target.files?.[0];
+    if (!info) return;
+    info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
+  });
+
+  root.querySelector("#personImageFile")?.addEventListener("change", (e) => {
+    const info = root.querySelector("#personImageInfo");
+    const file = e.target.files?.[0];
+    if (!info) return;
+    info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
+  });
+
+  /* -----------------------------------------------------------
+     LOGOUT
+  ----------------------------------------------------------- */
+
   root.querySelector("#logoutBtn")?.addEventListener("click", async () => {
     await signOut();
     location.hash = "#/admin";
   });
 
-  // Events CRUD
+  /* -----------------------------------------------------------
+     EVENTS CRUD
+  ----------------------------------------------------------- */
+
   if (isEditor) {
-
     root.querySelector("#addEventBtn")?.addEventListener("click", async () => {
-  try {
-    const de = root.querySelector("#eventTitleDe")?.value.trim() || "";
-    const tr = root.querySelector("#eventTitleTr")?.value.trim() || "";
-    const en = root.querySelector("#eventTitleEn")?.value.trim() || "";
-    const date = root.querySelector("#eventDate")?.value || "";
-    const time = root.querySelector("#eventTime")?.value || "";
-    const loc = root.querySelector("#eventLocation")?.value.trim() || "";
-    const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
+      try {
+        const de = root.querySelector("#eventTitleDe")?.value.trim() || "";
+        const tr = root.querySelector("#eventTitleTr")?.value.trim() || "";
+        const en = root.querySelector("#eventTitleEn")?.value.trim() || "";
+        const date = root.querySelector("#eventDate")?.value || "";
+        const time = root.querySelector("#eventTime")?.value || "";
+        const loc = root.querySelector("#eventLocation")?.value.trim() || "";
+        const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
 
-    if (!de) {
-      toast("Titel DE fehlt", "bad");
-      return;
-    }
+        if (!de) {
+          toast("Titel DE fehlt", "bad");
+          return;
+        }
 
-    if (!date) {
-      toast("Datum fehlt", "bad");
-      return;
-    }
+        if (!date) {
+          toast("Datum fehlt", "bad");
+          return;
+        }
 
-    if (!time) {
-      toast("Uhrzeit fehlt", "bad");
-      return;
-    }
+        if (!time) {
+          toast("Uhrzeit fehlt", "bad");
+          return;
+        }
 
-    // Robust für verschiedene Browserformate
-    let parsedDate = null;
+        const startISO = parseEventDateTime(date, time);
 
-    if (date.includes("-") && time.includes(":")) {
-      // z.B. 2026-03-13 + 19:00
-      parsedDate = new Date(`${date}T${time}`);
-    } else {
-      // z.B. 03/13/2026 + 07:00 PM
-      parsedDate = new Date(`${date} ${time}`);
-    }
+        if (!startISO) {
+          console.log("DATE RAW:", date);
+          console.log("TIME RAW:", time);
+          toast("Ungültiges Datum oder Uhrzeit", "bad");
+          return;
+        }
 
-    if (!(parsedDate instanceof Date) || isNaN(parsedDate.getTime())) {
-      console.log("DATE RAW:", date);
-      console.log("TIME RAW:", time);
-      toast("Ungültiges Datum oder Uhrzeit", "bad");
-      return;
-    }
+        let previewImageUrl = "";
+        if (previewImageFile) {
+          previewImageUrl = await uploadEventPreviewImage(previewImageFile);
+        }
 
-    const startISO = parsedDate.toISOString();
+        await createEvent({
+          title: { de, tr, en },
+          start_time: startISO,
+          location: loc,
+          preview_image_url: previewImageUrl,
+          description: { de: "", tr: "", en: "" }
+        });
 
-    let previewImageUrl = "";
-    if (previewImageFile) {
-      previewImageUrl = await uploadEventPreviewImage(previewImageFile);
-    }
-
-    await createEvent({
-      title: { de, tr, en },
-      start_time: startISO,
-      location: loc,
-      preview_image_url: previewImageUrl,
-      description: { de: "", tr: "", en: "" }
+        toast("Event erstellt", "ok");
+        await renderAdmin(root);
+        return;
+      } catch (err) {
+        console.error("EVENT ERROR:", err);
+        toast(err.message || "Event konnte nicht erstellt werden", "bad");
+      }
     });
-
-    toast("Event erstellt", "ok");
-    await renderAdmin(root);
-  } catch (err) {
-    console.error("EVENT ERROR:", err);
-    toast(err.message || "Event konnte nicht erstellt werden", "bad");
-  }
-});
 
     root.querySelectorAll("[data-edit-event]").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -607,35 +669,33 @@ root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => 
 
           const newTr = prompt("Neuer Titel TR?", "") ?? "";
           const newEn = prompt("Neuer Titel EN?", "") ?? "";
-          const newDate = prompt("Neues Datum (DD-MM-YYYY)?", "01-03-2026");
+          const newDate = prompt("Neues Datum (YYYY-MM-DD oder MM/DD/YYYY)?", "2026-03-13");
           if (!newDate) return;
 
-          const newTime = prompt("Neue Uhrzeit (HH:MM)?", "18:00");
+          const newTime = prompt("Neue Uhrzeit (HH:MM oder HH:MM AM/PM)?", "19:00");
           if (!newTime) return;
 
           const newLoc = prompt("Neuer Ort?", "") ?? "";
           const newPreviewImage = prompt("Neue Bild-URL?", "") ?? "";
-          const newStart = new Date(`${newDate}T${newTime}:00`).toISOString();
 
-           await updateEvent(id, {
-           title: { de: newDe, tr: newTr, en: newEn },
-           start_time: newStart,
-           location: newLoc,
-           preview_image_url: newPreviewImage
-           });
+          const newStartISO = parseEventDateTime(newDate, newTime);
+          if (!newStartISO) {
+            toast("Ungültiges Datum oder Uhrzeit", "bad");
+            return;
+          }
+
+          await updateEvent(id, {
+            title: { de: newDe, tr: newTr, en: newEn },
+            start_time: newStartISO,
+            location: newLoc,
+            preview_image_url: newPreviewImage
+          });
 
           toast("Event aktualisiert", "ok");
-
-const previewFileInput = root.querySelector("#eventPreviewImageFile");
-const previewInfo = root.querySelector("#eventPreviewImageInfo");
-
-if (previewFileInput) previewFileInput.value = "";
-if (previewInfo) previewInfo.textContent = "Kein Bild ausgewählt";
-          
-          location.hash = "#/admin";
+          await renderAdmin(root);
         } catch (err) {
           console.error(err);
-          toast("Ungültiges Datum oder Uhrzeit", "bad");
+          toast("Event konnte nicht aktualisiert werden", "bad");
         }
       });
     });
@@ -650,12 +710,15 @@ if (previewInfo) previewInfo.textContent = "Kein Bild ausgewählt";
 
         await deleteEvent(id);
         toast("Event gelöscht", "ok");
-        location.hash = "#/admin";
+        await renderAdmin(root);
       });
     });
   }
 
-    // Galleries CRUD
+  /* -----------------------------------------------------------
+     GALLERIES CRUD
+  ----------------------------------------------------------- */
+
   await fillGalleryCounts(root, galleries);
 
   root.querySelectorAll("[data-open-gallery]").forEach((btn) => {
@@ -675,55 +738,55 @@ if (previewInfo) previewInfo.textContent = "Kein Bild ausgewählt";
       previewSelectedGalleryFiles(root, e.target.files);
     });
 
-root.querySelector("#gallerySaveButton")?.addEventListener("click", async () => {
-  const saveBtn = root.querySelector("#gallerySaveButton");
-  const statusEl = root.querySelector("#galleryUploadStatus");
-  const titleInput = root.querySelector("#galleryTitle");
-  const statusInput = root.querySelector("#galleryStatus");
-  const filesInput = root.querySelector("#galleryFiles");
-  const preview = root.querySelector("#galleryFilePreview");
-  const count = root.querySelector("#galleryFileCount");
+    root.querySelector("#gallerySaveButton")?.addEventListener("click", async () => {
+      const saveBtn = root.querySelector("#gallerySaveButton");
+      const statusEl = root.querySelector("#galleryUploadStatus");
+      const titleInput = root.querySelector("#galleryTitle");
+      const statusInput = root.querySelector("#galleryStatus");
+      const filesInput = root.querySelector("#galleryFiles");
+      const preview = root.querySelector("#galleryFilePreview");
+      const count = root.querySelector("#galleryFileCount");
 
-  try {
-    const title = titleInput?.value.trim() || "";
-    const status = statusInput?.value || "active";
-    const files = Array.from(filesInput?.files || []);
+      try {
+        const title = titleInput?.value.trim() || "";
+        const status = statusInput?.value || "active";
+        const files = Array.from(filesInput?.files || []);
 
-    if (!title) {
-      toast("Galerietitel fehlt", "bad");
-      return;
-    }
+        if (!title) {
+          toast("Galerietitel fehlt", "bad");
+          return;
+        }
 
-    if (!files.length) {
-      toast("Bitte Bilder auswählen", "bad");
-      return;
-    }
+        if (!files.length) {
+          toast("Bitte Bilder auswählen", "bad");
+          return;
+        }
 
-    if (saveBtn) saveBtn.disabled = true;
-    if (statusEl) statusEl.textContent = "Bilder werden hochgeladen ...";
+        if (saveBtn) saveBtn.disabled = true;
+        if (statusEl) statusEl.textContent = "Bilder werden hochgeladen ...";
 
-    await createGalleryWithFiles({ title, status, files });
+        await createGalleryWithFiles({ title, status, files });
 
-    toast("Galerie erstellt", "ok");
+        toast("Galerie erstellt", "ok");
 
-    if (titleInput) titleInput.value = "";
-    if (statusInput) statusInput.value = "active";
-    if (filesInput) filesInput.value = "";
-    if (preview) preview.innerHTML = "";
-    if (count) count.textContent = "0 Bilder ausgewählt";
-    if (statusEl) statusEl.textContent = "";
+        if (titleInput) titleInput.value = "";
+        if (statusInput) statusInput.value = "active";
+        if (filesInput) filesInput.value = "";
+        if (preview) preview.innerHTML = "";
+        if (count) count.textContent = "0 Bilder ausgewählt";
+        if (statusEl) statusEl.textContent = "";
 
-    await renderAdmin(root);
-    return;
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Fehler beim Galerie-Upload");
-    toast("Galerie konnte nicht erstellt werden", "bad");
-  } finally {
-    if (saveBtn) saveBtn.disabled = false;
-  }
-});
-    
+        await renderAdmin(root);
+        return;
+      } catch (err) {
+        console.error(err);
+        alert(err.message || "Fehler beim Galerie-Upload");
+        toast("Galerie konnte nicht erstellt werden", "bad");
+      } finally {
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    });
+
     root.querySelectorAll("[data-edit-gallery]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const id = btn.getAttribute("data-edit-gallery");
@@ -732,7 +795,7 @@ root.querySelector("#gallerySaveButton")?.addEventListener("click", async () => 
 
         await updateGallery(id, { status });
         toast("Galerie aktualisiert", "ok");
-        location.hash = "#/admin";
+        await renderAdmin(root);
       });
     });
   }
@@ -746,127 +809,118 @@ root.querySelector("#gallerySaveButton")?.addEventListener("click", async () => 
 
         await deleteGallery(id);
         toast("Galerie gelöscht", "ok");
-        location.hash = "#/admin";
+        await renderAdmin(root);
       });
     });
   }
 
-  initLightbox();
+  /* -----------------------------------------------------------
+     PEOPLE CRUD
+  ----------------------------------------------------------- */
 
-  // People CRUD
-// People CRUD
-if (isEditor) {
-  root.querySelector("#addPersonBtn")?.addEventListener("click", async () => {
-    try {
-      const name = root.querySelector("#personName")?.value.trim() || "";
-      const avatarUrl = root.querySelector("#personImage")?.value.trim() || "";
-
-      const roleDe = root.querySelector("#personRoleDe")?.value.trim() || "";
-      const roleTr = root.querySelector("#personRoleTr")?.value.trim() || "";
-      const roleEn = root.querySelector("#personRoleEn")?.value.trim() || "";
-
-      const bioDe = root.querySelector("#personBioDe")?.value.trim() || "";
-      const bioTr = root.querySelector("#personBioTr")?.value.trim() || "";
-      const bioEn = root.querySelector("#personBioEn")?.value.trim() || "";
-
-      const sortOrderRaw = root.querySelector("#personSortOrder")?.value || "0";
-      const sortOrder = Number(sortOrderRaw) || 0;
-
-      const isVisible = !!root.querySelector("#personVisible")?.checked;
-
-      if (!name) {
-        toast("Name fehlt", "bad");
-        return;
-      }
-
-      await createPerson({
-        name,
-        role_title: {
-          de: roleDe,
-          tr: roleTr,
-          en: roleEn
-        },
-        bio: {
-          de: bioDe,
-          tr: bioTr,
-          en: bioEn
-        },
-        avatar_url: avatarUrl,
-        sort_order: sortOrder,
-        is_visible: isVisible
-      });
-
-      toast("Teammitglied erstellt", "ok");
-      location.hash = "#/admin";
-    } catch (err) {
-      console.error(err);
-      toast("Teammitglied konnte nicht erstellt werden", "bad");
-    }
-  });
-
-  root.querySelectorAll("[data-edit-person]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
+  if (isEditor) {
+    root.querySelector("#addPersonBtn")?.addEventListener("click", async () => {
       try {
-        const id = btn.getAttribute("data-edit-person");
-        if (!id) return;
+        const name = root.querySelector("#personName")?.value.trim() || "";
+        const imageFile = root.querySelector("#personImageFile")?.files?.[0] || null;
 
-        const name = prompt("Name?") ?? "";
-        if (!name) return;
+        const roleDe = root.querySelector("#personRoleDe")?.value.trim() || "";
+        const roleTr = root.querySelector("#personRoleTr")?.value.trim() || "";
+        const roleEn = root.querySelector("#personRoleEn")?.value.trim() || "";
 
-        const roleDe = prompt("Aufgabe DE?", "") ?? "";
-        const roleTr = prompt("Aufgabe TR?", "") ?? "";
-        const roleEn = prompt("Aufgabe EN?", "") ?? "";
+        const bioDe = root.querySelector("#personBioDe")?.value.trim() || "";
+        const bioTr = root.querySelector("#personBioTr")?.value.trim() || "";
+        const bioEn = root.querySelector("#personBioEn")?.value.trim() || "";
 
-        const bioDe = prompt("Beschreibung DE?", "") ?? "";
-        const bioTr = prompt("Beschreibung TR?", "") ?? "";
-        const bioEn = prompt("Beschreibung EN?", "") ?? "";
+        const sortOrderRaw = root.querySelector("#personSortOrder")?.value || "0";
+        const sortOrder = Number(sortOrderRaw) || 0;
+        const isVisible = !!root.querySelector("#personVisible")?.checked;
 
-        const avatarUrl = prompt("Bild-URL?", "") ?? "";
-        const sortOrder = Number(prompt("Reihenfolge?", "0") ?? "0") || 0;
-        const visibleText = prompt("Sichtbar? (yes/no)", "yes") ?? "yes";
+        if (!name) {
+          toast("Name fehlt", "bad");
+          return;
+        }
 
-        await updatePerson(id, {
+        let avatarUrl = "";
+        if (imageFile) {
+          avatarUrl = await uploadPersonImage(imageFile);
+        }
+
+        await createPerson({
           name,
-          role_title: {
-            de: roleDe,
-            tr: roleTr,
-            en: roleEn
-          },
-          bio: {
-            de: bioDe,
-            tr: bioTr,
-            en: bioEn
-          },
+          role_title: { de: roleDe, tr: roleTr, en: roleEn },
+          bio: { de: bioDe, tr: bioTr, en: bioEn },
           avatar_url: avatarUrl,
           sort_order: sortOrder,
-          is_visible: visibleText.toLowerCase() === "yes"
+          is_visible: isVisible
         });
 
-        toast("Teammitglied aktualisiert", "ok");
-        location.hash = "#/admin";
+        toast("Teammitglied erstellt", "ok");
+        await renderAdmin(root);
       } catch (err) {
         console.error(err);
-        toast("Teammitglied konnte nicht aktualisiert werden", "bad");
+        toast("Teammitglied konnte nicht erstellt werden", "bad");
       }
     });
-  });
-}
 
-if (isAdmin) {
-  root.querySelectorAll("[data-del-person]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.getAttribute("data-del-person");
-      const ok = await confirmBox("Löschen?", `Person ${id} wirklich löschen?`);
-      if (!ok) return;
+    root.querySelectorAll("[data-edit-person]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          const id = btn.getAttribute("data-edit-person");
+          if (!id) return;
 
-      await deletePerson(id);
-      toast("Teammitglied gelöscht", "ok");
-      location.hash = "#/admin";
+          const name = prompt("Name?") ?? "";
+          if (!name) return;
+
+          const roleDe = prompt("Aufgabe DE?", "") ?? "";
+          const roleTr = prompt("Aufgabe TR?", "") ?? "";
+          const roleEn = prompt("Aufgabe EN?", "") ?? "";
+
+          const bioDe = prompt("Beschreibung DE?", "") ?? "";
+          const bioTr = prompt("Beschreibung TR?", "") ?? "";
+          const bioEn = prompt("Beschreibung EN?", "") ?? "";
+
+          const avatarUrl = prompt("Bild-URL?", "") ?? "";
+          const sortOrder = Number(prompt("Reihenfolge?", "0") ?? "0") || 0;
+          const visibleText = prompt("Sichtbar? (yes/no)", "yes") ?? "yes";
+
+          await updatePerson(id, {
+            name,
+            role_title: { de: roleDe, tr: roleTr, en: roleEn },
+            bio: { de: bioDe, tr: bioTr, en: bioEn },
+            avatar_url: avatarUrl,
+            sort_order: sortOrder,
+            is_visible: visibleText.toLowerCase() === "yes"
+          });
+
+          toast("Teammitglied aktualisiert", "ok");
+          await renderAdmin(root);
+        } catch (err) {
+          console.error(err);
+          toast("Teammitglied konnte nicht aktualisiert werden", "bad");
+        }
+      });
     });
-  });
-}
+  }
 
-  // Forms status + print
+  if (isAdmin) {
+    root.querySelectorAll("[data-del-person]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-del-person");
+        const ok = await confirmBox("Löschen?", `Person ${id} wirklich löschen?`);
+        if (!ok) return;
+
+        await deletePerson(id);
+        toast("Teammitglied gelöscht", "ok");
+        await renderAdmin(root);
+      });
+    });
+  }
+
+  /* -----------------------------------------------------------
+     FORMS
+  ----------------------------------------------------------- */
+
   if (isEditor) {
     root.querySelectorAll("[data-form-status]").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -875,7 +929,7 @@ if (isAdmin) {
 
         await updateFormStatus(id, next);
         toast("Status gesetzt", "ok");
-        location.hash = "#/admin";
+        await renderAdmin(root);
       });
     });
 
@@ -883,4 +937,6 @@ if (isAdmin) {
       window.print();
     });
   }
+
+  initLightbox();
 }
