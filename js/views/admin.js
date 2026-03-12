@@ -34,6 +34,20 @@ import { openLightbox, initLightbox } from "../lightbox.js";
 import { listFormSubmissions, updateFormStatus } from "../modules/forms.js";
 import { listAuditLogs } from "../modules/audit.js";
 
+import {
+  listHomeTickerAdmin,
+  createHomeTicker,
+  updateHomeTicker,
+  deleteHomeTicker
+} from "../modules/homeTicker.js";
+
+import {
+  listHomeTilesAdmin,
+  createHomeTile,
+  updateHomeTile,
+  deleteHomeTile
+} from "../modules/homeTiles.js";
+
 /* -----------------------------------------------------------
    HELPERS
 ----------------------------------------------------------- */
@@ -269,13 +283,15 @@ export async function renderAdmin(root) {
   }
 
   const lang = getLang();
-  const [events, galleries, people, forms, audits] = await Promise.all([
-    listEventsPublic(),
-    listGalleriesPublic(),
-    listPeoplePublic(),
-    isEditor ? listFormSubmissions() : Promise.resolve([]),
-    isAdmin ? listAuditLogs() : Promise.resolve([])
-  ]);
+  const [events, galleries, people, forms, audits, tickerItems, homeTiles] = await Promise.all([
+  listEventsPublic(),
+  listGalleriesPublic(),
+  listPeoplePublic(),
+  isEditor ? listFormSubmissions() : Promise.resolve([]),
+  isAdmin ? listAuditLogs() : Promise.resolve([]),
+  isEditor ? listHomeTickerAdmin() : Promise.resolve([]),
+  isEditor ? listHomeTilesAdmin() : Promise.resolve([])
+]);
 
   root.innerHTML = `
     <div class="page">
