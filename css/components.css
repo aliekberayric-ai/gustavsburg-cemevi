@@ -792,3 +792,138 @@
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
+
+.hero-section {
+  margin-top: 8px;
+  border-radius: 24px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)),
+    radial-gradient(circle at top right, rgba(255,255,255,0.10), transparent 40%);
+}
+
+.hero-section__inner {
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-section__content h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+}
+
+.hero-section__content p {
+  margin: 0;
+  max-width: 760px;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.hero-section__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.home-ticker-section {
+  margin-top: 18px;
+}
+
+.home-ticker {
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.04);
+  padding: 10px 0;
+}
+
+.home-ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: homeTickerMove 32s linear infinite;
+}
+
+.home-ticker:hover .home-ticker-track {
+  animation-play-state: paused;
+}
+
+.home-ticker-item {
+  display: inline-block;
+  margin-right: 48px;
+  font-weight: 600;
+  color: #fff;
+}
+
+@keyframes homeTickerMove {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.home-tiles-section {
+  margin-top: 24px;
+}
+
+.section-head h2 {
+  margin: 0 0 8px;
+}
+
+.section-head p {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.home-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.home-tile-card {
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.home-tile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 38px rgba(0,0,0,0.24);
+}
+
+.home-tile-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.home-tile-body {
+  padding: 16px;
+}
+
+.home-tile-body h3 {
+  margin: 0 0 10px;
+}
+
+.home-tile-body p {
+  margin: 0 0 14px;
+  color: var(--muted);
+}
+
+@media (max-width: 700px) {
+  .hero-section__inner {
+    min-height: 220px;
+  }
+
+  .home-tile-image {
+    height: 160px;
+  }
+}
