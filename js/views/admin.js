@@ -316,6 +316,52 @@ export async function renderAdmin(root) {
             <a href="#admin-people" class="btn">Team</a>
             ${isEditor ? `<a href="#admin-forms" class="btn">Formulare</a>` : ""}
             ${isAdmin ? `<a href="#admin-audit" class="btn">Audit Log</a>` : ""}
+            ${isEditor ? `
+  <div id="admin-home-ticker" class="card card__pad">
+    <h2 style="margin:0">Startseite – Live-Ticker</h2>
+
+    <div class="grid" style="gap:8px;margin-top:12px">
+      <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
+      <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
+      <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
+      <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+      <label style="display:flex;align-items:center;gap:8px">
+        <input id="tickerActive" type="checkbox" checked />
+        Aktiv
+      </label>
+      <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
+    </div>
+
+    <table class="table" style="margin-top:14px">
+      <thead>
+        <tr>
+          <th>Text</th>
+          <th>Aktiv</th>
+          <th>Reihenfolge</th>
+          <th class="mono">ID</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tickerItems.map((item) => {
+          const text = item.text?.[lang] ?? item.text?.de ?? "";
+          return `
+            <tr>
+              <td>${escapeHtml(text)}</td>
+              <td>${item.active ? "ja" : "nein"}</td>
+              <td>${item.sort_order}</td>
+              <td class="mono">${escapeHtml(item.id)}</td>
+              <td style="white-space:nowrap">
+                <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
+                <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
+              </td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    </table>
+  </div>
+` : ""}
           </div>
         </div>
 
@@ -362,6 +408,65 @@ export async function renderAdmin(root) {
                       <td>${escapeHtml(e.location ?? "")}</td>
                       <td class="mono">${escapeHtml(e.id)}</td>
                       <td style="white-space:nowrap">
+                      ${isEditor ? `
+  <div id="admin-home-tiles" class="card card__pad">
+    <h2 style="margin:0">Startseite – Kacheln</h2>
+
+    <div class="grid" style="gap:8px;margin-top:12px">
+      <input id="tileTitleDe" class="input" placeholder="Titel DE" />
+      <input id="tileTitleTr" class="input" placeholder="Titel TR" />
+      <input id="tileTitleEn" class="input" placeholder="Titel EN" />
+
+      <textarea id="tileTextDe" class="input" placeholder="Text DE" rows="3"></textarea>
+      <textarea id="tileTextTr" class="input" placeholder="Text TR" rows="3"></textarea>
+      <textarea id="tileTextEn" class="input" placeholder="Text EN" rows="3"></textarea>
+
+      <input id="tileButtonTextDe" class="input" placeholder="Button Text DE" />
+      <input id="tileButtonTextTr" class="input" placeholder="Button Text TR" />
+      <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
+
+      <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
+      <input id="tileImageUrl" class="input" placeholder="Bild-URL (optional)" />
+      <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+
+      <label style="display:flex;align-items:center;gap:8px">
+        <input id="tileActive" type="checkbox" checked />
+        Aktiv
+      </label>
+
+      <button id="addTileBtn" class="btn btn--accent">Kachel hinzufügen</button>
+    </div>
+
+    <table class="table" style="margin-top:14px">
+      <thead>
+        <tr>
+          <th>Titel</th>
+          <th>Aktiv</th>
+          <th>Reihenfolge</th>
+          <th class="mono">ID</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${homeTiles.map((tile) => {
+          const title = tile.title?.[lang] ?? tile.title?.de ?? "";
+          return `
+            <tr>
+              <td>${escapeHtml(title)}</td>
+              <td>${tile.active ? "ja" : "nein"}</td>
+              <td>${tile.sort_order}</td>
+              <td class="mono">${escapeHtml(tile.id)}</td>
+              <td style="white-space:nowrap">
+                <button class="btn" data-edit-tile="${tile.id}">Bearbeiten</button>
+                <button class="btn btn--danger" data-del-tile="${tile.id}">Löschen</button>
+              </td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    </table>
+  </div>
+` : ""}
                         ${isEditor ? `<button class="btn" data-edit-event="${e.id}">${t("admin.edit")}</button>` : ""}
                         ${isAdmin ? `<button class="btn btn--danger" data-del-event="${e.id}">${t("admin.delete")}</button>` : ""}
                       </td>
