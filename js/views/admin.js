@@ -514,6 +514,21 @@ export async function renderAdmin(root) {
             </table>
           </div>
 
+
+
+<select id="tickerColor" class="input">
+
+<option value="green">🟢 Heute / aktuell</option>
+
+<option value="yellow">🟡 Bald</option>
+
+<option value="red">🔴 Wichtig</option>
+
+<option value="neutral">⚪ Info</option>
+
+</select>
+
+
           <!-- LIVE TICKER -->
           ${isEditor ? `
             <div id="admin-home-ticker" class="card card__pad">
