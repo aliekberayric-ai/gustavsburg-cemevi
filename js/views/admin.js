@@ -514,92 +514,7 @@ export async function renderAdmin(root) {
             </table>
           </div>
 
-
-
-<select id="tickerColor" class="input">
-
-<option value="green">🟢 Heute / aktuell</option>
-
-<option value="yellow">🟡 Bald</option>
-
-<option value="red">🔴 Wichtig</option>
-
-<option value="neutral">⚪ Info</option>
-
-</select>
-
-
-<!-- HOME TICKER -->
-<div id="admin-ticker" class="card card__pad">
-
-<h2 style="margin:0">Startseiten Ticker</h2>
-
-<p class="mono">
-Aktuelle Meldungen für das Laufband auf der Startseite
-</p>
-
-<div class="grid" style="gap:10px;margin-top:12px">
-
-<input id="tickerTextDe" class="input" placeholder="Ticker Text Deutsch" />
-<input id="tickerTextTr" class="input" placeholder="Ticker Text Türkisch" />
-<input id="tickerTextEn" class="input" placeholder="Ticker Text Englisch" />
-
-<select id="tickerColor" class="input">
-
-<option value="green">🟢 Heute / aktuell</option>
-
-<option value="yellow">🟡 Bald</option>
-
-<option value="red">🔴 Wichtig</option>
-
-<option value="neutral">⚪ Info</option>
-
-</select>
-
-<input id="tickerSortOrder"
-class="input"
-type="number"
-placeholder="Reihenfolge (z.B. 1,2,3)" />
-
-<label style="display:flex;align-items:center;gap:8px">
-
-<input id="tickerActive" type="checkbox" checked />
-
-Aktiv
-
-</label>
-
-<button id="addTickerBtn" class="btn btn--accent">
-
-Ticker hinzufügen
-
-</button>
-
-</div>
-
-<table class="table" style="margin-top:16px">
-
-<thead>
-
-<tr>
-
-<th>Text</th>
-<th>Farbe</th>
-<th>Aktiv</th>
-
-</tr>
-
-</thead>
-
-<tbody id="adminTickerTable">
-
-</tbody>
-
-</table>
-
-</div>
-
-          <!-- LIVE TICKER -->
+          <!-- HOME TICKER -->
           ${isEditor ? `
             <div id="admin-home-ticker" class="card card__pad">
               <h2 style="margin:0">Startseite – Live-Ticker</h2>
@@ -608,11 +523,21 @@ Ticker hinzufügen
                 <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
                 <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
                 <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
+
+                <select id="tickerColor" class="input">
+                  <option value="green">🟢 Heute / aktuell</option>
+                  <option value="yellow">🟡 Bald</option>
+                  <option value="red">🔴 Wichtig</option>
+                  <option value="neutral">⚪ Info</option>
+                </select>
+
                 <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+
                 <label style="display:flex;align-items:center;gap:8px">
                   <input id="tickerActive" type="checkbox" checked />
                   Aktiv
                 </label>
+
                 <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
               </div>
 
@@ -620,6 +545,7 @@ Ticker hinzufügen
                 <thead>
                   <tr>
                     <th>Text</th>
+                    <th>Farbe</th>
                     <th>Aktiv</th>
                     <th>Reihenfolge</th>
                     <th class="mono">ID</th>
@@ -632,6 +558,7 @@ Ticker hinzufügen
                     return `
                       <tr>
                         <td>${escapeHtml(text)}</td>
+                        <td>${escapeHtml(item.color ?? "neutral")}</td>
                         <td>${item.active ? "ja" : "nein"}</td>
                         <td>${item.sort_order}</td>
                         <td class="mono">${escapeHtml(item.id)}</td>
@@ -782,9 +709,7 @@ Ticker hinzufügen
     </div>
   `;
 
-  /* -----------------------------------------------------------
-     SIMPLE FIELD LISTENERS
-  ----------------------------------------------------------- */
+  /* FIELD LISTENERS */
 
   root.querySelector("#eventPreviewImageFile")?.addEventListener("change", (e) => {
     const info = root.querySelector("#eventPreviewImageInfo");
@@ -800,18 +725,14 @@ Ticker hinzufügen
     info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
   });
 
-  /* -----------------------------------------------------------
-     LOGOUT
-  ----------------------------------------------------------- */
+  /* LOGOUT */
 
   root.querySelector("#logoutBtn")?.addEventListener("click", async () => {
     await signOut();
     location.hash = "#/admin";
   });
 
-  /* -----------------------------------------------------------
-     EVENTS CRUD
-  ----------------------------------------------------------- */
+  /* EVENTS */
 
   if (isEditor) {
     root.querySelector("#addEventBtn")?.addEventListener("click", async () => {
@@ -863,7 +784,6 @@ Ticker hinzufügen
 
         toast("Event erstellt", "ok");
         await renderAdmin(root);
-        return;
       } catch (err) {
         console.error("EVENT ERROR:", err);
         toast(err.message || "Event konnte nicht erstellt werden", "bad");
@@ -927,9 +847,7 @@ Ticker hinzufügen
     });
   }
 
-  /* -----------------------------------------------------------
-     GALLERIES CRUD
-  ----------------------------------------------------------- */
+  /* GALLERIES */
 
   await fillGalleryCounts(root, galleries);
 
@@ -989,7 +907,6 @@ Ticker hinzufügen
         if (statusEl) statusEl.textContent = "";
 
         await renderAdmin(root);
-        return;
       } catch (err) {
         console.error(err);
         alert(err.message || "Fehler beim Galerie-Upload");
@@ -1026,9 +943,7 @@ Ticker hinzufügen
     });
   }
 
-  /* -----------------------------------------------------------
-     PEOPLE CRUD
-  ----------------------------------------------------------- */
+  /* PEOPLE */
 
   if (isEditor) {
     root.querySelector("#addPersonBtn")?.addEventListener("click", async () => {
@@ -1129,9 +1044,7 @@ Ticker hinzufügen
     });
   }
 
-  /* -----------------------------------------------------------
-     HOME TICKER CRUD
-  ----------------------------------------------------------- */
+  /* HOME TICKER */
 
   if (isEditor) {
     root.querySelector("#addTickerBtn")?.addEventListener("click", async () => {
@@ -1139,6 +1052,7 @@ Ticker hinzufügen
         const de = root.querySelector("#tickerTextDe")?.value.trim() || "";
         const tr = root.querySelector("#tickerTextTr")?.value.trim() || "";
         const en = root.querySelector("#tickerTextEn")?.value.trim() || "";
+        const color = root.querySelector("#tickerColor")?.value || "neutral";
         const sortOrder = Number(root.querySelector("#tickerSortOrder")?.value || "0") || 0;
         const active = !!root.querySelector("#tickerActive")?.checked;
 
@@ -1149,6 +1063,7 @@ Ticker hinzufügen
 
         await createHomeTicker({
           text: { de, tr, en },
+          color,
           sort_order: sortOrder,
           active
         });
@@ -1171,11 +1086,13 @@ Ticker hinzufügen
 
         const tr = prompt("Ticker Text TR?", "") ?? "";
         const en = prompt("Ticker Text EN?", "") ?? "";
+        const color = prompt("Farbe? (green/yellow/red/neutral)", "neutral") ?? "neutral";
         const sortOrder = Number(prompt("Reihenfolge?", "0") ?? "0") || 0;
         const activeText = prompt("Aktiv? (yes/no)", "yes") ?? "yes";
 
         await updateHomeTicker(id, {
           text: { de, tr, en },
+          color,
           sort_order: sortOrder,
           active: activeText.toLowerCase() === "yes"
         });
@@ -1198,9 +1115,7 @@ Ticker hinzufügen
     });
   }
 
-  /* -----------------------------------------------------------
-     HOME TILES CRUD
-  ----------------------------------------------------------- */
+  /* HOME TILES */
 
   if (isEditor) {
     root.querySelector("#addTileBtn")?.addEventListener("click", async () => {
@@ -1297,9 +1212,7 @@ Ticker hinzufügen
     });
   }
 
-  /* -----------------------------------------------------------
-     FORMS
-  ----------------------------------------------------------- */
+  /* FORMS */
 
   if (isEditor) {
     root.querySelectorAll("[data-form-status]").forEach((btn) => {
@@ -1316,51 +1229,6 @@ Ticker hinzufügen
     root.querySelector("#printFormsBtn")?.addEventListener("click", () => {
       window.print();
     });
-
-// ===== HOME TICKER =====
-
-root.querySelector("#addTickerBtn")?.addEventListener("click", async () => {
-
-  try {
-
-    const de = root.querySelector("#tickerTextDe")?.value.trim() || "";
-    const tr = root.querySelector("#tickerTextTr")?.value.trim() || "";
-    const en = root.querySelector("#tickerTextEn")?.value.trim() || "";
-
-    const color = root.querySelector("#tickerColor")?.value || "neutral";
-
-    const sortOrder = Number(
-      root.querySelector("#tickerSortOrder")?.value || "0"
-    ) || 0;
-
-    const active = !!root.querySelector("#tickerActive")?.checked;
-
-    if (!de) {
-      toast("Ticker Text fehlt", "bad");
-      return;
-    }
-
-    await createHomeTicker({
-      text: { de, tr, en },
-      color,
-      sort_order: sortOrder,
-      active
-    });
-
-    toast("Ticker erstellt", "ok");
-
-    location.hash = "#/admin";
-
-  } catch (err) {
-
-    console.error(err);
-
-    toast("Ticker konnte nicht erstellt werden", "bad");
-
-  }
-
-});
-    
   }
 
   initLightbox();
