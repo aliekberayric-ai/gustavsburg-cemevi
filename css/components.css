@@ -989,3 +989,10 @@ margin-top:6px;
 color:#b7bfcc;
 font-size:14px;
 }
+
+.person-grid img{
+width:100px !important;
+height:100px !important;
+object-fit:cover;
+border-radius: 10px;
+}
