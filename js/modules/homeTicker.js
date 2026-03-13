@@ -33,7 +33,10 @@ export async function listHomeTickerAdmin() {
 }
 
 export async function createHomeTicker(payload) {
-  const { error } = await supabase.from("home_ticker").insert([payload]);
+  const { error } = await supabase
+    .from("home_ticker")
+    .insert([payload]);
+
   if (error) {
     console.error(error);
     toast(error.message, "bad");
