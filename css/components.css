@@ -843,7 +843,7 @@ select:focus {
 
 .people-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 18px;
 }
 
@@ -945,4 +945,47 @@ label {
   .gallery-thumb img {
     height: 150px;
   }
+}
+
+/* TEAM BILDER FIX */
+
+.person-card img{
+width:90px;
+height:90px;
+object-fit:cover;
+border-radius:10px;
+display:block;
+}
+
+/* TEAM LAYOUT */
+
+.people-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+.person-card{
+display:flex;
+gap:16px;
+padding:16px;
+
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:16px;
+}
+
+.person-card__body{
+flex:1;
+}
+
+.person-card__body h3{
+margin:0;
+font-size:18px;
+}
+
+.person-card__body p{
+margin-top:6px;
+color:#b7bfcc;
+font-size:14px;
 }
