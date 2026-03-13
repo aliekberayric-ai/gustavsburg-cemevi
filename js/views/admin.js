@@ -1161,43 +1161,46 @@ export async function renderAdmin(root) {
     });
 
     root.querySelectorAll("[data-edit-tile]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const id = btn.getAttribute("data-edit-tile");
-        if (!id) return;
+  btn.addEventListener("click", async () => {
+    const id = btn.getAttribute("data-edit-tile");
+    if (!id) return;
 
-        const titleDe = prompt("Titel DE?");
-        if (!titleDe) return;
+    const current = homeTiles.find((tile) => tile.id === id);
+    if (!current) return;
 
-        const titleTr = prompt("Titel TR?", "") ?? "";
-        const titleEn = prompt("Titel EN?", "") ?? "";
+    const titleDe = prompt("Titel DE?", current.title?.de ?? "");
+    if (!titleDe) return;
 
-        const textDe = prompt("Text DE?", "") ?? "";
-        const textTr = prompt("Text TR?", "") ?? "";
-        const textEn = prompt("Text EN?", "") ?? "";
+    const titleTr = prompt("Titel TR?", current.title?.tr ?? "") ?? "";
+    const titleEn = prompt("Titel EN?", current.title?.en ?? "") ?? "";
 
-        const buttonDe = prompt("Button Text DE?", "") ?? "";
-        const buttonTr = prompt("Button Text TR?", "") ?? "";
-        const buttonEn = prompt("Button Text EN?", "") ?? "";
+    const textDe = prompt("Text DE?", current.text?.de ?? "") ?? "";
+    const textTr = prompt("Text TR?", current.text?.tr ?? "") ?? "";
+    const textEn = prompt("Text EN?", current.text?.en ?? "") ?? "";
 
-        const linkUrl = prompt("Link URL?", "") ?? "";
-        const imageUrl = prompt("Bild-URL?", "") ?? "";
-        const sortOrder = Number(prompt("Reihenfolge?", "0") ?? "0") || 0;
-        const activeText = prompt("Aktiv? (yes/no)", "yes") ?? "yes";
+    const buttonDe = prompt("Button Text DE?", current.button_text?.de ?? "") ?? "";
+    const buttonTr = prompt("Button Text TR?", current.button_text?.tr ?? "") ?? "";
+    const buttonEn = prompt("Button Text EN?", current.button_text?.en ?? "") ?? "";
 
-        await updateHomeTile(id, {
-          title: { de: titleDe, tr: titleTr, en: titleEn },
-          text: { de: textDe, tr: textTr, en: textEn },
-          button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
-          link_url: linkUrl,
-          image_url: imageUrl,
-          sort_order: sortOrder,
-          active: activeText.toLowerCase() === "yes"
-        });
+    const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
+    const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
+    const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
+    const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
 
-        toast("Kachel aktualisiert", "ok");
-        await renderAdmin(root);
-      });
+    await updateHomeTile(id, {
+      title: { de: titleDe, tr: titleTr, en: titleEn },
+      text: { de: textDe, tr: textTr, en: textEn },
+      button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
+      link_url: linkUrl,
+      image_url: imageUrl,
+      sort_order: sortOrder,
+      active: activeText.toLowerCase() === "yes"
     });
+
+    toast("Kachel aktualisiert", "ok");
+    await renderAdmin(root);
+  });
+});
 
     root.querySelectorAll("[data-del-tile]").forEach((btn) => {
       btn.addEventListener("click", async () => {
