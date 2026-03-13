@@ -529,6 +529,76 @@ export async function renderAdmin(root) {
 </select>
 
 
+<!-- HOME TICKER -->
+<div id="admin-ticker" class="card card__pad">
+
+<h2 style="margin:0">Startseiten Ticker</h2>
+
+<p class="mono">
+Aktuelle Meldungen für das Laufband auf der Startseite
+</p>
+
+<div class="grid" style="gap:10px;margin-top:12px">
+
+<input id="tickerTextDe" class="input" placeholder="Ticker Text Deutsch" />
+<input id="tickerTextTr" class="input" placeholder="Ticker Text Türkisch" />
+<input id="tickerTextEn" class="input" placeholder="Ticker Text Englisch" />
+
+<select id="tickerColor" class="input">
+
+<option value="green">🟢 Heute / aktuell</option>
+
+<option value="yellow">🟡 Bald</option>
+
+<option value="red">🔴 Wichtig</option>
+
+<option value="neutral">⚪ Info</option>
+
+</select>
+
+<input id="tickerSortOrder"
+class="input"
+type="number"
+placeholder="Reihenfolge (z.B. 1,2,3)" />
+
+<label style="display:flex;align-items:center;gap:8px">
+
+<input id="tickerActive" type="checkbox" checked />
+
+Aktiv
+
+</label>
+
+<button id="addTickerBtn" class="btn btn--accent">
+
+Ticker hinzufügen
+
+</button>
+
+</div>
+
+<table class="table" style="margin-top:16px">
+
+<thead>
+
+<tr>
+
+<th>Text</th>
+<th>Farbe</th>
+<th>Aktiv</th>
+
+</tr>
+
+</thead>
+
+<tbody id="adminTickerTable">
+
+</tbody>
+
+</table>
+
+</div>
+
           <!-- LIVE TICKER -->
           ${isEditor ? `
             <div id="admin-home-ticker" class="card card__pad">
