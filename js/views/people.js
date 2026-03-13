@@ -1,71 +1,72 @@
-import { t, getLang } from "../i18n.js";
 import { listPeoplePublic } from "../modules/people.js";
+import { getLang } from "../i18n.js";
 import { escapeHtml } from "../ui.js";
 
-function getLocalizedField(obj, lang) {
-  if (!obj || typeof obj !== "object") return "";
-  return (
-    (obj[lang] && String(obj[lang]).trim()) ||
-    (obj.de && String(obj.de).trim()) ||
-    (obj.tr && String(obj.tr).trim()) ||
-    (obj.en && String(obj.en).trim()) ||
-    ""
-  );
+function pickLocalized(obj, lang) {
+  return obj?.[lang] ?? obj?.de ?? "";
 }
 
 export async function renderPeople(root) {
+
   const lang = getLang();
-  const people = await listPeoplePublic();
+  let people = [];
 
-  const visiblePeople = (people ?? [])
-    .filter((p) => p.is_visible)
-    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-  root.innerHTML = `
-    <section class="page team-section">
-      <h1>${t("nav.team") || "Team"}</h1>
-      <div id="teamList" class="team-list"></div>
-    </section>
-  `;
-
-  const teamList = root.querySelector("#teamList");
-  if (!teamList) return;
-
-  if (!visiblePeople.length) {
-    teamList.innerHTML = `
-      <div class="team-empty">
-        ${t("team.empty") || "Noch keine Teammitglieder vorhanden."}
-      </div>
-    `;
-    return;
+  try {
+    people = await listPeoplePublic();
+  } catch (err) {
+    console.error("Fehler beim Laden des Teams:", err);
   }
 
-  teamList.innerHTML = visiblePeople.map((p) => {
-    const role = getLocalizedField(p.role_title, lang);
-    const bio = getLocalizedField(p.bio, lang);
-    const image = (p.avatar_url && String(p.avatar_url).trim())
-      ? p.avatar_url
-      : "assets/team-placeholder.png";
+  root.innerHTML = `
+  <div class="page">
 
-    return `
-      <article class="team-card">
-        <div class="team-card__media">
-          <div class="team-card__image-wrap">
-            <img
-              src="${escapeHtml(image)}"
-              alt="${escapeHtml(p.name || "")}"
-              class="team-card__image"
-              loading="lazy"
-            />
+    <h1>Team</h1>
+
+    <div class="people-grid">
+
+      ${people.map(person => {
+
+        const name = person.name ?? "";
+        const role = pickLocalized(person.role_title, lang);
+        const bio = pickLocalized(person.bio, lang);
+        const img = person.avatar_url ?? "";
+
+        return `
+
+        <div class="person-card">
+
+          <div class="person-card__media">
+
+            ${
+              img
+              ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}">`
+              : `<div class="person-card__placeholder">Kein Bild</div>`
+            }
+
+            <div class="person-card__name">
+              ${escapeHtml(name)}
+            </div>
+
           </div>
-          <div class="team-card__name">${escapeHtml(p.name || "-")}</div>
+
+          <div class="person-card__body">
+
+            <h3>${escapeHtml(role)}</h3>
+
+            <p>
+              ${escapeHtml(bio)}
+            </p>
+
+          </div>
+
         </div>
 
-        <div class="team-card__content">
-          <div class="team-card__role">${escapeHtml(role || "-")}</div>
-          <div class="team-card__bio">${escapeHtml(bio || "")}</div>
-        </div>
-      </article>
-    `;
-  }).join("");
+        `;
+
+      }).join("")}
+
+    </div>
+
+  </div>
+  `;
 }
