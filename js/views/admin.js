@@ -1246,6 +1246,51 @@ export async function renderAdmin(root) {
     root.querySelector("#printFormsBtn")?.addEventListener("click", () => {
       window.print();
     });
+
+// ===== HOME TICKER =====
+
+root.querySelector("#addTickerBtn")?.addEventListener("click", async () => {
+
+  try {
+
+    const de = root.querySelector("#tickerTextDe")?.value.trim() || "";
+    const tr = root.querySelector("#tickerTextTr")?.value.trim() || "";
+    const en = root.querySelector("#tickerTextEn")?.value.trim() || "";
+
+    const color = root.querySelector("#tickerColor")?.value || "neutral";
+
+    const sortOrder = Number(
+      root.querySelector("#tickerSortOrder")?.value || "0"
+    ) || 0;
+
+    const active = !!root.querySelector("#tickerActive")?.checked;
+
+    if (!de) {
+      toast("Ticker Text fehlt", "bad");
+      return;
+    }
+
+    await createHomeTicker({
+      text: { de, tr, en },
+      color,
+      sort_order: sortOrder,
+      active
+    });
+
+    toast("Ticker erstellt", "ok");
+
+    location.hash = "#/admin";
+
+  } catch (err) {
+
+    console.error(err);
+
+    toast("Ticker konnte nicht erstellt werden", "bad");
+
+  }
+
+});
+    
   }
 
   initLightbox();
