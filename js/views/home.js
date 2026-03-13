@@ -70,26 +70,47 @@ export async function renderHome(root) {
         </div>
       </section>
 
-      <section class="home-ticker-section">
-        <div class="home-ticker">
-          <div class="home-ticker-track">
-            ${
-              tickerItems.length
-                ? [...tickerItems, ...tickerItems].map((item) => {
-                    const text = pickLocalized(item.text, lang);
-                    return `<span class="home-ticker-item">● ${escapeHtml(text)}</span>`;
-                  }).join("")
-                : `<span class="home-ticker-item">● ${
-                    lang === "tr"
-                      ? "Güncel duyuru yok"
-                      : lang === "en"
-                      ? "No current announcements"
-                      : "Keine aktuellen Meldungen"
-                  }</span>`
-            }
-          </div>
-        </div>
-      </section>
+
+     <section class="home-ticker-section">
+  <div class="home-ticker">
+    <div class="home-ticker-track">
+
+      ${
+        tickerItems.length
+          ? [...tickerItems, ...tickerItems].map(item => {
+
+              const text = pickLocalized(item.text, lang);
+
+              return `
+                <span class="home-ticker-item">
+
+                  <span class="ticker-dot ticker-dot-${item.color}"></span>
+
+                  <span class="ticker-label ticker-label-${item.color}">
+                    ${
+                      item.color === "green"
+                        ? "HEUTE"
+                        : item.color === "yellow"
+                        ? "BALD"
+                        : item.color === "red"
+                        ? "WICHTIG"
+                        : "INFO"
+                    }
+                  </span>
+
+                  <span class="ticker-text">
+                    ${escapeHtml(text)}
+                  </span>
+
+                </span>
+              `;
+            }).join("")
+          : `<span class="home-ticker-item">Keine Meldungen</span>`
+      }
+
+    </div>
+  </div>
+</section>
 
       <section class="home-tiles-section">
         <div class="section-head">
