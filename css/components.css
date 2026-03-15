@@ -849,7 +849,7 @@ select:focus {
 
 .people-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 280px));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 260px));
   gap: 16px;
   justify-content: start;
   margin-top: 18px;
