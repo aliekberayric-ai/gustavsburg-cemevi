@@ -1004,3 +1004,45 @@ label {
     height: 150px;
   }
 }
+
+/* Sprach Flags */
+
+.lang-switch{
+display:flex;
+gap:8px;
+align-items:center;
+}
+
+.lang-btn{
+
+background:transparent;
+border:none;
+padding:0;
+cursor:pointer;
+
+opacity:0.7;
+transition:all .2s;
+}
+
+.lang-btn img{
+
+width:28px;
+height:20px;
+
+border-radius:4px;
+
+box-shadow:0 0 0 1px rgba(255,255,255,0.25);
+}
+
+.lang-btn:hover{
+
+opacity:1;
+transform:scale(1.1);
+}
+
+.lang-btn.active{
+
+opacity:1;
+transform:scale(1.15);
+box-shadow:0 0 6px rgba(255,255,255,0.5);
+}
