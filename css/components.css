@@ -5,7 +5,8 @@
   --card-strong: rgba(255, 255, 255, 0.08);
  /* --text: #f5f7fb; */
  /*  --text: #d4af37; */
-  --text: red;
+  --text: white;
+  --textCN: yellow;
   --muted: #b7bfcc;
   --line: rgba(255, 255, 255, 0.10);
   --line-strong: rgba(255, 255, 255, 0.16);
@@ -909,7 +910,8 @@ select:focus {
   line-height: 1.2;
   word-break: break-word;
   font-size: 0.82rem;
-  color: var(--text);
+  /* color: var(--text); */
+  color: var(--textCN);
 }
 
 .person-card__body {
