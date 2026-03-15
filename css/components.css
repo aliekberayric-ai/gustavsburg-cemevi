@@ -152,12 +152,10 @@ p {
    BUTTONS / INPUTS / TABLES
 ----------------------------------------------------------- */
 
-/* .btn {
+ .btn {
   appearance: none;
-  /* border: 1px solid var(--line-strong); */
- /* border: 1px solid transparent
-  /* background: rgba(255,255,255,0.05); */
-/*  background: transparent;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,0.05); 
   color: var(--text);
   border-radius: 999px;
   padding: 10px 16px;
@@ -169,26 +167,8 @@ p {
   justify-content: center;
   gap: 8px;
   transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
-} */
+} 
 
-
-.btn {
-  appearance: none;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--text);
-  border-radius: 999px;
-  padding: 10px 16px;
-  font: inherit;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
-  box-shadow: none;
-}
 
 .btn:hover {
   transform: translateY(-1px);
