@@ -155,7 +155,8 @@ p {
 .btn {
   appearance: none;
   border: 1px solid var(--line-strong);
-  background: rgba(255,255,255,0.05);
+  /* background: rgba(255,255,255,0.05); */
+  background: transparent;
   color: var(--text);
   border-radius: 999px;
   padding: 10px 16px;
