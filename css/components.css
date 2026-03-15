@@ -849,115 +849,114 @@ select:focus {
 
 .people-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 280px));
+  gap: 16px;
+  justify-content: start;
   margin-top: 18px;
 }
 
 .person-card {
   display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 16px;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
   align-items: start;
-  padding: 16px;
-  border-radius: 22px;
+  padding: 14px;
+  border-radius: 18px;
   background: rgba(255,255,255,0.05);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
   overflow: hidden;
+  min-height: 140px;
 }
 
 .person-card__media {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   justify-items: center;
   align-content: start;
 }
 
 .person-card__media img,
-.person-card img,
-.people-grid img {
-  width: 96px !important;
-  height: 96px !important;
-  min-width: 96px !important;
-  max-width: 96px !important;
-  min-height: 96px !important;
-  max-height: 96px !important;
-  border-radius: 16px;
+.person-card__placeholder {
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  min-height: 72px !important;
+  max-height: 72px !important;
+  border-radius: 14px;
   object-fit: cover;
   display: block;
   flex-shrink: 0;
 }
 
 .person-card__placeholder {
-  width: 96px;
-  height: 96px;
-  min-width: 96px;
-  max-width: 96px;
-  min-height: 96px;
-  max-height: 96px;
-  border-radius: 16px;
-  object-fit: cover;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.04);
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   text-align: center;
-  padding: 8px;
-  flex-shrink: 0;
+  padding: 6px;
 }
 
 .person-card__name {
-  font-weight: 800;
+  font-weight: 700;
   text-align: center;
-  line-height: 1.25;
+  line-height: 1.2;
   word-break: break-word;
+  font-size: 0.82rem;
+  color: var(--text);
 }
 
 .person-card__body {
   min-width: 0;
+  display: grid;
+  gap: 6px;
 }
 
 .person-card__body h3 {
-  margin: 0 0 8px;
-  font-size: 1.05rem;
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.25;
 }
 
 .person-card__body p {
   margin: 0;
   color: var(--muted);
-  line-height: 1.55;
-  font-size: 0.95rem;
+  line-height: 1.45;
+  font-size: 0.88rem;
   word-break: break-word;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 4;   /* maximal 4 Zeilen */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 @media (max-width: 640px) {
-  .person-card {
+  .people-grid {
     grid-template-columns: 1fr;
   }
 
-  .person-card__media {
-    justify-items: start;
-  }
-
-  .person-card__name {
-    text-align: left;
+  .person-card {
+    grid-template-columns: 68px 1fr;
+    padding: 12px;
   }
 
   .person-card__media img,
-  .person-card img,
-  .people-grid img,
   .person-card__placeholder {
-    width: 88px !important;
-    height: 88px !important;
-    min-width: 88px !important;
-    max-width: 88px !important;
-    min-height: 88px !important;
-    max-height: 88px !important;
+    width: 68px !important;
+    height: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+    min-height: 68px !important;
+    max-height: 68px !important;
   }
 }
+
+
 
 /* -----------------------------------------------------------
    FORM HELPERS
