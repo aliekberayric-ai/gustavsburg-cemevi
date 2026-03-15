@@ -3,7 +3,8 @@
   --bg-soft: #151923;
   --card: rgba(255, 255, 255, 0.05);
   --card-strong: rgba(255, 255, 255, 0.08);
-  --text: #f5f7fb;
+ //* --text: #f5f7fb; *//
+  --text: #d4af37;
   --muted: #b7bfcc;
   --line: rgba(255, 255, 255, 0.10);
   --line-strong: rgba(255, 255, 255, 0.16);
