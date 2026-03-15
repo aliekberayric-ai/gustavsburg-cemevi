@@ -3,11 +3,13 @@
   --bg-soft: #151923;
   --card: rgba(255, 255, 255, 0.05);
   --card-strong: rgba(255, 255, 255, 0.08);
- /* --text: #f5f7fb; */
- /*  --text: #d4af37; */
+  /* text (--text: xxx) für Schrift auf der Seite */
+  /* --text: #f5f7fb;  */
   --text: white;
+  /* text (--textCN: xxx) für Schrift unter dem Bild */
   --textCN: yellow;
-  --muted: #b7bfcc;
+  /* text (--muted: xxx) für Beschreibung unter der Aufgabe */
+  --muted: green;
   --line: rgba(255, 255, 255, 0.10);
   --line-strong: rgba(255, 255, 255, 0.16);
 
