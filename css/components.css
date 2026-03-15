@@ -1005,44 +1005,37 @@ label {
   }
 }
 
-/* Sprach Flags */
+/* Sprachflaggen */
 
 .lang-switch{
 display:flex;
-gap:8px;
+gap:10px;
 align-items:center;
 }
 
 .lang-btn{
-
 background:transparent;
 border:none;
-padding:0;
 cursor:pointer;
-
+padding:0;
 opacity:0.7;
-transition:all .2s;
+transition:all .2s ease;
 }
 
 .lang-btn img{
-
 width:28px;
 height:20px;
-
 border-radius:4px;
-
-box-shadow:0 0 0 1px rgba(255,255,255,0.25);
+box-shadow:0 0 0 1px rgba(255,255,255,0.3);
 }
 
 .lang-btn:hover{
-
 opacity:1;
-transform:scale(1.1);
+transform:scale(1.15);
 }
 
 .lang-btn.active{
-
 opacity:1;
-transform:scale(1.15);
-box-shadow:0 0 6px rgba(255,255,255,0.5);
+transform:scale(1.2);
+box-shadow:0 0 6px rgba(255,255,255,0.6);
 }
