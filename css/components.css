@@ -3,13 +3,16 @@
   --bg-soft: #151923;
   --card: rgba(255, 255, 255, 0.05);
   --card-strong: rgba(255, 255, 255, 0.08);
+
   /* text (--text: xxx) für Schrift auf der Seite */
-  /* --text: #f5f7fb;  */
   --text: white;
+
   /* text (--textCN: xxx) für Schrift unter dem Bild */
   --textCN: yellow;
+
   /* text (--muted: xxx) für Beschreibung unter der Aufgabe */
   --muted: grey;
+
   --line: rgba(255, 255, 255, 0.10);
   --line-strong: rgba(255, 255, 255, 0.16);
 
@@ -31,7 +34,9 @@
   --container: 1180px;
 }
 
- {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -49,6 +54,7 @@ body {
 
 img {
   max-width: 100%;
+  display: block;
 }
 
 /* -----------------------------------------------------------
@@ -106,6 +112,11 @@ img {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
+
+  /* WICHTIG für Hover-Vorschau */
+  overflow: visible;
+  position: relative;
+  z-index: 1;
 }
 
 .card__pad {
@@ -152,10 +163,10 @@ p {
    BUTTONS / INPUTS / TABLES
 ----------------------------------------------------------- */
 
- .btn {
+.btn {
   appearance: none;
   border: 1px solid var(--line-strong);
-  background: rgba(255,255,255,0.05); 
+  background: rgba(255,255,255,0.05);
   color: var(--text);
   border-radius: 999px;
   padding: 10px 16px;
@@ -167,8 +178,7 @@ p {
   justify-content: center;
   gap: 8px;
   transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
-} 
-
+}
 
 .btn:hover {
   transform: translateY(-1px);
@@ -228,6 +238,8 @@ select:focus {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.96rem;
+  overflow: visible !important;
+  position: relative;
 }
 
 .table th,
@@ -236,6 +248,8 @@ select:focus {
   vertical-align: middle;
   padding: 12px 10px;
   border-bottom: 1px solid var(--line);
+  overflow: visible !important;
+  position: relative;
 }
 
 .table thead th {
@@ -800,12 +814,14 @@ select:focus {
 }
 
 /* -----------------------------------------------------------
-   CALENDAR PREVIEW
+   CALENDAR PREVIEW / HOVER FIX
 ----------------------------------------------------------- */
 
 .calendar-preview-wrap {
   position: relative;
   display: inline-block;
+  overflow: visible !important;
+  z-index: 5;
 }
 
 .calendar-preview-thumb {
@@ -816,27 +832,32 @@ select:focus {
   border: 1px solid rgba(255,255,255,0.12);
   display: block;
   background: rgba(255,255,255,0.04);
+  position: relative;
+  z-index: 2;
 }
 
 .calendar-preview-popup {
   position: absolute;
-  left: 78px;
+  right: calc(100% + 14px);
+  left: auto;
   top: 50%;
   transform: translateY(-50%) scale(.96);
+  transform-origin: right center;
   opacity: 0;
   pointer-events: none;
   transition: opacity .2s ease, transform .2s ease;
-  z-index: 30;
+  z-index: 9999;
   background: rgba(15,15,20,0.96);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 18px;
   padding: 10px;
   box-shadow: 0 18px 40px rgba(0,0,0,.35);
+  overflow: visible;
 }
 
 .calendar-preview-popup img {
   width: 280px;
-  max-width: 40vw;
+  max-width: min(40vw, 280px);
   height: auto;
   max-height: 240px;
   object-fit: cover;
@@ -847,6 +868,13 @@ select:focus {
 .calendar-preview-wrap:hover .calendar-preview-popup {
   opacity: 1;
   transform: translateY(-50%) scale(1);
+}
+
+/* Alternative Klasse falls Bild links sitzen sollte */
+.calendar-preview-wrap.preview-left .calendar-preview-popup {
+  left: calc(100% + 14px);
+  right: auto;
+  transform-origin: left center;
 }
 
 /* -----------------------------------------------------------
@@ -913,7 +941,6 @@ select:focus {
   line-height: 1.2;
   word-break: break-word;
   font-size: 0.82rem;
-  /* color: var(--text); */
   color: var(--textCN);
 }
 
@@ -935,9 +962,8 @@ select:focus {
   line-height: 1.45;
   font-size: 0.65rem;
   word-break: break-word;
-
   display: -webkit-box;
-  -webkit-line-clamp: 4;   /* maximal 4 Zeilen */
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -962,8 +988,6 @@ select:focus {
     max-height: 68px !important;
   }
 }
-
-
 
 /* -----------------------------------------------------------
    FORM HELPERS
@@ -1003,39 +1027,48 @@ label {
   .gallery-thumb img {
     height: 150px;
   }
+
+  .calendar-preview-popup {
+    right: calc(100% + 8px);
+  }
+
+  .calendar-preview-popup img {
+    width: 220px;
+    max-height: 180px;
+  }
 }
 
 /* Sprachflaggen */
 
-.lang-switch{
-display:flex;
-gap:10px;
-align-items:center;
+.lang-switch {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-.lang-btn{
-background:transparent;
-border:none;
-cursor:pointer;
-padding:0;
-opacity:0.7;
-transition:all .2s ease;
+.lang-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.7;
+  transition: all .2s ease;
 }
 
-.lang-btn img{
-width:28px;
-height:20px;
-border-radius:4px;
-box-shadow:0 0 0 1px rgba(255,255,255,0.3);
+.lang-btn img {
+  width: 28px;
+  height: 20px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.3);
 }
 
-.lang-btn:hover{
-opacity:1;
-transform:scale(1.15);
+.lang-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
 }
 
-.lang-btn.active{
-opacity:1;
-transform:scale(1.2);
-box-shadow:0 0 6px rgba(255,255,255,0.6);
+.lang-btn.active {
+  opacity: 1;
+  transform: scale(1.2);
+  box-shadow: 0 0 6px rgba(255,255,255,0.6);
 }
