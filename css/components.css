@@ -886,7 +886,7 @@ select:focus {
 
 /* Kleine Vorschau wird schon etwas edler */
 .calendar-preview-wrap:hover .calendar-preview-thumb {
-  transform: scale(1.08);
+  transform: scale(1.03);
   border-color: rgba(255,255,255,0.28);
   box-shadow: 0 12px 30px rgba(0,0,0,0.28);
   filter: brightness(1.03);
@@ -901,7 +901,7 @@ select:focus {
   transform: translateY(-50%) scale(0.94);
   transform-origin: right center;
 
-  width: 420px;
+  width: 360px;
   max-width: min(52vw, 420px);
 
   opacity: 0;
