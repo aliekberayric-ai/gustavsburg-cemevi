@@ -814,67 +814,196 @@ select:focus {
 }
 
 /* -----------------------------------------------------------
-   CALENDAR PREVIEW / HOVER FIX
+   CALENDAR PREVIEW / PREMIUM HOVER
 ----------------------------------------------------------- */
 
-.calendar-preview-wrap {
+/* Tabelle stabil halten */
+.table {
   position: relative;
-  display: inline-block;
-  overflow: visible !important;
-  z-index: 5;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.calendar-preview-thumb {
-  width: 64px;
-  height: 44px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.12);
-  display: block;
+.table tbody {
+  position: relative;
+}
+
+.table tbody tr {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.22s ease, filter 0.22s ease, background 0.22s ease;
+}
+
+/* Alle Zeilen leicht in den Hintergrund, wenn man in der Tabelle hovert */
+.table tbody:hover tr {
+  opacity: 0.55;
+  filter: saturate(0.85);
+}
+
+/* Aktive Zeile kommt nach vorn */
+.table tbody tr:hover {
+  opacity: 1;
+  filter: none;
+  z-index: 40;
   background: rgba(255,255,255,0.04);
+}
+
+/* Preview-Zelle */
+.calendar-preview-wrap {
+  position: relative;
+  width: 110px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  z-index: 2;
+}
+
+/* Kleine Vorschau */
+.calendar-preview-thumb {
+  width: 88px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  display: block;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease,
+    filter 0.28s ease;
   position: relative;
   z-index: 2;
 }
 
+/* Hover-Container nach vorne */
+.calendar-preview-wrap:hover {
+  z-index: 9999;
+}
+
+/* Kleine Vorschau wird schon etwas edler */
+.calendar-preview-wrap:hover .calendar-preview-thumb {
+  transform: scale(1.08);
+  border-color: rgba(255,255,255,0.28);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+  filter: brightness(1.03);
+}
+
+/* Großes Hover-Fenster */
 .calendar-preview-popup {
   position: absolute;
-  right: calc(100% + 14px);
+  right: calc(100% + 16px);
   left: auto;
   top: 50%;
-  transform: translateY(-50%) scale(.96);
+  transform: translateY(-50%) scale(0.94);
   transform-origin: right center;
+
+  width: 420px;
+  max-width: min(52vw, 420px);
+
   opacity: 0;
   pointer-events: none;
-  transition: opacity .2s ease, transform .2s ease;
-  z-index: 9999;
-  background: rgba(15,15,20,0.96);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 18px;
+
+  z-index: 10000;
+
   padding: 10px;
-  box-shadow: 0 18px 40px rgba(0,0,0,.35);
-  overflow: visible;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.14);
+
+  background:
+    linear-gradient(180deg, rgba(24,28,36,0.94), rgba(12,15,22,0.96));
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 28px 70px rgba(0,0,0,0.42),
+    0 0 0 1px rgba(255,255,255,0.03);
+
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s ease,
+    box-shadow 0.24s ease;
 }
 
+/* Leichter Glow-Ring */
+.calendar-preview-popup::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 22px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.16),
+    rgba(255,255,255,0.04)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Großes Bild */
 .calendar-preview-popup img {
-  width: 280px;
-  max-width: min(40vw, 280px);
-  height: auto;
-  max-height: 240px;
+  width: 100%;
+  max-width: 100%;
+  max-height: 320px;
   object-fit: cover;
-  border-radius: 12px;
   display: block;
+  border-radius: 16px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.26);
 }
 
+/* Sichtbar beim Hover */
 .calendar-preview-wrap:hover .calendar-preview-popup {
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
 
-/* Alternative Klasse falls Bild links sitzen sollte */
+/* Wenn du die Vorschau mal links/rechts wechseln willst */
 .calendar-preview-wrap.preview-left .calendar-preview-popup {
-  left: calc(100% + 14px);
+  left: calc(100% + 16px);
   right: auto;
   transform-origin: left center;
+}
+
+/* Mobile / kleinere Bildschirme */
+@media (max-width: 900px) {
+  .calendar-preview-popup {
+    width: 320px;
+    max-width: min(60vw, 320px);
+  }
+
+  .calendar-preview-popup img {
+    max-height: 240px;
+  }
+}
+
+@media (max-width: 700px) {
+  /* Auf kleinen Screens lieber kein großes Popup */
+  .calendar-preview-popup {
+    display: none !important;
+  }
+
+  .calendar-preview-wrap {
+    width: 92px;
+    height: 60px;
+    overflow: hidden;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .calendar-preview-thumb {
+    width: 74px;
+    height: 44px;
+  }
+
+  .calendar-preview-wrap:hover .calendar-preview-thumb {
+    transform: scale(1.35);
+  }
 }
 
 /* -----------------------------------------------------------
