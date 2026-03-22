@@ -253,6 +253,7 @@ async function openAdminGallery(root, gallery) {
 ----------------------------------------------------------- */
 
 export async function renderAdmin(root) {
+  const siteSettings = await getSiteSettings();
   const auth = getAuth();
   const isEditor = requireRole(["admin", "editor"]);
   const isAdmin = requireRole(["admin"]);
