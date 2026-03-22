@@ -25,7 +25,7 @@ export async function renderCalendar(root) {
           </thead>
           <tbody>
             ${
-              events.length
+              Array.isArray(events) && events.length
                 ? events.map((e) => {
                     const title =
                       e?.title?.[lang] ??
@@ -35,11 +35,21 @@ export async function renderCalendar(root) {
                       "—";
 
                     const location = e?.location ?? "—";
-                    const previewImage = e?.preview_image_url || EVENT_PLACEHOLDER;
+
+                    const previewImage =
+                      e?.preview_image_url &&
+                      String(e.preview_image_url).trim() !== ""
+                        ? e.preview_image_url
+                        : EVENT_PLACEHOLDER;
+
+                    const startTime =
+                      e?.start_time
+                        ? fmtDateTime(e.start_time)
+                        : "—";
 
                     return `
                       <tr>
-                        <td class="mono">${escapeHtml(fmtDateTime(e.start_time))}</td>
+                        <td class="mono">${escapeHtml(startTime)}</td>
                         <td>${escapeHtml(title)}</td>
                         <td>${escapeHtml(location)}</td>
                         <td>
@@ -49,12 +59,14 @@ export async function renderCalendar(root) {
                               src="${escapeHtml(previewImage)}"
                               alt="${escapeHtml(title)}"
                               loading="lazy"
+                              onerror="this.onerror=null;this.src='${EVENT_PLACEHOLDER}'"
                             />
                             <div class="calendar-preview-popup">
                               <img
                                 src="${escapeHtml(previewImage)}"
                                 alt="${escapeHtml(title)}"
                                 loading="lazy"
+                                onerror="this.onerror=null;this.src='${EVENT_PLACEHOLDER}'"
                               />
                             </div>
                           </div>
