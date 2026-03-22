@@ -11,10 +11,16 @@ export async function getSiteSettings() {
   if (error) {
     console.error(error);
     toast("Site Settings konnten nicht geladen werden.", "bad");
-    return { site_title: "Gustavsburg Cem Evi", logo_url: "" };
+    return {
+      site_title: "Gustavsburg Cem Evi",
+      logo_url: ""
+    };
   }
 
-  return data || { site_title: "Gustavsburg Cem Evi", logo_url: "" };
+  return data || {
+    site_title: "Gustavsburg Cem Evi",
+    logo_url: ""
+  };
 }
 
 export async function updateSiteSettings(patch) {
@@ -34,10 +40,17 @@ export async function updateSiteSettings(patch) {
       toast(error.message, "bad");
       throw error;
     }
+
     return;
   }
 
-  const { error } = await supabase.from("site_settings").insert([patch]);
+  const { error } = await supabase.from("site_settings").insert([
+    {
+      site_title: patch.site_title || "Gustavsburg Cem Evi",
+      logo_url: patch.logo_url || null
+    }
+  ]);
+
   if (error) {
     console.error(error);
     toast(error.message, "bad");
@@ -46,6 +59,10 @@ export async function updateSiteSettings(patch) {
 }
 
 export async function uploadBrandLogo(file) {
+  if (!file) {
+    throw new Error("Keine Datei ausgewählt.");
+  }
+
   const safeName = file.name.replace(/[^\w.\-]+/g, "_");
   const path = `logo/${Date.now()}_${safeName}`;
 
