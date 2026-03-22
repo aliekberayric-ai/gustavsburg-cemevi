@@ -1,40 +1,169 @@
-/* layout.css: header + app frame */
+/* =========================================================
+   LAYOUT / APP FRAME
+========================================================= */
 
-.topbar{
-  position: sticky;
-  top:0;
-  z-index: 20;
-  display:flex;
-  gap: 14px;
-  align-items:center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(14px);
-  background: rgba(11,13,18,0.55);
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  /* WICHTIG: nichts mehr abschneiden */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-.brand{
-  font-weight: 780;
+/* =========================================================
+   TOPBAR / HEADER
+========================================================= */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 12px 18px;
+
+  backdrop-filter: blur(14px);
+  background: rgba(11, 13, 18, 0.75);
+  border-bottom: 1px solid var(--line);
+
+  /* wichtig */
+  overflow: visible;
+}
+
+.brand {
+  font-weight: 700;
   letter-spacing: -0.02em;
-  padding: 8px 10px;
-  border-radius: 12px;
+  padding: 6px 10px;
+  border-radius: 10px;
   background: rgba(255,255,255,0.04);
 }
 
-.nav{
-  display:flex;
+.nav {
+  display: flex;
   gap: 10px;
-  align-items:center;
+  align-items: center;
   flex-wrap: wrap;
 }
 
-.topbar__right{
-  display:flex;
+.topbar_right {
+  display: flex;
   gap: 10px;
-  align-items:center;
+  align-items: center;
 }
 
-.app{
+/* =========================================================
+   APP WRAPPER
+========================================================= */
+
+.app {
+  flex: 1;
+
+  /* ganz wichtig für Hover */
+  overflow: visible;
+
+  display: block;
   min-height: calc(100vh - 64px);
+}
+
+/* =========================================================
+   PAGE WRAPPER
+========================================================= */
+
+.page {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+
+  /* WICHTIG */
+  overflow: visible;
+
+  position: relative;
+}
+
+/* =========================================================
+   CONTAINER / CONTENT
+========================================================= */
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+
+  overflow: visible;
+}
+
+/* =========================================================
+   CONTENT AREAS (GLOBAL FIX)
+========================================================= */
+
+main,
+section,
+div {
+  /* verhindert abgeschnittene Hover-Elemente */
+  max-width: 100%;
+}
+
+/* KEIN overflow:hidden global verwenden */
+
+/* =========================================================
+   TABLE / CALENDAR FIX GLOBAL
+========================================================= */
+
+.table,
+.table tr,
+.table td,
+.table th {
+  overflow: visible !important;
+  position: relative;
+}
+
+/* =========================================================
+   CARD FIX GLOBAL
+========================================================= */
+
+.card {
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.site-footer {
+  margin-top: auto;
+  padding: 18px;
+  border-top: 1px solid var(--line);
+  background: rgba(255,255,255,0.02);
+}
+
+/* =========================================================
+   MOBILE FIXES
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .topbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nav {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .topbar_right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page {
+    width: calc(100% - 20px);
+  }
 }
