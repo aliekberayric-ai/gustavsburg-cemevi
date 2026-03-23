@@ -1344,7 +1344,6 @@ export async function renderAdmin(root) {
 }
 
 if (!auth.user) {
-  ...
   root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
