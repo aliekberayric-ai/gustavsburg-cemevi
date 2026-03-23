@@ -61,7 +61,7 @@ function parseEventDateTime(date, time) {
 
   if (isoDate && isoTime) {
     const d = new Date(`${date}T${time}:00`);
-    return isNaN(d.getTime()) ? null : d.toISOString();
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
   }
 
   const usDate = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date);
@@ -80,11 +80,11 @@ function parseEventDateTime(date, time) {
     if (ampm === "AM" && hour === 12) hour = 0;
 
     const d = new Date(year, month - 1, day, hour, minute, 0);
-    return isNaN(d.getTime()) ? null : d.toISOString();
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
   }
 
   const fallback = new Date(`${date} ${time}`);
-  return isNaN(fallback.getTime()) ? null : fallback.toISOString();
+  return Number.isNaN(fallback.getTime()) ? null : fallback.toISOString();
 }
 
 function previewSelectedGalleryFiles(root, fileList) {
@@ -253,7 +253,6 @@ async function openAdminGallery(root, gallery) {
 ----------------------------------------------------------- */
 
 export async function renderAdmin(root) {
-  const siteSettings = await getSiteSettings();
   const auth = getAuth();
   const isEditor = requireRole(["admin", "editor"]);
   const isAdmin = requireRole(["admin"]);
@@ -274,23 +273,34 @@ export async function renderAdmin(root) {
       </div>
     `;
 
-
     root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+      e.preventDefault();
 
-  try {
-    const fd = new FormData(e.target);
-    await signIn(fd.get("email"), fd.get("password"));
+      try {
+        const fd = new FormData(e.target);
+        await signIn(fd.get("email"), fd.get("password"));
+        await renderAdmin(root);
+      } catch (err) {
+        console.error(err);
+      }
+    });
 
-    // direkt neu rendern statt reload
-    await renderAdmin(root);
-  } catch (err) {
-    console.error(err);
+    return;
   }
-});
 
   const lang = getLang();
-  const [events, galleries, people, forms, audits, tickerItems, homeTiles] = await Promise.all([
+
+  const [
+    siteSettings,
+    events,
+    galleries,
+    people,
+    forms,
+    audits,
+    tickerItems,
+    homeTiles
+  ] = await Promise.all([
+    getSiteSettings(),
     listEventsPublic(),
     listGalleriesPublic(),
     listPeoplePublic(),
@@ -318,6 +328,7 @@ export async function renderAdmin(root) {
           <p class="mono">${t("admin.rolesHint")}</p>
 
           <div style="display:grid;gap:8px">
+            <a href="#admin-branding" class="btn">Branding</a>
             <a href="#admin-events" class="btn">Events</a>
             <a href="#admin-galleries" class="btn">Galerien</a>
             <a href="#admin-people" class="btn">Team</a>
@@ -329,6 +340,49 @@ export async function renderAdmin(root) {
         </div>
 
         <div class="grid" style="gap:14px">
+
+          <!-- BRANDING -->
+          <div id="admin-branding" class="card card__pad">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+              <h2 style="margin:0">Branding</h2>
+              ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+            </div>
+
+            <div class="grid" style="gap:12px;margin-top:12px">
+              <div>
+                <label for="siteTitleInput">Seitentitel</label>
+                <input
+                  id="siteTitleInput"
+                  class="input"
+                  type="text"
+                  value="${escapeHtml(siteSettings?.site_title || "Gustavsburg Cem Evi")}"
+                  placeholder="Seitentitel"
+                  ${isEditor ? "" : "disabled"}
+                />
+              </div>
+
+              <div>
+                <label for="siteLogoInput">Logo hochladen</label>
+                <input
+                  id="siteLogoInput"
+                  class="input"
+                  type="file"
+                  accept="image/*"
+                  ${isEditor ? "" : "disabled"}
+                />
+              </div>
+
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                <img
+                  id="siteLogoPreview"
+                  src="${escapeHtml(siteSettings?.logo_url || "")}"
+                  alt="Logo Preview"
+                  style="width:54px;height:54px;object-fit:contain;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,0.04);${siteSettings?.logo_url ? "" : "display:none;"}"
+                />
+                ${isEditor ? `<button id="saveBrandingBtn" class="btn btn--accent">Branding speichern</button>` : ""}
+              </div>
+            </div>
+          </div>
 
           <!-- EVENTS -->
           <div id="admin-events" class="card card__pad">
@@ -469,32 +523,34 @@ export async function renderAdmin(root) {
 
           <!-- PEOPLE -->
           <div id="admin-people" class="card card__pad">
-            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Team</h2>
-              ${isEditor ? `
-                <div style="display:grid;gap:8px;width:100%;margin-top:12px">
-                  <input id="personName" class="input" placeholder="Name" />
-                  <input id="personImageFile" class="input" type="file" accept="image/*" />
-                  <div id="personImageInfo" class="mono">Kein Bild ausgewählt</div>
-
-                  <input id="personRoleDe" class="input" placeholder="Aufgabe DE" />
-                  <input id="personRoleTr" class="input" placeholder="Aufgabe TR" />
-                  <input id="personRoleEn" class="input" placeholder="Aufgabe EN" />
-
-                  <textarea id="personBioDe" class="input" placeholder="Beschreibung DE" rows="4"></textarea>
-                  <textarea id="personBioTr" class="input" placeholder="Beschreibung TR" rows="4"></textarea>
-                  <textarea id="personBioEn" class="input" placeholder="Beschreibung EN" rows="4"></textarea>
-
-                  <input id="personSortOrder" class="input" type="number" placeholder="Reihenfolge (z.B. 1, 2, 3)" />
-                  <label style="display:flex;align-items:center;gap:8px">
-                    <input id="personVisible" type="checkbox" checked />
-                    Sichtbar
-                  </label>
-
-                  <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
-                </div>
-              ` : ""}
+              ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
             </div>
+
+            ${isEditor ? `
+              <div style="display:grid;gap:8px;width:100%;margin-top:12px">
+                <input id="personName" class="input" placeholder="Name" />
+                <input id="personImageFile" class="input" type="file" accept="image/*" />
+                <div id="personImageInfo" class="mono">Kein Bild ausgewählt</div>
+
+                <input id="personRoleDe" class="input" placeholder="Aufgabe DE" />
+                <input id="personRoleTr" class="input" placeholder="Aufgabe TR" />
+                <input id="personRoleEn" class="input" placeholder="Aufgabe EN" />
+
+                <textarea id="personBioDe" class="input" placeholder="Beschreibung DE" rows="4"></textarea>
+                <textarea id="personBioTr" class="input" placeholder="Beschreibung TR" rows="4"></textarea>
+                <textarea id="personBioEn" class="input" placeholder="Beschreibung EN" rows="4"></textarea>
+
+                <input id="personSortOrder" class="input" type="number" placeholder="Reihenfolge (z.B. 1, 2, 3)" />
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input id="personVisible" type="checkbox" checked />
+                  Sichtbar
+                </label>
+
+                <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
+              </div>
+            ` : ""}
 
             <table class="table" style="margin-top:10px">
               <thead>
@@ -715,6 +771,49 @@ export async function renderAdmin(root) {
       </div>
     </div>
   `;
+
+  /* BRANDING */
+  if (isEditor) {
+    const siteTitleInput = root.querySelector("#siteTitleInput");
+    const siteLogoInput = root.querySelector("#siteLogoInput");
+    const siteLogoPreview = root.querySelector("#siteLogoPreview");
+    const saveBrandingBtn = root.querySelector("#saveBrandingBtn");
+
+    let uploadedLogoUrl = siteSettings?.logo_url || "";
+
+    siteLogoInput?.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      try {
+        const logoUrl = await uploadBrandLogo(file);
+        uploadedLogoUrl = logoUrl;
+
+        siteLogoPreview.src = logoUrl;
+        siteLogoPreview.style.display = "block";
+
+        toast("Logo hochgeladen ✅", "ok");
+      } catch (err) {
+        console.error(err);
+        toast("Logo konnte nicht hochgeladen werden", "bad");
+      }
+    });
+
+    saveBrandingBtn?.addEventListener("click", async () => {
+      try {
+        await updateSiteSettings({
+          site_title: siteTitleInput.value.trim() || "Gustavsburg Cem Evi",
+          logo_url: uploadedLogoUrl || null
+        });
+
+        toast("Branding gespeichert ✅", "ok");
+        location.reload();
+      } catch (err) {
+        console.error(err);
+        toast("Branding konnte nicht gespeichert werden", "bad");
+      }
+    });
+  }
 
   /* FIELD LISTENERS */
 
@@ -1168,46 +1267,46 @@ export async function renderAdmin(root) {
     });
 
     root.querySelectorAll("[data-edit-tile]").forEach((btn) => {
-  btn.addEventListener("click", async () => {
-    const id = btn.getAttribute("data-edit-tile");
-    if (!id) return;
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-edit-tile");
+        if (!id) return;
 
-    const current = homeTiles.find((tile) => tile.id === id);
-    if (!current) return;
+        const current = homeTiles.find((tile) => tile.id === id);
+        if (!current) return;
 
-    const titleDe = prompt("Titel DE?", current.title?.de ?? "");
-    if (!titleDe) return;
+        const titleDe = prompt("Titel DE?", current.title?.de ?? "");
+        if (!titleDe) return;
 
-    const titleTr = prompt("Titel TR?", current.title?.tr ?? "") ?? "";
-    const titleEn = prompt("Titel EN?", current.title?.en ?? "") ?? "";
+        const titleTr = prompt("Titel TR?", current.title?.tr ?? "") ?? "";
+        const titleEn = prompt("Titel EN?", current.title?.en ?? "") ?? "";
 
-    const textDe = prompt("Text DE?", current.text?.de ?? "") ?? "";
-    const textTr = prompt("Text TR?", current.text?.tr ?? "") ?? "";
-    const textEn = prompt("Text EN?", current.text?.en ?? "") ?? "";
+        const textDe = prompt("Text DE?", current.text?.de ?? "") ?? "";
+        const textTr = prompt("Text TR?", current.text?.tr ?? "") ?? "";
+        const textEn = prompt("Text EN?", current.text?.en ?? "") ?? "";
 
-    const buttonDe = prompt("Button Text DE?", current.button_text?.de ?? "") ?? "";
-    const buttonTr = prompt("Button Text TR?", current.button_text?.tr ?? "") ?? "";
-    const buttonEn = prompt("Button Text EN?", current.button_text?.en ?? "") ?? "";
+        const buttonDe = prompt("Button Text DE?", current.button_text?.de ?? "") ?? "";
+        const buttonTr = prompt("Button Text TR?", current.button_text?.tr ?? "") ?? "";
+        const buttonEn = prompt("Button Text EN?", current.button_text?.en ?? "") ?? "";
 
-    const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
-    const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
-    const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
-    const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
+        const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
+        const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
+        const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
+        const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
 
-    await updateHomeTile(id, {
-      title: { de: titleDe, tr: titleTr, en: titleEn },
-      text: { de: textDe, tr: textTr, en: textEn },
-      button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
-      link_url: linkUrl,
-      image_url: imageUrl,
-      sort_order: sortOrder,
-      active: activeText.toLowerCase() === "yes"
+        await updateHomeTile(id, {
+          title: { de: titleDe, tr: titleTr, en: titleEn },
+          text: { de: textDe, tr: textTr, en: textEn },
+          button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
+          link_url: linkUrl,
+          image_url: imageUrl,
+          sort_order: sortOrder,
+          active: activeText.toLowerCase() === "yes"
+        });
+
+        toast("Kachel aktualisiert", "ok");
+        await renderAdmin(root);
+      });
     });
-
-    toast("Kachel aktualisiert", "ok");
-    await renderAdmin(root);
-  });
-});
 
     root.querySelectorAll("[data-del-tile]").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -1242,4 +1341,23 @@ export async function renderAdmin(root) {
   }
 
   initLightbox();
+}
+Der entscheidende Fix
+Das ist der wichtige Teil:
+JavaScript
+if (!auth.user) {
+  ...
+  root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    try {
+      const fd = new FormData(e.target);
+      await signIn(fd.get("email"), fd.get("password"));
+      await renderAdmin(root);
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  return;
 }
