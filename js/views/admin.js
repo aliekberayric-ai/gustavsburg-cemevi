@@ -274,12 +274,24 @@ export async function renderAdmin(root) {
       </div>
     `;
 
-    root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      await signIn(fd.get("email"), fd.get("password"));
+   root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  try {
+    const fd = new FormData(e.target);
+    await signIn(fd.get("email"), fd.get("password"));
+
+    // Admin-Seite direkt neu rendern
+    await renderAdmin(root);
+
+    // optional zusätzlich Hash sauber setzen
+    if (location.hash !== "#/admin") {
       location.hash = "#/admin";
-    });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+});
 
     return;
   }
