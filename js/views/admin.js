@@ -1342,19 +1342,3 @@ export async function renderAdmin(root) {
 
   initLightbox();
 }
-
-/*if (!auth.user) {
-  root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    try {
-      const fd = new FormData(e.target);
-      await signIn(fd.get("email"), fd.get("password"));
-      await renderAdmin(root);
-    } catch (err) {
-      console.error(err);
-    }
-  });
-
-  return; 
-}
