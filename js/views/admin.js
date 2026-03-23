@@ -1343,7 +1343,7 @@ export async function renderAdmin(root) {
   initLightbox();
 }
 
-if (!auth.user) {
+/*if (!auth.user) {
   root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -1356,5 +1356,5 @@ if (!auth.user) {
     }
   });
 
- /* return; */
+  return; 
 }
