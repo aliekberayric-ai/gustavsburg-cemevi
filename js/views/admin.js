@@ -1342,9 +1342,7 @@ export async function renderAdmin(root) {
 
   initLightbox();
 }
-Der entscheidende Fix
-Das ist der wichtige Teil:
-JavaScript
+
 if (!auth.user) {
   ...
   root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
