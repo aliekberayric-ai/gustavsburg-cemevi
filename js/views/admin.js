@@ -720,7 +720,7 @@ export async function renderAdmin(root) {
                       <td>${escapeHtml(f.form_type)}</td>
                       <td class="mono">${escapeHtml(fmtDateTime(f.created_at))}</td>
                       <td>${escapeHtml(f.status)}</td>
-                      <td class="mono">${escapeHtml(JSON.stringify(f.payload).slice(0, 160))}…</td>
+                      <td class="mono">${escapeHtml(JSON.stringify(f.payload).slice(0, 160))}</td>
                       <td style="white-space:nowrap">
                         <button class="btn" data-form-status="${f.id}" data-next="in_review">in_review</button>
                         <button class="btn" data-form-status="${f.id}" data-next="done">done</button>
