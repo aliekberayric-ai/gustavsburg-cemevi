@@ -274,21 +274,20 @@ export async function renderAdmin(root) {
       </div>
     `;
 
-root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
+
+    root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   try {
     const fd = new FormData(e.target);
     await signIn(fd.get("email"), fd.get("password"));
 
-    // Nach erfolgreichem Login Seite komplett neu laden
-    location.reload();
+    // direkt neu rendern statt reload
+    await renderAdmin(root);
   } catch (err) {
     console.error(err);
   }
 });
-    return;
-  }
 
   const lang = getLang();
   const [events, galleries, people, forms, audits, tickerItems, homeTiles] = await Promise.all([
