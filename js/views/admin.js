@@ -1356,5 +1356,5 @@ if (!auth.user) {
     }
   });
 
-  return;
+ /* return; */
 }
