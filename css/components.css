@@ -481,9 +481,15 @@ select:focus {
   margin: 0 0 10px;
 }
 
+/* .home-tile-body p {
+  margin: 0 0 14px;
+  color: var(--muted); 
+} */
+
 .home-tile-body p {
   margin: 0 0 14px;
   color: var(--muted);
+  white-space: pre-line;
 }
 
 /* -----------------------------------------------------------
