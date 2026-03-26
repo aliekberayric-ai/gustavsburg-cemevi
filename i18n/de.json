@@ -1,18 +1,43 @@
 {
-  "brand": { "title": "Gustavsburg Cem Evi" },
-  "nav": { "home": "Start", "gallery": "Galerie", "calendar": "Kalender", "people": "Team", "forms": "Formulare" },
-
+  "brand": {
+    "title": "Gustavsburg Cem Evi"
+  },
+  "nav": {
+    "home": "Start",
+    "gallery": "Galerie",
+    "calendar": "Kalender",
+    "people": "Team",
+    "forms": "Formulare",
+    "admin": "Admin",
+    "about": "Über uns",
+    "contact": "Kontakt"
+  },
   "home": {
     "h1": "Gustavsburg Cem Evi — modern, mehrsprachig, organisiert.",
     "p": "Diese Website ist V1: 3 Sprachen, Animationen, Kalender-Events, Team-Seite, öffentliche Formulare + Admin-Bereich mit Rollen und Audit-Log.",
     "cta1": "Events ansehen",
     "cta2": "Formulare öffnen",
     "cta3": "Galerien",
-    "card1": { "t": "Hip UI", "p": "Sanfte Animationen & Screen-Transitions." },
-    "card2": { "t": "Admin & Rollen", "p": "Editor/Admin darf pflegen — alles wird geloggt." },
-    "card3": { "t": "Archiv", "p": "Formulare & Inhalte strukturiert speicherbar." }
+    "card1": {
+      "t": "Hip UI",
+      "p": "Sanfte Animationen & Screen-Transitions."
+    },
+    "card2": {
+      "t": "Admin & Rollen",
+      "p": "Editor/Admin darf pflegen — alles wird geloggt."
+    },
+    "card3": {
+      "t": "Archiv",
+      "p": "Formulare & Inhalte strukturiert speicherbar."
+    },
+    "noTicker": "Derzeit keine aktuellen Hinweise vorhanden.",
+    "noTiles": "Keine Startseiten-Kacheln vorhanden.",
+    "more": "Mehr",
+    "today": "HEUTE",
+    "soon": "BALD",
+    "important": "WICHTIG",
+    "info": "INFO"
   },
-
   "calendar": {
     "h1": "Kalender",
     "p": "Alle Events werden hier angezeigt. Änderungen laufen über den Admin-Bereich.",
@@ -20,7 +45,6 @@
     "th2": "Titel",
     "th3": "Ort"
   },
-
   "gallery": {
     "h1": "Galerie",
     "p": "Galerien können aktiv oder archiviert sein. Inhalte/Sortierung pflegt der Admin.",
@@ -28,25 +52,34 @@
     "archived": "Archiv",
     "hintAdmin": "Items-Upload & Sortierung folgt in V2 (Storage + Drag&Drop)."
   },
-
   "people": {
     "h1": "Team",
     "p": "Personen mit Vorschaubild, Aufgaben und Beschreibung.",
     "tasks": "Aufgaben"
   },
-
   "forms": {
     "h1": "Formulare",
     "p": "Online ausfüllen und direkt archivieren (Supabase).",
-    "member": { "h": "Mitgliedsanmeldung", "p": "Daten werden gespeichert und können später gefiltert/gedruckt werden." },
-    "funeral": { "h": "Bestattungsvorsorge", "p": "Vorsorge-Wünsche sicher ablegen und später bearbeiten." },
+    "member": {
+      "h": "Mitgliedsanmeldung",
+      "p": "Daten werden gespeichert und können später gefiltert/gedruckt werden."
+    },
+    "funeral": {
+      "h": "Bestattungsvorsorge",
+      "p": "Vorsorge-Wünsche sicher ablegen und später bearbeiten."
+    },
     "firstName": "Vorname",
     "lastName": "Nachname",
     "fullName": "Vor- und Nachname",
     "email": "Email",
     "phone": "Telefon",
     "memberType": "Mitgliedstyp",
-    "types": { "family": "Familie", "spouse": "Ehepartner", "single": "Single", "pensioner": "Rentner" },
+    "types": {
+      "family": "Familie",
+      "spouse": "Ehepartner",
+      "single": "Single",
+      "pensioner": "Rentner"
+    },
     "notes": "Notizen",
     "birthdate": "Geburtsdatum (optional)",
     "ageGroup": "Altersgruppe",
@@ -55,7 +88,6 @@
     "hint": "Hinweis: Admin kann die Einträge später prüfen, filtern und drucken.",
     "sent": "Gesendet ✅"
   },
-
   "admin": {
     "login": "Login",
     "signIn": "Einloggen",
@@ -81,5 +113,15 @@
     "table": "Tabelle",
     "actor": "User",
     "galleryItemsNote": "V1 zeigt Galerien. In V2 kommen Upload/Sortierung pro Galerie-Item (Storage)."
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "yes": "Ja",
+    "no": "Nein",
+    "loading": "Lädt...",
+    "error": "Fehler",
+    "success": "Erfolg"
   }
 }
