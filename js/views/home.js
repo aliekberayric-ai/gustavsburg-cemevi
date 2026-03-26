@@ -1,59 +1,27 @@
 import { listHomeTicker } from "../modules/homeTicker.js";
 import { listHomeTiles } from "../modules/homeTiles.js";
-import { getLang } from "../i18n.js";
+import { getLang, pickLocalized, t } from "../i18n.js";
 import { escapeHtml } from "../ui.js";
 
-function pickLocalized(obj, lang) {
-  if (!obj) return "";
-
-  // Falls Datenbank mal nur String statt Sprachobjekt enthält
-  if (typeof obj === "string") return obj;
-
-  return obj?.[lang] || obj?.de || obj?.tr || obj?.en || "";
-}
-
 function getTickerLabel(color, lang) {
-  const labels = {
-    de: {
-      green: "HEUTE",
-      yellow: "BALD",
-      red: "WICHTIG",
-      neutral: "INFO"
-    },
-    tr: {
-      green: "BUGÜN",
-      yellow: "YAKINDA",
-      red: "ÖNEMLİ",
-      neutral: "BİLGİ"
-    },
-    en: {
-      green: "TODAY",
-      yellow: "SOON",
-      red: "IMPORTANT",
-      neutral: "INFO"
-    }
-  };
+  if (lang === "tr") {
+    if (color === "green") return "BUGÜN";
+    if (color === "yellow") return "YAKINDA";
+    if (color === "red") return "ÖNEMLİ";
+    return "BİLGİ";
+  }
 
-  const safeLang = labels[lang] ? lang : "de";
-  return labels[safeLang][color] || labels[safeLang].neutral;
-}
+  if (lang === "en") {
+    if (color === "green") return "TODAY";
+    if (color === "yellow") return "SOON";
+    if (color === "red") return "IMPORTANT";
+    return "INFO";
+  }
 
-function getDefaultButtonText(lang) {
-  if (lang === "tr") return "Daha fazla";
-  if (lang === "en") return "More";
-  return "Mehr";
-}
-
-function getEmptyTickerText(lang) {
-  if (lang === "tr") return "Şu anda güncel duyuru bulunmamaktadır.";
-  if (lang === "en") return "There are currently no announcements available.";
-  return "Derzeit keine aktuellen Hinweise vorhanden.";
-}
-
-function getEmptyTilesText(lang) {
-  if (lang === "tr") return "Ana sayfa kutuları mevcut değil.";
-  if (lang === "en") return "No homepage tiles available.";
-  return "Keine Startseiten-Kacheln vorhanden.";
+  if (color === "green") return "HEUTE";
+  if (color === "yellow") return "BALD";
+  if (color === "red") return "WICHTIG";
+  return "INFO";
 }
 
 export async function renderHome(root) {
@@ -84,7 +52,7 @@ export async function renderHome(root) {
               ticker.length
                 ? [...ticker, ...ticker]
                     .map((item) => {
-                      const text = pickLocalized(item.text, lang);
+                      const text = pickLocalized(item.text);
                       const color = item.color || "neutral";
                       const label = getTickerLabel(color, lang);
 
@@ -104,12 +72,8 @@ export async function renderHome(root) {
                 : `
                   <span class="home-ticker-item">
                     <span class="ticker-dot ticker-dot-neutral"></span>
-                    <span class="ticker-label ticker-label-neutral">
-                      ${escapeHtml(getTickerLabel("neutral", lang))}
-                    </span>
-                    <span class="ticker-text">
-                      ${escapeHtml(getEmptyTickerText(lang))}
-                    </span>
+                    <span class="ticker-label ticker-label-neutral">${escapeHtml(t("home.info"))}</span>
+                    <span class="ticker-text">${escapeHtml(t("home.noTicker"))}</span>
                   </span>
                 `
             }
@@ -124,9 +88,9 @@ export async function renderHome(root) {
               <div class="home-tiles-grid">
                 ${tiles
                   .map((tile) => {
-                    const title = pickLocalized(tile.title, lang);
-                    const text = pickLocalized(tile.text, lang);
-                    const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
+                    const title = pickLocalized(tile.title);
+                    const text = pickLocalized(tile.text);
+                    const button = pickLocalized(tile.button_text) || t("home.more");
 
                     return `
                       <div class="home-tile-card">
@@ -152,7 +116,7 @@ export async function renderHome(root) {
                   .join("")}
               </div>
             `
-            : `<div class="empty-state">${escapeHtml(getEmptyTilesText(lang))}</div>`
+            : `<div class="empty-state">${escapeHtml(t("home.noTiles"))}</div>`
         }
       </section>
 
