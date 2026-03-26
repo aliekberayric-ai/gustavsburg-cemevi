@@ -1284,3 +1284,17 @@ body.lang-fade #app {
     transform: translateY(0);
   }
 }
+
+
+/* Page transition */
+.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.2s ease;
+}
