@@ -1,7 +1,9 @@
 /**
  * router.js
- * - hash router
- * - animated transitions
+ * SPA Router mit:
+ * - Page Transitions (fade)
+ * - i18n Re-Apply nach jedem Render
+ * - Smooth Scroll nach oben
  */
 
 import { renderHome } from "./views/home.js";
@@ -11,40 +13,103 @@ import { renderPeople } from "./views/people.js";
 import { renderForms } from "./views/forms.js";
 import { renderAdmin } from "./views/admin.js";
 
+import { applyTranslations } from "./i18n.js";
+
+// -------------------------------
+// ROUTES
+// -------------------------------
 const routes = {
   "/": renderHome,
   "/gallery": renderGallery,
   "/calendar": renderCalendar,
   "/people": renderPeople,
   "/forms": renderForms,
-  "/admin": renderAdmin,
+  "/admin": renderAdmin
 };
 
-function getPath(){
+// -------------------------------
+// PATH HELPER
+// -------------------------------
+function getPath() {
   const hash = location.hash.replace("#", "") || "/";
-  return hash.startsWith("/") ? hash : "/";
+  return hash.startsWith("/") ? hash : "/" + hash;
 }
 
-export function initRouter(){
+// -------------------------------
+// INIT ROUTER
+// -------------------------------
+export function initRouter() {
   window.addEventListener("hashchange", navigate);
   navigate();
 }
 
-async function navigate(){
+// -------------------------------
+// NAVIGATION
+// -------------------------------
+async function navigate() {
   const app = document.querySelector("#app");
+  if (!app) {
+    console.error("#app nicht gefunden");
+    return;
+  }
+
   const path = getPath();
-  const view = routes[path] ?? routes["/"];
+  const view = routes[path] || routes["/"];
 
-  app.classList.add("fade-out");
-  await sleep(140);
+  try {
+    // -----------------------
+    // FADE OUT
+    // -----------------------
+    app.classList.add("fade-out");
+    await sleep(120);
 
-  app.innerHTML = "";
-  await view(app);
+    // -----------------------
+    // CLEAR CONTENT
+    // -----------------------
+    app.innerHTML = "";
 
-  app.classList.remove("fade-out");
-  app.classList.add("fade-in");
-  await sleep(180);
-  app.classList.remove("fade-in");
+    // -----------------------
+    // RENDER VIEW
+    // -----------------------
+    await view(app);
+
+    // -----------------------
+    // 🔥 i18n FIX (WICHTIG)
+    // -----------------------
+    applyTranslations();
+
+    // -----------------------
+    // SCROLL TOP
+    // -----------------------
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+    // -----------------------
+    // FADE IN
+    // -----------------------
+    app.classList.remove("fade-out");
+    app.classList.add("fade-in");
+
+    await sleep(150);
+    app.classList.remove("fade-in");
+
+  } catch (err) {
+    console.error("Router Fehler:", err);
+
+    app.innerHTML = `
+      <div style="padding:40px; text-align:center;">
+        <h2>⚠️ Fehler beim Laden der Seite</h2>
+        <p>${err.message}</p>
+      </div>
+    `;
+  }
 }
 
-function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+// -------------------------------
+// SLEEP HELPER
+// -------------------------------
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
