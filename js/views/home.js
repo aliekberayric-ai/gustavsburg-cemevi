@@ -4,14 +4,56 @@ import { getLang } from "../i18n.js";
 import { escapeHtml } from "../ui.js";
 
 function pickLocalized(obj, lang) {
-  return obj?.[lang] ?? obj?.de ?? "";
+  if (!obj) return "";
+
+  // Falls Datenbank mal nur String statt Sprachobjekt enthält
+  if (typeof obj === "string") return obj;
+
+  return obj?.[lang] || obj?.de || obj?.tr || obj?.en || "";
 }
 
-function getTickerLabel(color) {
-  if (color === "green") return "HEUTE";
-  if (color === "yellow") return "BALD";
-  if (color === "red") return "WICHTIG";
-  return "INFO";
+function getTickerLabel(color, lang) {
+  const labels = {
+    de: {
+      green: "HEUTE",
+      yellow: "BALD",
+      red: "WICHTIG",
+      neutral: "INFO"
+    },
+    tr: {
+      green: "BUGÜN",
+      yellow: "YAKINDA",
+      red: "ÖNEMLİ",
+      neutral: "BİLGİ"
+    },
+    en: {
+      green: "TODAY",
+      yellow: "SOON",
+      red: "IMPORTANT",
+      neutral: "INFO"
+    }
+  };
+
+  const safeLang = labels[lang] ? lang : "de";
+  return labels[safeLang][color] || labels[safeLang].neutral;
+}
+
+function getDefaultButtonText(lang) {
+  if (lang === "tr") return "Daha fazla";
+  if (lang === "en") return "More";
+  return "Mehr";
+}
+
+function getEmptyTickerText(lang) {
+  if (lang === "tr") return "Şu anda güncel duyuru bulunmamaktadır.";
+  if (lang === "en") return "There are currently no announcements available.";
+  return "Derzeit keine aktuellen Hinweise vorhanden.";
+}
+
+function getEmptyTilesText(lang) {
+  if (lang === "tr") return "Ana sayfa kutuları mevcut değil.";
+  if (lang === "en") return "No homepage tiles available.";
+  return "Keine Startseiten-Kacheln vorhanden.";
 }
 
 export async function renderHome(root) {
@@ -44,13 +86,13 @@ export async function renderHome(root) {
                     .map((item) => {
                       const text = pickLocalized(item.text, lang);
                       const color = item.color || "neutral";
-                      const label = getTickerLabel(color);
+                      const label = getTickerLabel(color, lang);
 
                       return `
                         <span class="home-ticker-item">
                           <span class="ticker-dot ticker-dot-${escapeHtml(color)}"></span>
                           <span class="ticker-label ticker-label-${escapeHtml(color)}">
-                            ${label}
+                            ${escapeHtml(label)}
                           </span>
                           <span class="ticker-text">
                             ${escapeHtml(text)}
@@ -62,8 +104,12 @@ export async function renderHome(root) {
                 : `
                   <span class="home-ticker-item">
                     <span class="ticker-dot ticker-dot-neutral"></span>
-                    <span class="ticker-label ticker-label-neutral">INFO</span>
-                    <span class="ticker-text">Derzeit keine aktuellen Hinweise vorhanden.</span>
+                    <span class="ticker-label ticker-label-neutral">
+                      ${escapeHtml(getTickerLabel("neutral", lang))}
+                    </span>
+                    <span class="ticker-text">
+                      ${escapeHtml(getEmptyTickerText(lang))}
+                    </span>
                   </span>
                 `
             }
@@ -80,13 +126,13 @@ export async function renderHome(root) {
                   .map((tile) => {
                     const title = pickLocalized(tile.title, lang);
                     const text = pickLocalized(tile.text, lang);
-                    const button = pickLocalized(tile.button_text, lang) || "Mehr";
+                    const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
 
                     return `
                       <div class="home-tile-card">
                         ${
                           tile.image_url
-                            ? `<img src="${tile.image_url}" alt="${escapeHtml(title)}" class="home-tile-image">`
+                            ? `<img src="${escapeHtml(tile.image_url)}" alt="${escapeHtml(title)}" class="home-tile-image">`
                             : ""
                         }
 
@@ -96,7 +142,7 @@ export async function renderHome(root) {
 
                           ${
                             tile.link_url
-                              ? `<a href="${tile.link_url}" class="btn btn--accent">${escapeHtml(button)}</a>`
+                              ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
                               : ""
                           }
                         </div>
@@ -106,7 +152,7 @@ export async function renderHome(root) {
                   .join("")}
               </div>
             `
-            : `<div class="empty-state">Keine Startseiten-Kacheln vorhanden.</div>`
+            : `<div class="empty-state">${escapeHtml(getEmptyTilesText(lang))}</div>`
         }
       </section>
 
