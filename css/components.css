@@ -1286,8 +1286,8 @@ body.lang-fade #app {
 
 .site-brand img,
 #brandLogo {
-  width: 56px;
-  height: 56px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
   border-radius: 12px;
   display: block;
@@ -1296,7 +1296,7 @@ body.lang-fade #app {
 
 .site-brand img:hover,
 #brandLogo:hover {
-  transform: scale(3);
+  transform: scale(2);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
   position: relative;
   z-index: 50;
