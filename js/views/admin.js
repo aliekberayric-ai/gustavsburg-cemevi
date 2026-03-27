@@ -879,10 +879,18 @@ export async function renderAdmin(root) {
 
 
 root.querySelector("#tileImageFile")?.addEventListener("change", (e) => {
-  const info = root.querySelector("#tileImageInfo");
   const file = e.target.files?.[0];
-  if (!info) return;
-  info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
+  const info = root.querySelector("#tileImageInfo");
+
+  if (!file || !info) return;
+
+  info.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="${URL.createObjectURL(file)}"
+           style="width:60px;height:60px;object-fit:cover;border-radius:10px;">
+      <span>${file.name}</span>
+    </div>
+  `;
 });
   
   /* -----------------------------------------------------------
