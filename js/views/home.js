@@ -138,6 +138,10 @@ function buildTickerRow(items) {
   return `
     <div class="home-ticker">
       <div class="home-ticker-track">
+
+    <div class="home-ticker home-ticker--reverse">
+      <div class="home-ticker-track">
+      
         ${doubled.map((item) => `
           <span class="home-ticker-item">
             <span class="ticker-icon">${item.icon}</span>
