@@ -42,7 +42,6 @@ function resolveDisplayType(item) {
   const explicit = item?.display_type || "auto";
 
   if (explicit !== "auto") return explicit;
-
   if (!item?.start_time) return "info";
 
   const date = new Date(item.start_time);
@@ -118,9 +117,7 @@ function buildTickerRow(items, reverse = false) {
             <span class="ticker-label ticker-label-${escapeHtml(item.color)}">
               ${escapeHtml(item.label)}
             </span>
-            <span class="ticker-text">
-              ${escapeHtml(item.text)}
-            </span>
+            <span class="ticker-text">${escapeHtml(item.text)}</span>
           </span>
         `).join("")}
       </div>
@@ -145,3 +142,33 @@ export async function renderHome(root) {
     tiles = await listHomeTiles();
   } catch (err) {
     console.error("Fehler beim Laden der Startseiten-Kacheln:", err);
+  }
+
+  try {
+    events = await listEventsPublic();
+  } catch (err) {
+    console.error("Fehler beim Laden der Events:", err);
+  }
+
+  const manualItems = ticker
+    .filter((item) => item.active)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    .map((item) => {
+      const displayType = item.display_type || "info";
+      const meta = getTypeMeta(displayType, lang);
+
+      return {
+        text: pickLocalized(item.text, lang),
+        icon: meta.icon,
+        color: meta.color,
+        label: meta.label
+      };
+    });
+
+  const upcomingEvents = events
+    .filter((event) => {
+      if (!event.start_time) return false;
+      const eventDate = new Date(event.start_time);
+      return eventDate >= getTodayStart();
+    })
+    .sort((a, b) =>
