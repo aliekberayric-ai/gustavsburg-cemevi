@@ -830,10 +830,10 @@ export async function renderAdmin(root) {
      BRANDING
   ----------------------------------------------------------- */
   if (isEditor) {
-    const siteTitleInput = querySelector("#siteTitleInput");
-    const siteLogoInput = querySelector("#siteLogoInput");
-    const siteLogoPreview = querySelector("#siteLogoPreview");
-    const saveBrandingBtn = querySelector("#saveBrandingBtn");
+    const siteTitleInput = document.querySelector("#siteTitleInput");
+    const siteLogoInput = document.querySelector("#siteLogoInput");
+    const siteLogoPreview = document.querySelector("#siteLogoPreview");
+    const saveBrandingBtn = qdocument.uerySelector("#saveBrandingBtn");
 
     let uploadedLogoUrl = siteSettings?.logo_url || "";
 
