@@ -1298,3 +1298,21 @@ body.lang-fade #app {
   transform: translateY(0);
   transition: all 0.2s ease;
 }
+
+#siteLogoPreview {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: zoom-in;
+}
+
+#siteLogoPreview:hover {
+  transform: scale(2);
+  z-index: 50;
+  position: relative;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+}
