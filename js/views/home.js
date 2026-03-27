@@ -218,32 +218,40 @@ export async function renderHome(root) {
         ${
           tiles.length
             ? `
-              <div class="home-tiles-grid">
-                ${tiles.map((tile) => {
-                  const title = pickLocalized(tile.title, lang);
-                  const text = pickLocalized(tile.text, lang);
-                  const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
-                  const widthClass = `tile-width-${tile.layout_width || "third"}`;
-                  const heightClass = `tile-height-${tile.layout_height || "medium"}`;
-                  return `
-                    <div class="home-tile-card"
-                      ${widthClass} ${heightClass}">
-                      ${tile.image_url
-                       ? ⁠ <img src="${escapeHtml(tile.image_url)}" alt="${escapeHtml(title)}" class="home-tile-image"> ⁠: "" }
 
-                      <div class="home-tile-body">
-                        <h3>${escapeHtml(title)}</h3>
-                        <p>${escapeHtml(text)}</p>
-                        ${
-                          tile.link_url
-                            ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
-                            : ""
-                        }
-                      </div>
-                    </div>
-                  `;
-                }).join("")}
-              </div>
+<div class="home-tiles-grid">
+  ${tiles.map((tile) => {
+    const title = pickLocalized(tile.title, lang);
+    const text = pickLocalized(tile.text, lang);
+    const button =
+      pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
+
+    const widthClass = `tile-width-${tile.layout_width || "third"}`;
+    const heightClass = `tile-height-${tile.layout_height || "medium"}`;
+
+    return `
+      <div class="home-tile-card ${widthClass} ${heightClass}">
+        ${
+          tile.image_url
+            ? `<img src="${escapeHtml(tile.image_url)}" alt="${escapeHtml(title)}" class="home-tile-image">`
+            : ""
+        }
+
+        <div class="home-tile-body">
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(text)}</p>
+
+          ${
+            tile.link_url
+              ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
+              : ""
+          }
+        </div>
+      </div>
+    `;
+  }).join("")}
+</div>
+              
             `
             : `<div class="empty-state">${escapeHtml(getEmptyTilesText(lang))}</div>`
         }
