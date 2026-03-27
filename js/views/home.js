@@ -114,9 +114,7 @@ function buildTickerRow(items, reverse = false) {
         ${doubled.map((item) => `
           <span class="home-ticker-item">
             <span class="ticker-icon">${item.icon}</span>
-            <span class="ticker-label ticker-label-${escapeHtml(item.color)}">
-              ${escapeHtml(item.label)}
-            </span>
+            <span class="ticker-label ticker-label-${escapeHtml(item.color)}">${escapeHtml(item.label)}</span>
             <span class="ticker-text">${escapeHtml(item.text)}</span>
           </span>
         `).join("")}
@@ -230,16 +228,15 @@ export async function renderHome(root) {
                     <div class="home-tile-card">
                       ${
                         tile.image_url
-                          ? ⁠ <img src="${escapeHtml(tile.image_url)}" alt="${escapeHtml(title)}" class="home-tile-image"> ⁠
+                          ? `<img src="${escapeHtml(tile.image_url)}" alt="${escapeHtml(title)}" class="home-tile-image">`
                           : ""
                       }
-
                       <div class="home-tile-body">
                         <h3>${escapeHtml(title)}</h3>
                         <p>${escapeHtml(text)}</p>
                         ${
                           tile.link_url
-                            ? ⁠ <a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a> ⁠
+                            ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
                             : ""
                         }
                       </div>
@@ -248,7 +245,7 @@ export async function renderHome(root) {
                 }).join("")}
               </div>
             `
-            : ⁠ <div class="empty-state">${escapeHtml(getEmptyTilesText(lang))}</div> ⁠
+            : `<div class="empty-state">${escapeHtml(getEmptyTilesText(lang))}</div>`
         }
       </section>
     </div>
