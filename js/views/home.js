@@ -137,7 +137,7 @@ function buildTickerRow(items) {
 
   return `
 
-    <div class="home-ticker home-ticker--reverse">
+    <div class="home-ticker">
       <div class="home-ticker-track">
       
         ${doubled.map((item) => `
@@ -224,7 +224,8 @@ export async function renderHome(root) {
           manualItems.length
             ? buildTickerRow(manualItems)
             : `
-              <div class="home-ticker">
+              <div class="home-ticker
+              home-ticker--reverse">
                 <div class="home-ticker-track">
                   <span class="home-ticker-item">
                     <span class="ticker-icon">ℹ️</span>
