@@ -65,6 +65,7 @@ img {
   width: min(var(--container), calc(100% - 32px));
   margin: 0 auto;
   padding: 18px 0 36px;
+  overflow: visible;
 }
 
 .grid {
@@ -81,6 +82,7 @@ img {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
   gap: 18px;
+  overflow: visible;
 }
 
 @media (max-width: 980px) {
@@ -112,8 +114,6 @@ img {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
-
-  /* WICHTIG für Hover-Vorschau */
   overflow: visible;
   position: relative;
   z-index: 1;
@@ -236,7 +236,8 @@ select:focus {
 
 .table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.96rem;
   overflow: visible !important;
   position: relative;
@@ -340,11 +341,10 @@ select:focus {
    HOME TICKER
 ----------------------------------------------------------- */
 
-/* ticker scrift stylen */
 .home-ticker-section {
   margin-top: 18px;
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .home-ticker {
@@ -353,37 +353,40 @@ select:focus {
   border: 1px solid var(--line);
   background: rgba(255,255,255,0.04);
   padding: 14px 0;
+  position: relative;
 }
 
 .home-ticker-track {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
-  animation: tickerMove 36s linear infinite;
+  width: max-content;
+  will-change: transform;
+  animation: tickerMoveLeft 35s linear infinite;
+}
+
+.home-ticker--reverse .home-ticker-track {
+  animation: tickerMoveRight 35s linear infinite;
 }
 
 .home-ticker:hover .home-ticker-track {
   animation-play-state: paused;
 }
 
-/* untere zeile läuft anders herum */
-.home-ticker--revers .home-ticker-track {
-  animation: tickerMoveRight 36s linear infinite;
-}
-
 .home-ticker-item {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  margin-right: 52px;
-  font-size: 17px; /* schrift grösser */
+  margin-right: 48px;
+  font-size: 17px;
   font-weight: 600;
+  flex: 0 0 auto;
 }
+
 .ticker-icon {
   font-size: 18px;
   line-height: 1;
 }
-
-
 
 .ticker-dot {
   width: 16px;
@@ -445,19 +448,19 @@ select:focus {
 
 @keyframes tickerMoveLeft {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
 @keyframes tickerMoveRight {
   0% {
-    transform: translateX(100%);
+    transform: translateX(-50%);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(0);
   }
 }
 
@@ -504,16 +507,11 @@ select:focus {
   margin: 0 0 10px;
 }
 
-/* .home-tile-body p {
-  margin: 0 0 14px;
-  color: var(--muted); 
-} */
-
 .home-tile-body p {
   margin: 0 0 14px;
   color: var(--muted);
   white-space: pre-line;
-  line-height:1.6;
+  line-height: 1.6;
   font-size: 1rem;
 }
 
@@ -848,13 +846,6 @@ select:focus {
    CALENDAR PREVIEW / PREMIUM HOVER
 ----------------------------------------------------------- */
 
-/* Tabelle stabil halten */
-.table {
-  position: relative;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
 .table tbody {
   position: relative;
 }
@@ -865,13 +856,11 @@ select:focus {
   transition: opacity 0.22s ease, filter 0.22s ease, background 0.22s ease;
 }
 
-/* Alle Zeilen leicht in den Hintergrund, wenn man in der Tabelle hovert */
 .table tbody:hover tr {
   opacity: 0.55;
   filter: saturate(0.85);
 }
 
-/* Aktive Zeile kommt nach vorn */
 .table tbody tr:hover {
   opacity: 1;
   filter: none;
@@ -879,7 +868,6 @@ select:focus {
   background: rgba(255,255,255,0.04);
 }
 
-/* Preview-Zelle */
 .calendar-preview-wrap {
   position: relative;
   width: 110px;
@@ -891,7 +879,6 @@ select:focus {
   z-index: 2;
 }
 
-/* Kleine Vorschau */
 .calendar-preview-thumb {
   width: 88px;
   height: 52px;
@@ -910,12 +897,10 @@ select:focus {
   z-index: 2;
 }
 
-/* Hover-Container nach vorne */
 .calendar-preview-wrap:hover {
   z-index: 9999;
 }
 
-/* Kleine Vorschau wird schon etwas edler */
 .calendar-preview-wrap:hover .calendar-preview-thumb {
   transform: scale(1.03);
   border-color: rgba(255,255,255,0.28);
@@ -923,7 +908,6 @@ select:focus {
   filter: brightness(1.03);
 }
 
-/* Großes Hover-Fenster */
 .calendar-preview-popup {
   position: absolute;
   right: calc(100% + 16px);
@@ -958,7 +942,6 @@ select:focus {
     box-shadow 0.24s ease;
 }
 
-/* Leichter Glow-Ring */
 .calendar-preview-popup::before {
   content: "";
   position: absolute;
@@ -976,7 +959,6 @@ select:focus {
   pointer-events: none;
 }
 
-/* Großes Bild */
 .calendar-preview-popup img {
   width: 100%;
   max-width: 100%;
@@ -987,20 +969,17 @@ select:focus {
   box-shadow: 0 10px 26px rgba(0,0,0,0.26);
 }
 
-/* Sichtbar beim Hover */
 .calendar-preview-wrap:hover .calendar-preview-popup {
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
 
-/* Wenn du die Vorschau mal links/rechts wechseln willst */
 .calendar-preview-wrap.preview-left .calendar-preview-popup {
   left: calc(100% + 16px);
   right: auto;
   transform-origin: left center;
 }
 
-/* Mobile / kleinere Bildschirme */
 @media (max-width: 900px) {
   .calendar-preview-popup {
     width: 320px;
@@ -1013,7 +992,6 @@ select:focus {
 }
 
 @media (max-width: 700px) {
-  /* Auf kleinen Screens lieber kein großes Popup */
   .calendar-preview-popup {
     display: none !important;
   }
@@ -1198,40 +1176,6 @@ label {
   }
 }
 
-/* Sprachflaggen */
-
-.lang-switch {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.lang-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  opacity: 0.7;
-  transition: all .2s ease;
-}
-
-.lang-btn img {
-  width: 28px;
-  height: 20px;
-  border-radius: 4px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.3);
-}
-
-.lang-btn:hover {
-  opacity: 1;
-  transform: scale(1.15);
-}
-
-.lang-btn.active {
-  opacity: 1;
-  transform: scale(1.2);
-  box-shadow: 0 0 6px rgba(255,255,255,0.6);
-}
 /* -----------------------------------------------------------
    PREMIUM LANGUAGE UX
 ----------------------------------------------------------- */
@@ -1310,8 +1254,8 @@ body.lang-fade #app {
   }
 }
 
-
 /* Page transition */
+
 .fade-out {
   opacity: 0;
   transform: translateY(10px);
@@ -1324,43 +1268,16 @@ body.lang-fade #app {
   transition: all 0.2s ease;
 }
 
-#siteLogoPreview {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.04);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  cursor: zoom-in;
-}
-
-#siteLogoPreview:hover {
-  transform: scale(2);
-  z-index: 50;
-  position: relative;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
-}
-
-/* =========================================================
+/* ---------------------------------------------------------
    BRANDING / LOGO
-   - Header Logo
-   - Admin Logo Preview
-   - Premium Hover
-========================================================= */
+--------------------------------------------------------- */
 
-/* Wichtig: Hover darf nicht abgeschnitten werden */
 #admin-branding,
 #admin-branding .card,
-#admin-branding .card__pad,
-.admin-grid,
-.page {
+#admin-branding .card__pad {
   overflow: visible;
 }
 
-/* ---------------------------------------------------------
-   HEADER LOGO
---------------------------------------------------------- */
 .site-brand {
   display: flex;
   align-items: center;
@@ -1369,8 +1286,8 @@ body.lang-fade #app {
 
 .site-brand img,
 #brandLogo {
-  width: 56px;          /* HIER Header-Logo Größe ändern */
-  height: 56px;         /* HIER Header-Logo Größe ändern */
+  width: 56px;
+  height: 56px;
   object-fit: contain;
   border-radius: 12px;
   display: block;
@@ -1379,20 +1296,16 @@ body.lang-fade #app {
 
 .site-brand img:hover,
 #brandLogo:hover {
-  transform: scale(1.25);   /* HIER Hover-Faktor Header ändern */
+  transform: scale(1.25);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
   position: relative;
   z-index: 50;
 }
 
-/* Wenn kein Logo da ist */
 #brandLogo.hidden {
   display: none !important;
 }
 
-/* ---------------------------------------------------------
-   ADMIN BRANDING BLOCK
---------------------------------------------------------- */
 #admin-branding {
   position: relative;
   overflow: visible;
@@ -1409,12 +1322,9 @@ body.lang-fade #app {
   width: 100%;
 }
 
-/* ---------------------------------------------------------
-   ADMIN LOGO PREVIEW
---------------------------------------------------------- */
 #siteLogoPreview {
-  width: 100px;          /* HIER normale Größe ändern */
-  height: 100px;         /* HIER normale Größe ändern */
+  width: 100px;
+  height: 100px;
   object-fit: contain;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.16);
@@ -1430,9 +1340,8 @@ body.lang-fade #app {
   transform-origin: center center;
 }
 
-/* Premium Hover */
 #siteLogoPreview:hover {
-  transform: scale(2);   /* HIER doppelt so groß einstellen */
+  transform: scale(2);
   position: relative;
   z-index: 100;
   border-color: rgba(255,255,255,0.35);
@@ -1440,14 +1349,10 @@ body.lang-fade #app {
   box-shadow: 0 18px 50px rgba(0,0,0,0.42);
 }
 
-/* Falls Preview zuerst versteckt wird */
 #siteLogoPreview[style*="display:none"] {
   display: none !important;
 }
 
-/* ---------------------------------------------------------
-   Optional: etwas mehr Platz im Branding-Bereich
---------------------------------------------------------- */
 #admin-branding .grid {
   overflow: visible;
 }
@@ -1461,9 +1366,6 @@ body.lang-fade #app {
   flex-wrap: wrap;
 }
 
-/* ---------------------------------------------------------
-   Mobile Anpassung
---------------------------------------------------------- */
 @media (max-width: 768px) {
   #siteLogoPreview {
     width: 74px;
