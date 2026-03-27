@@ -188,7 +188,7 @@ export async function renderHome(root) {
       <section class="home-ticker-section">
         ${
           manualItems.length
-            ? buildTickerRow(manualItems, false)
+            ? buildTickerRow(manualItems, true)
             : `
               <div class="home-ticker">
                 <div class="home-ticker-track">
@@ -209,7 +209,7 @@ export async function renderHome(root) {
 
         ${
           eventItems.length
-            ? buildTickerRow(eventItems, true)
+            ? buildTickerRow(eventItems, false)
             : ""
         }
       </section>
