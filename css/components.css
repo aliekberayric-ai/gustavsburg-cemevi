@@ -365,6 +365,11 @@ select:focus {
   animation-play-state: paused;
 }
 
+/* untere zeile läuft anders herum */
+.home-ticker--revers .home-ticker-track {
+  animation: tickerMoveRight 36s linear infinite;
+}
+
 .home-ticker-item {
   display: inline-flex;
   align-items: center;
@@ -438,7 +443,16 @@ select:focus {
   color: #fff;
 }
 
-@keyframes tickerMove {
+@keyframes tickerMoveLeft {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes tickerMoveRight {
   0% {
     transform: translateX(100%);
   }
