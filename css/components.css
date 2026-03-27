@@ -1407,7 +1407,7 @@ body.lang-fade #app {
 
 /* Premium Hover */
 #siteLogoPreview:hover {
-  transform: scale(3);   /* HIER doppelt so groß einstellen */
+  transform: scale(5);   /* HIER doppelt so groß einstellen */
   position: relative;
   z-index: 100;
   border-color: rgba(255,255,255,0.35);
