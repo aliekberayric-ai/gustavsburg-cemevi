@@ -435,6 +435,13 @@ export async function renderAdmin(root) {
                 <input id="eventDate" class="input" type="date" />
                 <input id="eventTime" class="input" type="time" />
                 <input id="eventLocation" class="input" placeholder="Ort" />
+                  <select id="eventDisplayType" class="input">
+                   <option value="auto">Auto</option>
+                   <option value="today">🟢 Heute</option>
+                   <option value="urgent">🔥 Dringend</option>
+                   <option value="future">📅 Zukunft</option>
+                   <option value="info">ℹ️ Hinweis</option>
+                  </select>             
                 <input id="eventPreviewImageFile" class="input" type="file" accept="image/*" />
                 <div id="eventPreviewImageInfo" class="mono">Kein Bild ausgewählt</div>
                 <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
@@ -622,11 +629,13 @@ export async function renderAdmin(root) {
                 <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
 
                 <select id="tickerColor" class="input">
-                  <option value="green">🟢 Heute / aktuell</option>
-                  <option value="yellow">🟡 Bald</option>
-                  <option value="red">🔴 Wichtig</option>
-                  <option value="neutral">⚪ Info</option>
-                </select>
+                <select id="tickerDisplayType" class="input">
+                  <option value="info">ℹ️ Hinweis</option>
+                  <option value="urgent">🔥 Dringend</option>
+                  <option value="future">📅 Zukunft</option>
+                  <option value="today">🟢 Heute</option>
+                 </select>
+               
 
                 <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
 
@@ -914,6 +923,7 @@ export async function renderAdmin(root) {
         const date = root.querySelector("#eventDate")?.value || "";
         const time = root.querySelector("#eventTime")?.value || "";
         const loc = root.querySelector("#eventLocation")?.value.trim() || "";
+          const displayType = root.querySelector("#eventDisplayType")?.value || "auto";        
         const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
 
         if (!de) {
@@ -948,6 +958,7 @@ export async function renderAdmin(root) {
           start_time: startISO,
           location: loc,
           preview_image_url: previewImageUrl,
+          display_type: displayType,
           description: { de: "", tr: "", en: "" }
         });
 
@@ -979,6 +990,9 @@ export async function renderAdmin(root) {
           if (!newTime) return;
 
           const newLoc = prompt("Neuer Ort?", current.location ?? "") ?? "";
+           const newDisplayType = prompt("Anzeige-Typ? (auto/today/urgent/future/info)",
+           current.display_type ?? "auto") ?? "auto";
+          
           const newPreviewImage = prompt("Neue Bild-URL?", current.preview_image_url ?? "") ?? "";
 
           const newStartISO = parseEventDateTime(newDate, newTime);
@@ -991,7 +1005,8 @@ export async function renderAdmin(root) {
             title: { de: newDe, tr: newTr, en: newEn },
             start_time: newStartISO,
             location: newLoc,
-            preview_image_url: newPreviewImage
+            preview_image_url: newPreviewImage,
+            display_type: newDisplayType
           });
 
           toast("Event aktualisiert", "ok");
@@ -1255,6 +1270,7 @@ export async function renderAdmin(root) {
         const tr = root.querySelector("#tickerTextTr")?.value.trim() || "";
         const en = root.querySelector("#tickerTextEn")?.value.trim() || "";
         const color = root.querySelector("#tickerColor")?.value || "neutral";
+        const displayType = root.querySelector("#tickerDisplayType")?.value || "info";        
         const sortOrder = Number(root.querySelector("#tickerSortOrder")?.value || "0") || 0;
         const active = !!root.querySelector("#tickerActive")?.checked;
 
@@ -1266,6 +1282,7 @@ export async function renderAdmin(root) {
         await createHomeTicker({
           text: { de, tr, en },
           color,
+          display_type: display_type,
           sort_order: sortOrder,
           active
         });
@@ -1291,12 +1308,15 @@ export async function renderAdmin(root) {
           const tr = prompt("Ticker Text TR?", current.text?.tr ?? "") ?? "";
           const en = prompt("Ticker Text EN?", current.text?.en ?? "") ?? "";
           const color = prompt("Farbe? (green/yellow/red/neutral)", current.color ?? "neutral") ?? "neutral";
+            const displayType = prompt("Anzeige-Typ? (info/urgent/future/today)",
+            current.display_type ?? "info") ?? "info";       
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
           const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
 
           await updateHomeTicker(id, {
             text: { de, tr, en },
             color,
+            display_type: displayType,
             sort_order: sortOrder,
             active: activeText.toLowerCase() === "yes"
           });
