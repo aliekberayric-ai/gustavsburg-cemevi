@@ -499,6 +499,8 @@ select:focus {
   margin: 0 0 14px;
   color: var(--muted);
   white-space: pre-line;
+  line-height:1.6;
+  font-size: 1rem;
 }
 
 /* -----------------------------------------------------------
