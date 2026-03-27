@@ -1,27 +1,157 @@
 import { listHomeTicker } from "../modules/homeTicker.js";
 import { listHomeTiles } from "../modules/homeTiles.js";
-import { getLang, pickLocalized, t } from "../i18n.js";
+import { listEventsPublic } from "../modules/events.js";
+import { getLang } from "../i18n.js";
 import { escapeHtml } from "../ui.js";
 
+function pickLocalized(obj, lang) {
+  if (!obj) return "";
+  if (typeof obj === "string") return obj;
+  return obj?.[lang] || obj?.de || obj?.tr || obj?.en || "";
+}
+
 function getTickerLabel(color, lang) {
-  if (lang === "tr") {
-    if (color === "green") return "BUGÜN";
-    if (color === "yellow") return "YAKINDA";
-    if (color === "red") return "ÖNEMLİ";
-    return "BİLGİ";
-  }
+  const labels = {
+    de: {
+      green: "HEUTE",
+      yellow: "BALD",
+      red: "WICHTIG",
+      neutral: "INFO"
+    },
+    tr: {
+      green: "BUGÜN",
+      yellow: "YAKINDA",
+      red: "ÖNEMLİ",
+      neutral: "BİLGİ"
+    },
+    en: {
+      green: "TODAY",
+      yellow: "SOON",
+      red: "IMPORTANT",
+      neutral: "INFO"
+    }
+  };
 
-  if (lang === "en") {
-    if (color === "green") return "TODAY";
-    if (color === "yellow") return "SOON";
-    if (color === "red") return "IMPORTANT";
-    return "INFO";
-  }
+  const safeLang = labels[lang] ? lang : "de";
+  return labels[safeLang][color] || labels[safeLang].neutral;
+}
 
-  if (color === "green") return "HEUTE";
-  if (color === "yellow") return "BALD";
-  if (color === "red") return "WICHTIG";
-  return "INFO";
+function getDefaultButtonText(lang) {
+  if (lang === "tr") return "Daha fazla";
+  if (lang === "en") return "More";
+  return "Mehr";
+}
+
+function getEmptyTickerText(lang) {
+  if (lang === "tr") return "Şu anda güncel duyuru bulunmamaktadır.";
+  if (lang === "en") return "There are currently no announcements available.";
+  return "Derzeit keine aktuellen Hinweise vorhanden.";
+}
+
+function getEmptyTilesText(lang) {
+  if (lang === "tr") return "Ana sayfa kutuları mevcut değil.";
+  if (lang === "en") return "No homepage tiles available.";
+  return "Keine Startseiten-Kacheln vorhanden.";
+}
+
+function getTodayStart() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function getDiffDays(date) {
+  const todayStart = getTodayStart();
+  return Math.floor((date - todayStart) / (1000 * 60 * 60 * 24));
+}
+
+function resolveDisplayType(item) {
+  const explicit = item?.display_type || "auto";
+
+  if (explicit !== "auto") return explicit;
+
+  if (!item?.start_time) return "info";
+
+  const date = new Date(item.start_time);
+  const diffDays = getDiffDays(date);
+
+  if (diffDays === 0) return "today";
+  if (diffDays <= 2) return "urgent";
+  return "future";
+}
+
+function getTypeMeta(displayType, lang) {
+  const map = {
+    today: {
+      icon: "🟢",
+      color: "green",
+      label: lang === "tr" ? "BUGÜN" : lang === "en" ? "TODAY" : "HEUTE"
+    },
+    urgent: {
+      icon: "🔥",
+      color: "red",
+      label: lang === "tr" ? "ÖNEMLİ" : lang === "en" ? "URGENT" : "DRINGEND"
+    },
+    future: {
+      icon: "📅",
+      color: "yellow",
+      label: lang === "tr" ? "GELECEK" : lang === "en" ? "UPCOMING" : "ZUKUNFT"
+    },
+    info: {
+      icon: "ℹ️",
+      color: "neutral",
+      label: lang === "tr" ? "BİLGİ" : lang === "en" ? "INFO" : "INFO"
+    }
+  };
+
+  return map[displayType] || map.info;
+}
+
+function formatEventText(event, lang) {
+  const title = pickLocalized(event.title, lang);
+  const location = event.location ? ` • ${event.location}` : "";
+
+  const date = new Date(event.start_time);
+
+  const locale =
+    lang === "tr" ? "tr-TR" :
+    lang === "en" ? "en-US" :
+    "de-DE";
+
+  const dateStr = date.toLocaleDateString(locale, {
+    day: "2-digit",
+    month: "2-digit"
+  });
+
+  const timeStr = date.toLocaleTimeString(locale, {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  return `${dateStr} • ${timeStr} • ${title}${location}`;
+}
+
+function buildTickerRow(items) {
+  if (!items.length) return "";
+
+  const doubled = [...items, ...items];
+
+  return `
+    <div class="home-ticker">
+      <div class="home-ticker-track">
+        ${doubled.map((item) => `
+          <span class="home-ticker-item">
+            <span class="ticker-icon">${item.icon}</span>
+            <span class="ticker-label ticker-label-${escapeHtml(item.color)}">
+              ${escapeHtml(item.label)}
+            </span>
+            <span class="ticker-text">
+              ${escapeHtml(item.text)}
+            </span>
+          </span>
+        `).join("")}
+      </div>
+    </div>
+  `;
 }
 
 export async function renderHome(root) {
@@ -29,6 +159,7 @@ export async function renderHome(root) {
 
   let ticker = [];
   let tiles = [];
+  let events = [];
 
   try {
     ticker = await listHomeTicker();
@@ -42,43 +173,72 @@ export async function renderHome(root) {
     console.error("Fehler beim Laden der Startseiten-Kacheln:", err);
   }
 
+  try {
+    events = await listEventsPublic();
+  } catch (err) {
+    console.error("Fehler beim Laden der Events:", err);
+  }
+
+  const manualItems = ticker
+    .filter((item) => item.active)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    .map((item) => {
+      const displayType = item.display_type || "info";
+      const meta = getTypeMeta(displayType, lang);
+
+      return {
+        text: pickLocalized(item.text, lang),
+        icon: meta.icon,
+        color: meta.color,
+        label: meta.label
+      };
+    });
+
+  const upcomingEvents = events
+    .filter((event) => {
+      if (!event.start_time) return false;
+      const eventDate = new Date(event.start_time);
+      return eventDate >= getTodayStart();
+    })
+    .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+
+  const eventItems = upcomingEvents.map((event) => {
+    const displayType = resolveDisplayType(event);
+    const meta = getTypeMeta(displayType, lang);
+
+    return {
+      text: formatEventText(event, lang),
+      icon: meta.icon,
+      color: meta.color,
+      label: meta.label
+    };
+  });
+
   root.innerHTML = `
     <div class="page">
 
       <section class="home-ticker-section">
-        <div class="home-ticker">
-          <div class="home-ticker-track">
-            ${
-              ticker.length
-                ? [...ticker, ...ticker]
-                    .map((item) => {
-                      const text = pickLocalized(item.text);
-                      const color = item.color || "neutral";
-                      const label = getTickerLabel(color, lang);
-
-                      return `
-                        <span class="home-ticker-item">
-                          <span class="ticker-dot ticker-dot-${escapeHtml(color)}"></span>
-                          <span class="ticker-label ticker-label-${escapeHtml(color)}">
-                            ${escapeHtml(label)}
-                          </span>
-                          <span class="ticker-text">
-                            ${escapeHtml(text)}
-                          </span>
-                        </span>
-                      `;
-                    })
-                    .join("")
-                : `
+        ${
+          manualItems.length
+            ? buildTickerRow(manualItems)
+            : `
+              <div class="home-ticker">
+                <div class="home-ticker-track">
                   <span class="home-ticker-item">
-                    <span class="ticker-dot ticker-dot-neutral"></span>
-                    <span class="ticker-label ticker-label-neutral">${escapeHtml(t("home.info"))}</span>
-                    <span class="ticker-text">${escapeHtml(t("home.noTicker"))}</span>
+                    <span class="ticker-icon">ℹ️</span>
+                    <span class="ticker-label ticker-label-neutral">INFO</span>
+                    <span class="ticker-text">${escapeHtml(getEmptyTickerText(lang))}</span>
                   </span>
-                `
-            }
-          </div>
-        </div>
+                </div>
+              </div>
+            `
+        }
+
+        ${
+          eventItems.length
+            ? `<div class="home-ticker home-ticker--calendar">${buildTickerRow(eventItems).replace('<div class="home-ticker">', '').replace('</div>', '')}</div>`
+            : ""
+        }
       </section>
 
       <section class="home-tiles-section">
@@ -88,9 +248,9 @@ export async function renderHome(root) {
               <div class="home-tiles-grid">
                 ${tiles
                   .map((tile) => {
-                    const title = pickLocalized(tile.title);
-                    const text = pickLocalized(tile.text);
-                    const button = pickLocalized(tile.button_text) || t("home.more");
+                    const title = pickLocalized(tile.title, lang);
+                    const text = pickLocalized(tile.text, lang);
+                    const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
 
                     return `
                       <div class="home-tile-card">
@@ -116,7 +276,7 @@ export async function renderHome(root) {
                   .join("")}
               </div>
             `
-            : `<div class="empty-state">${escapeHtml(t("home.noTiles"))}</div>`
+            : `<div class="empty-state">${escapeHtml(getEmptyTilesText(lang))}</div>`
         }
       </section>
 
