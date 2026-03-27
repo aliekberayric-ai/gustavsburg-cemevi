@@ -830,10 +830,10 @@ export async function renderAdmin(root) {
      BRANDING
   ----------------------------------------------------------- */
   if (isEditor) {
-    const siteTitleInput = root.querySelector("#siteTitleInput");
-    const siteLogoInput = root.querySelector("#siteLogoInput");
-    const siteLogoPreview = root.querySelector("#siteLogoPreview");
-    const saveBrandingBtn = root.querySelector("#saveBrandingBtn");
+    const siteTitleInput = querySelector("#siteTitleInput");
+    const siteLogoInput = querySelector("#siteLogoInput");
+    const siteLogoPreview = querySelector("#siteLogoPreview");
+    const saveBrandingBtn = querySelector("#saveBrandingBtn");
 
     let uploadedLogoUrl = siteSettings?.logo_url || "";
 
@@ -1285,6 +1285,8 @@ export async function renderAdmin(root) {
         const color = root.querySelector("#tickerColor")?.value || "neutral";
         const displayType = root.querySelector("#tickerDisplayType")?.value || "info";        
         const sortOrder = Number(root.querySelector("#tickerSortOrder")?.value || "0") || 0;
+        const layoutWidth = root.querySelector("#tileLayoutWidth")?.value || "third";
+        const layoutHeight = root.querySelector("#tileLayoutHeight")?.value || "medium";
         const active = !!root.querySelector("#tickerActive")?.checked;
 
         if (!de) {
@@ -1407,6 +1409,8 @@ export async function renderAdmin(root) {
           link_url: linkUrl,
           image_url: imageUrl,
           sort_order: sortOrder,
+          layout_width: layoutWidth,
+          layout_height: layoutHeight,
           active
         });
 
@@ -1442,16 +1446,23 @@ export async function renderAdmin(root) {
           const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
           const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
+          const layoutWidth = prompt(
+          "Breite? (full/half/third/quarter/fifth)",
+          current.layout_width ?? "third") ?? "third";
+          const layoutHeight = prompt("Höhe? (small/medium/large)",
+          current.layout_height ?? "medium") ?? "medium";
           const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
 
-          await updateHomeTile(id, {
-            title: { de: titleDe, tr: titleTr, en: titleEn },
-            text: { de: textDe, tr: textTr, en: textEn },
-            button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
-            link_url: linkUrl,
-            image_url: imageUrl,
-            sort_order: sortOrder,
-            active: activeText.toLowerCase() === "yes"
+         await updateHomeTile(id, {
+           title: { de: titleDe, tr: titleTr, en: titleEn },
+           text: { de: textDe, tr: textTr, en: textEn },
+           button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
+           link_url: linkUrl,
+           image_url: imageUrl,
+           sort_order: sortOrder,
+           layout_width: layoutWidth,
+           layout_height: layoutHeight,
+           active: activeText.toLowerCase() === "yes"
           });
 
           toast("Kachel aktualisiert", "ok");
