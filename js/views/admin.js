@@ -1344,7 +1344,12 @@ root.querySelector("#tileImageFile")?.addEventListener("change", (e) => {
         const buttonEn = root.querySelector("#tileButtonTextEn")?.value.trim() || "";
 
         const linkUrl = root.querySelector("#tileLinkUrl")?.value.trim() || "";
-        const imageUrl = root.querySelector("#tileImageUrl")?.value.trim() || "";
+        /* const imageUrl = root.querySelector("#tileImageUrl")?.value.trim() || ""; */
+        let imageUrl = "";
+         const file = root.querySelector("#tileImageFile")?.files?.[0];
+         if (file) {
+        imageUrl = await uploadTileImage(file);
+}
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
         const active = !!root.querySelector("#tileActive")?.checked;
 
