@@ -58,9 +58,9 @@ await supabase
 ========================================================= */
 
 /* Wichtig: Hover darf nicht abgeschnitten werden */
-#admin-branding,
-#admin-branding .card,
-#admin-branding .card__pad,
+admin-branding,
+admin-branding .card,
+admin-branding .card__pad,
 .admin-grid,
 .page {
   overflow: visible;
@@ -101,12 +101,12 @@ await supabase
 /* ---------------------------------------------------------
    ADMIN BRANDING BLOCK
 --------------------------------------------------------- */
-#admin-branding {
+admin-branding {
   position: relative;
   overflow: visible;
 }
 
-#admin-branding label {
+admin-branding label {
   display: block;
   margin-bottom: 6px;
   font-weight: 600;
@@ -156,11 +156,11 @@ await supabase
 /* ---------------------------------------------------------
    Optional: etwas mehr Platz im Branding-Bereich
 --------------------------------------------------------- */
-#admin-branding .grid {
+admin-branding .grid {
   overflow: visible;
 }
 
-#admin-branding .grid > div:last-child {
+admin-branding .grid > div:last-child {
   min-height: 120px;
   overflow: visible;
   display: flex;
