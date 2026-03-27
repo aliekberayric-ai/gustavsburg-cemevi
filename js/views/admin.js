@@ -379,7 +379,6 @@ export async function renderAdmin(root) {
 
         <div class="grid" style="gap:14px">
 
-          <!-- BRANDING -->
           <div id="admin-branding" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Branding</h2>
@@ -422,7 +421,6 @@ export async function renderAdmin(root) {
             </div>
           </div>
 
-          <!-- EVENTS -->
           <div id="admin-events" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Events</h2>
@@ -473,7 +471,6 @@ export async function renderAdmin(root) {
             </table>
           </div>
 
-          <!-- GALLERIES -->
           <div id="admin-galleries" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Galerien</h2>
@@ -560,7 +557,6 @@ export async function renderAdmin(root) {
             <p class="mono" style="margin-top:10px">${t("admin.galleryItemsNote")}</p>
           </div>
 
-          <!-- PEOPLE -->
           <div id="admin-people" class="card card__pad">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Team</h2>
@@ -616,7 +612,6 @@ export async function renderAdmin(root) {
             </table>
           </div>
 
-          <!-- HOME TICKER -->
           ${isEditor ? `
             <div id="admin-home-ticker" class="card card__pad">
               <h2 style="margin:0">Startseite – Live-Ticker</h2>
@@ -676,7 +671,6 @@ export async function renderAdmin(root) {
             </div>
           ` : ""}
 
-          <!-- HOME TILES -->
           ${isEditor ? `
             <div id="admin-home-tiles" class="card card__pad">
               <h2 style="margin:0">Startseite – Kacheln</h2>
@@ -695,8 +689,7 @@ export async function renderAdmin(root) {
                 <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
 
                 <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
-                /* <input id="tileImageUrl" class="input" placeholder="Bild-URL (optional)" /> */
-                <input id="tileFile" class="input" type="file" accept="image/*" /> 
+                <input id="tileImageFile" class="input" type="file" accept="image/*" />
                 <div id="tileImageInfo" class="mono">Kein Bild ausgewählt</div>
                 <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
 
@@ -739,7 +732,6 @@ export async function renderAdmin(root) {
             </div>
           ` : ""}
 
-          <!-- FORMS -->
           ${isEditor ? `
             <div id="admin-forms" class="card card__pad">
               <h2 style="margin:0">Formulare</h2>
@@ -778,7 +770,6 @@ export async function renderAdmin(root) {
             </div>
           ` : ""}
 
-          <!-- AUDIT -->
           ${isAdmin ? `
             <div id="admin-audit" class="card card__pad">
               <h2 style="margin:0">Audit Log</h2>
@@ -877,22 +868,26 @@ export async function renderAdmin(root) {
     info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
   });
 
+  root.querySelector("#tileImageFile")?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    const info = root.querySelector("#tileImageInfo");
 
-root.querySelector("#tileImageFile")?.addEventListener("change", (e) => {
-  const file = e.target.files?.[0];
-  const info = root.querySelector("#tileImageInfo");
+    if (!info) return;
 
-  if (!file || !info) return;
+    if (!file) {
+      info.textContent = "Kein Bild ausgewählt";
+      return;
+    }
 
-  info.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;">
-      <img src="${URL.createObjectURL(file)}"
-           style="width:60px;height:60px;object-fit:cover;border-radius:10px;">
-      <span>${file.name}</span>
-    </div>
-  `;
-});
-  
+    info.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="${URL.createObjectURL(file)}"
+             style="width:60px;height:60px;object-fit:cover;border-radius:10px;">
+        <span>${escapeHtml(file.name)}</span>
+      </div>
+    `;
+  });
+
   /* -----------------------------------------------------------
      LOGOUT
   ----------------------------------------------------------- */
@@ -1352,23 +1347,24 @@ root.querySelector("#tileImageFile")?.addEventListener("change", (e) => {
         const buttonEn = root.querySelector("#tileButtonTextEn")?.value.trim() || "";
 
         const linkUrl = root.querySelector("#tileLinkUrl")?.value.trim() || "";
-        /* const imageUrl = root.querySelector("#tileImageUrl")?.value.trim() || ""; */
-        let imageUrl = "";
-         const file = root.querySelector("#tileImageFile")?.files?.[0];
-         if (file) {
-           try {
-        imageUrl = await uploadTileImage(file);
-} catch (err) { catch (err) { consolr.error(derr); toast("Bild Upload fehlgeschlagen", "bad");
-               return;
-              }
-         }
-        
+        const tileImageFile = root.querySelector("#tileImageFile")?.files?.[0] || null;
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
         const active = !!root.querySelector("#tileActive")?.checked;
 
         if (!titleDe) {
           toast("Kachel Titel DE fehlt", "bad");
           return;
+        }
+
+        let imageUrl = "";
+        if (tileImageFile) {
+          try {
+            imageUrl = await uploadTileImage(tileImageFile);
+          } catch (err) {
+            console.error(err);
+            toast("Bild Upload fehlgeschlagen", "bad");
+            return;
+          }
         }
 
         await createHomeTile({
