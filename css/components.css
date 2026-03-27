@@ -340,8 +340,11 @@ select:focus {
    HOME TICKER
 ----------------------------------------------------------- */
 
+/* ticker scrift stylen */
 .home-ticker-section {
   margin-top: 18px;
+  display: grid;
+  gap: 8px;
 }
 
 .home-ticker {
@@ -349,13 +352,13 @@ select:focus {
   border-radius: 18px;
   border: 1px solid var(--line);
   background: rgba(255,255,255,0.04);
-  padding: 12px 0;
+  padding: 14px 0;
 }
 
 .home-ticker-track {
   display: inline-block;
   white-space: nowrap;
-  animation: tickerMove 30s linear infinite;
+  animation: tickerMove 36s linear infinite;
 }
 
 .home-ticker:hover .home-ticker-track {
@@ -367,9 +370,15 @@ select:focus {
   align-items: center;
   gap: 12px;
   margin-right: 52px;
-  font-size: 15px;
+  font-size: 17px; /* schrift grösser */
   font-weight: 600;
 }
+.ticker-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+
 
 .ticker-dot {
   width: 16px;
