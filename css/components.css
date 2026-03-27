@@ -1388,8 +1388,8 @@ body.lang-fade #app {
    ADMIN LOGO PREVIEW
 --------------------------------------------------------- */
 #siteLogoPreview {
-  width: 96px;          /* HIER normale Größe ändern */
-  height: 96px;         /* HIER normale Größe ändern */
+  width: 100px;          /* HIER normale Größe ändern */
+  height: 100px;         /* HIER normale Größe ändern */
   object-fit: contain;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.16);
@@ -1407,7 +1407,7 @@ body.lang-fade #app {
 
 /* Premium Hover */
 #siteLogoPreview:hover {
-  transform: scale(5);   /* HIER doppelt so groß einstellen */
+  transform: scale(2);   /* HIER doppelt so groß einstellen */
   position: relative;
   z-index: 100;
   border-color: rgba(255,255,255,0.35);
