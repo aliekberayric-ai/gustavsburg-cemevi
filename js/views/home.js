@@ -100,7 +100,7 @@ function formatEventText(event, lang) {
     minute: "2-digit"
   });
 
-  return ⁠ ${dateStr} • ${timeStr} • ${title}${location} ⁠;
+  return ⁠ '${dateStr} • ${timeStr} • ${title}${location}' ⁠;
 }
 
 function buildTickerRow(items, reverse = false) {
