@@ -1,190 +1,77 @@
 import { supabase } from "../api.js";
 
-export async function listHomeTiles(){
+export async function listHomeTiles() {
+  const { data, error } = await supabase
+    .from("home_tiles")
+    .select("*")
+    .eq("active", true)
+    .order("sort_order", { ascending: true });
 
-const { data } = await supabase
-.from("home_tiles")
-.select("*")
-.eq("active",true)
-.order("sort_order",{ascending:true});
-
-return data ?? [];
-
+  if (error) throw error;
+  return data || [];
 }
 
-export async function listHomeTilesAdmin(){
+export async function listHomeTilesAdmin() {
+  const { data, error } = await supabase
+    .from("home_tiles")
+    .select("*")
+    .order("sort_order", { ascending: true });
 
-const { data } = await supabase
-.from("home_tiles")
-.select("*")
-.order("sort_order",{ascending:true});
-
-return data ?? [];
-
+  if (error) throw error;
+  return data || [];
 }
 
-export async function createHomeTile(payload){
+export async function createHomeTile(payload) {
+  const { data, error } = await supabase
+    .from("home_tiles")
+    .insert([payload])
+    .select()
+    .single();
 
-await supabase
-.from("home_tiles")
-.insert([payload]);
-
+  if (error) throw error;
+  return data;
 }
 
-export async function updateHomeTile(id,patch){
+export async function updateHomeTile(id, patch) {
+  const { data, error } = await supabase
+    .from("home_tiles")
+    .update(patch)
+    .eq("id", id)
+    .select()
+    .single();
 
-await supabase
-.from("home_tiles")
-.update(patch)
-.eq("id",id);
-
+  if (error) throw error;
+  return data;
 }
 
-export async function deleteHomeTile(id){
+export async function deleteHomeTile(id) {
+  const { error } = await supabase
+    .from("home_tiles")
+    .delete()
+    .eq("id", id);
 
-await supabase
-.from("home_tiles")
-.delete()
-.eq("id",id);
-
+  if (error) throw error;
+  return true;
 }
 
+export async function uploadTileImage(file) {
+  if (!file) throw new Error("Keine Datei ausgewählt");
 
-/* =========================================================
-   BRANDING / LOGO
-   - Header Logo
-   - Admin Logo Preview
-   - Premium Hover
-========================================================= */
+  const safeName = file.name.replace(/\s+/g, "_");
+  const path = `tiles/${Date.now()}_${safeName}`;
 
-/* Wichtig: Hover darf nicht abgeschnitten werden */
-admin-branding,
-admin-branding .card,
-admin-branding .card__pad,
-.admin-grid,
-.page {
-  overflow: visible;
-}
+  const { error: uploadError } = await supabase.storage
+    .from("branding")
+    .upload(path, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
 
-/* ---------------------------------------------------------
-   HEADER LOGO
---------------------------------------------------------- */
-.site-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+  if (uploadError) throw uploadError;
 
-.site-brand img,
-#brandLogo {
-  width: 56px;          /* HIER Header-Logo Größe ändern */
-  height: 56px;         /* HIER Header-Logo Größe ändern */
-  object-fit: contain;
-  border-radius: 12px;
-  display: block;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
+  const { data } = supabase.storage
+    .from("branding")
+    .getPublicUrl(path);
 
-.site-brand img:hover,
-#brandLogo:hover {
-  transform: scale(1.25);   /* HIER Hover-Faktor Header ändern */
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
-  position: relative;
-  z-index: 50;
-}
-
-/* Wenn kein Logo da ist */
-#brandLogo.hidden {
-  display: none !important;
-}
-
-/* ---------------------------------------------------------
-   ADMIN BRANDING BLOCK
---------------------------------------------------------- */
-admin-branding {
-  position: relative;
-  overflow: visible;
-}
-
-admin-branding label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-#siteTitleInput,
-#siteLogoInput {
-  width: 100%;
-}
-
-/* ---------------------------------------------------------
-   ADMIN LOGO PREVIEW
---------------------------------------------------------- */
-#siteLogoPreview {
-  width: 96px;          /* HIER normale Größe ändern */
-  height: 96px;         /* HIER normale Größe ändern */
-  object-fit: contain;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.05);
-  padding: 6px;
-  display: block;
-  transition:
-    transform 0.28s ease,
-    box-shadow 0.28s ease,
-    border-color 0.28s ease,
-    background 0.28s ease;
-  cursor: zoom-in;
-  transform-origin: center center;
-}
-
-/* Premium Hover */
-#siteLogoPreview:hover {
-  transform: scale(2);   /* HIER doppelt so groß einstellen */
-  position: relative;
-  z-index: 100;
-  border-color: rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.08);
-  box-shadow: 0 18px 50px rgba(0,0,0,0.42);
-}
-
-/* Falls Preview zuerst versteckt wird */
-#siteLogoPreview[style*="display:none"] {
-  display: none !important;
-}
-
-/* ---------------------------------------------------------
-   Optional: etwas mehr Platz im Branding-Bereich
---------------------------------------------------------- */
-admin-branding .grid {
-  overflow: visible;
-}
-
-admin-branding .grid > div:last-child {
-  min-height: 120px;
-  overflow: visible;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-/* ---------------------------------------------------------
-   Mobile Anpassung
---------------------------------------------------------- */
-@media (max-width: 768px) {
-  #siteLogoPreview {
-    width: 74px;
-    height: 74px;
-  }
-
-  #siteLogoPreview:hover {
-    transform: scale(1.6);
-  }
-
-  .site-brand img,
-  #brandLogo {
-    width: 46px;
-    height: 46px;
-  }
+  return data?.publicUrl || "";
 }
