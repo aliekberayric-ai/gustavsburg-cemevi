@@ -100,7 +100,7 @@ function formatEventText(event, lang) {
     minute: "2-digit"
   });
 
-  return `${dateStr} • ${timeStr} • ${title}${location}`;
+  return ⁠ ${dateStr} • ${timeStr} • ${title}${location} ⁠;
 }
 
 function buildTickerRow(items, reverse = false) {
@@ -171,4 +171,86 @@ export async function renderHome(root) {
       const eventDate = new Date(event.start_time);
       return eventDate >= getTodayStart();
     })
-    .sort((a, b) =>
+    .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+
+  const eventItems = upcomingEvents.map((event) => {
+    const displayType = resolveDisplayType(event);
+    const meta = getTypeMeta(displayType, lang);
+
+    return {
+      text: formatEventText(event, lang),
+      icon: meta.icon,
+      color: meta.color,
+      label: meta.label
+    };
+  });
+
+  root.innerHTML = `
+    <div class="page">
+      <section class="home-ticker-section">
+        ${
+          manualItems.length
+            ? buildTickerRow(manualItems, false)
+            : `
+              <div class="home-ticker">
+                <div class="home-ticker-track">
+                  <span class="home-ticker-item">
+                    <span class="ticker-icon">ℹ️</span>
+                    <span class="ticker-label ticker-label-neutral">INFO</span>
+                    <span class="ticker-text">${escapeHtml(getEmptyTickerText(lang))}</span>
+                  </span>
+                  <span class="home-ticker-item">
+                    <span class="ticker-icon">ℹ️</span>
+                    <span class="ticker-label ticker-label-neutral">INFO</span>
+                    <span class="ticker-text">${escapeHtml(getEmptyTickerText(lang))}</span>
+                  </span>
+                </div>
+              </div>
+            `
+        }
+
+        ${
+          eventItems.length
+            ? buildTickerRow(eventItems, true)
+            : ""
+        }
+      </section>
+
+      <section class="home-tiles-section">
+        ${
+          tiles.length
+            ? `
+              <div class="home-tiles-grid">
+                ${tiles.map((tile) => {
+                  const title = pickLocalized(tile.title, lang);
+                  const text = pickLocalized(tile.text, lang);
+                  const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
+
+                  return `
+                    <div class="home-tile-card">
+                      ${
+                        tile.image_url
+                          ? ⁠ <img src="${escapeHtml(tile.image_url)}" alt="${escapeHtml(title)}" class="home-tile-image"> ⁠
+                          : ""
+                      }
+
+                      <div class="home-tile-body">
+                        <h3>${escapeHtml(title)}</h3>
+                        <p>${escapeHtml(text)}</p>
+                        ${
+                          tile.link_url
+                            ? ⁠ <a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a> ⁠
+                            : ""
+                        }
+                      </div>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            `
+            : ⁠ <div class="empty-state">${escapeHtml(getEmptyTilesText(lang))}</div> ⁠
+        }
+      </section>
+    </div>
+  `;
+}
