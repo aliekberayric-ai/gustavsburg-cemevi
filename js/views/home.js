@@ -226,11 +226,10 @@ export async function renderHome(root) {
 
                   return `
                     <div class="home-tile-card">
-                      ${
-                        tile.image_url
-                          ? `<img src="${escapeHtml(tile.image_url)}" alt="${escapeHtml(title)}" class="home-tile-image">`
-                          : ""
-                      }
+                      ${widthClass} ${heightClass}">
+                      ${tile.image_url
+                       ? ⁠ <img src="${escapeHtml(tile.image_url)}" alt="${escapeHtml(title)}" class="home-tile-image"> ⁠: "" }
+
                       <div class="home-tile-body">
                         <h3>${escapeHtml(title)}</h3>
                         <p>${escapeHtml(text)}</p>
