@@ -130,16 +130,14 @@ function formatEventText(event, lang) {
   return `${dateStr} • ${timeStr} • ${title}${location}`;
 }
 
-function buildTickerRow(items) {
+function buildTickerRow(items, reverse = false) {
   if (!items.length) return "";
 
   const doubled = [...items, ...items];
 
   return `
-
-    <div class="home-ticker">
+    <div class="home-ticker ${reverse ? "home-ticker--reverse" : ""}">
       <div class="home-ticker-track">
-      
         ${doubled.map((item) => `
           <span class="home-ticker-item">
             <span class="ticker-icon">${item.icon}</span>
