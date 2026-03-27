@@ -1296,7 +1296,7 @@ body.lang-fade #app {
 
 .site-brand img:hover,
 #brandLogo:hover {
-  transform: scale(1.25);
+  transform: scale(3);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
   position: relative;
   z-index: 50;
