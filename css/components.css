@@ -474,7 +474,7 @@ select:focus {
 
 .home-tiles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -1381,4 +1381,40 @@ body.lang-fade #app {
     width: 46px;
     height: 46px;
   }
+}
+/* =========================================
+   FLEX TILE SYSTEM (ADMIN STEUERBAR)
+========================================= */
+
+/* BREITE */
+.tile-width-full { grid-column: span 12; }
+.tile-width-half { grid-column: span 6; }
+.tile-width-third { grid-column: span 4; }
+.tile-width-quarter { grid-column: span 3; }
+.tile-width-fifth { grid-column: span 2; }
+
+/* HÖHE */
+.tile-height-small .home-tile-image {
+  height: 50px;
+}
+
+.tile-height-medium .home-tile-image {
+  height: 140px;
+}
+
+.tile-height-large .home-tile-image {
+  height: 220px;
+}
+
+/* optional: schöner */
+.tile-height-small {
+  min-height: 90px;
+}
+
+.tile-height-medium {
+  min-height: 180px;
+}
+
+.tile-height-large {
+  min-height: 260px;
 }
