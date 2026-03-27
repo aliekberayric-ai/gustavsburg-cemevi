@@ -701,6 +701,19 @@ export async function renderAdmin(root) {
                 <input id="tileImageFile" class="input" type="file" accept="image/*" />
                 <div id="tileImageInfo" class="mono">Kein Bild ausgewählt</div>
                 <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+                <select id="tileLayoutWidth" class="input">
+                   <option value="full">Ganze Breite</option>
+                   <option value="half">1/2 Breite</option>
+                   <option value="third" selected>1/3 Breite</option>
+                   <option value="quarter">1/4 Breite</option>
+                   <option value="fifth">1/5 Breite</option>
+                </select>
+
+                <select id="tileLayoutHeight" class="input">
+                   <option value="small">Flach</option>
+                   <option value="medium" selected>Mittel</option>
+                   <option value="large">Groß</option>
+                </select>
 
                 <label style="display:flex;align-items:center;gap:8px">
                   <input id="tileActive" type="checkbox" checked />
