@@ -2,6 +2,7 @@ import { t, getLang } from "../i18n.js";
 import { getAuth, signIn, signOut, requireRole } from "../auth.js";
 import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
 import { getSiteSettings, updateSiteSettings, uploadBrandLogo } from "../modules/siteSettings.js";
+import { uploadTileImage } from "../modules/homeTiles.js";
 
 import {
   listEventsPublic,
@@ -876,6 +877,14 @@ export async function renderAdmin(root) {
     info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
   });
 
+
+root.querySelector("#tileImageFile")?.addEventListener("change", (e) => {
+  const info = root.querySelector("#tileImageInfo");
+  const file = e.target.files?.[0];
+  if (!info) return;
+  info.textContent = file ? `Ausgewählt: ${file.name}` : "Kein Bild ausgewählt";
+});
+  
   /* -----------------------------------------------------------
      LOGOUT
   ----------------------------------------------------------- */
