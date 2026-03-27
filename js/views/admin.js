@@ -1348,8 +1348,13 @@ root.querySelector("#tileImageFile")?.addEventListener("change", (e) => {
         let imageUrl = "";
          const file = root.querySelector("#tileImageFile")?.files?.[0];
          if (file) {
+           try {
         imageUrl = await uploadTileImage(file);
-}
+} catch (err) { catch (err) { consolr.error(derr); toast("Bild Upload fehlgeschlagen", "bad");
+               return;
+              }
+         }
+        
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
         const active = !!root.querySelector("#tileActive")?.checked;
 
