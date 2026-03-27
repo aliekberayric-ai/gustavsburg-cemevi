@@ -694,7 +694,9 @@ export async function renderAdmin(root) {
                 <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
 
                 <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
-                <input id="tileImageUrl" class="input" placeholder="Bild-URL (optional)" />
+                /* <input id="tileImageUrl" class="input" placeholder="Bild-URL (optional)" /> */
+                <input id="tileFile" class="input" type="file" accept="image/*" /> 
+                <div id="tileImageInfo" class="mono">Kein Bild ausgewählt</div>
                 <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
 
                 <label style="display:flex;align-items:center;gap:8px">
