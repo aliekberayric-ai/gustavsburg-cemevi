@@ -351,18 +351,20 @@ select:focus {
 .home-ticker-track {
   display: inline-flex;
   align-items: center;
-  gap: 0;
   white-space: nowrap;
   width: max-content;
   min-width: max-content;
   will-change: transform;
   padding-left: 24px;
   padding-right: 24px;
-  animation: tickerLeftToRight var(--ticker-duration, 30s) linear infinite;
+
+  /* 👇 WICHTIG: OBEN = links → rechts */
+  animation: tickerLTR var(--ticker-duration, 30s) linear infinite;
 }
 
 .home-ticker--reverse .home-ticker-track {
-  animation: tickerRightToLeft var(--ticker-duration, 30s) linear infinite;
+  /* 👇 UNTEN = rechts → links */
+  animation: tickerRTL var(--ticker-duration, 30s) linear infinite;
 }
 
 .home-ticker:hover .home-ticker-track {
