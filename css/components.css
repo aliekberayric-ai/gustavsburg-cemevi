@@ -4,13 +4,8 @@
   --card: rgba(255, 255, 255, 0.05);
   --card-strong: rgba(255, 255, 255, 0.08);
 
-  /* text (--text: xxx) für Schrift auf der Seite */
   --text: white;
-
-  /* text (--textCN: xxx) für Schrift unter dem Bild */
   --textCN: yellow;
-
-  /* text (--muted: xxx) für Beschreibung unter der Aufgabe */
   --muted: grey;
 
   --line: rgba(255, 255, 255, 0.10);
@@ -65,7 +60,6 @@ img {
   width: min(var(--container), calc(100% - 32px));
   margin: 0 auto;
   padding: 18px 0 36px;
-  overflow: visible;
 }
 
 .grid {
@@ -82,7 +76,6 @@ img {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
   gap: 18px;
-  overflow: visible;
 }
 
 @media (max-width: 980px) {
@@ -236,8 +229,7 @@ select:focus {
 
 .table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
   font-size: 0.96rem;
   overflow: visible !important;
   position: relative;
@@ -344,7 +336,7 @@ select:focus {
 .home-ticker-section {
   margin-top: 18px;
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .home-ticker {
@@ -352,22 +344,29 @@ select:focus {
   border-radius: 18px;
   border: 1px solid var(--line);
   background: rgba(255,255,255,0.04);
-  padding: 14px 0;
+  padding: 10px 0;
   position: relative;
 }
 
 .home-ticker-track {
   display: inline-flex;
   align-items: center;
+  gap: 0;
   white-space: nowrap;
   width: max-content;
   min-width: max-content;
   will-change: transform;
-  animation: tickerTop var(--ticker-duration, 30s) linear infinite;
+  padding-left: 24px;
+  padding-right: 24px;
+  animation: tickerLeftToRight var(--ticker-duration, 30s) linear infinite;
 }
 
 .home-ticker--reverse .home-ticker-track {
-  animation: tickerBottom var(--ticker-duration, 30s) linear infinite;
+  animation: tickerRightToLeft var(--ticker-duration, 30s) linear infinite;
+}
+
+.home-ticker:hover .home-ticker-track {
+  animation-play-state: paused;
 }
 
 .home-ticker-item {
@@ -377,36 +376,11 @@ select:focus {
   margin-right: 48px;
   font-size: 17px;
   font-weight: 600;
-  flex: 0 0 auto;
 }
 
 .ticker-icon {
   font-size: 18px;
   line-height: 1;
-}
-
-.ticker-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  flex: 0 0 16px;
-  box-shadow: 0 0 0 4px rgba(255,255,255,0.04);
-}
-
-.ticker-dot-green {
-  background: #2ecc71;
-}
-
-.ticker-dot-yellow {
-  background: #f1c40f;
-}
-
-.ticker-dot-red {
-  background: #e74c3c;
-}
-
-.ticker-dot-neutral {
-  background: #a0a0a0;
 }
 
 .ticker-label {
@@ -443,21 +417,21 @@ select:focus {
   color: #fff;
 }
 
-@keyframes tickerTop {
+@keyframes tickerLeftToRight {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(calc(-100% + 85vw));
   }
   100% {
-    transform: translateX(100%);
+    transform: translateX(0);
   }
 }
 
-@keyframes tickerBottom {
+@keyframes tickerRightToLeft {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(calc(-100% + 85vw));
   }
 }
 
@@ -473,15 +447,19 @@ select:focus {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 16px;
+  align-items: stretch;
 }
 
 .home-tile-card {
+  grid-column: span 4;
   border-radius: 22px;
   overflow: hidden;
   background: rgba(255,255,255,0.05);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
   transition: transform .2s ease, box-shadow .2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .home-tile-card:hover {
@@ -491,13 +469,18 @@ select:focus {
 
 .home-tile-image {
   width: 100%;
-  height: 300px;
+  height: 220px;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
 .home-tile-body {
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
 }
 
 .home-tile-body h3 {
@@ -510,6 +493,50 @@ select:focus {
   white-space: pre-line;
   line-height: 1.6;
   font-size: 1rem;
+}
+
+/* Layout widths */
+.tile-width-full {
+  grid-column: span 12;
+}
+
+.tile-width-half {
+  grid-column: span 6;
+}
+
+.tile-width-third {
+  grid-column: span 4;
+}
+
+.tile-width-quarter {
+  grid-column: span 3;
+}
+
+.tile-width-fifth {
+  grid-column: span 2;
+}
+
+/* Layout heights */
+.tile-height-small .home-tile-image {
+  height: 110px;
+}
+
+.tile-height-medium .home-tile-image {
+  height: 220px;
+}
+
+.tile-height-large .home-tile-image {
+  height: 320px;
+}
+
+@media (max-width: 980px) {
+  .tile-width-full,
+  .tile-width-half,
+  .tile-width-third,
+  .tile-width-quarter,
+  .tile-width-fifth {
+    grid-column: span 12;
+  }
 }
 
 /* -----------------------------------------------------------
@@ -843,6 +870,12 @@ select:focus {
    CALENDAR PREVIEW / PREMIUM HOVER
 ----------------------------------------------------------- */
 
+.table {
+  position: relative;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
 .table tbody {
   position: relative;
 }
@@ -912,27 +945,20 @@ select:focus {
   top: 50%;
   transform: translateY(-50%) scale(0.94);
   transform-origin: right center;
-
   width: 360px;
   max-width: min(52vw, 420px);
-
   opacity: 0;
   pointer-events: none;
-
   z-index: 10000;
-
   padding: 10px;
   border-radius: 22px;
   border: 1px solid rgba(255,255,255,0.14);
-
   background:
     linear-gradient(180deg, rgba(24,28,36,0.94), rgba(12,15,22,0.96));
   backdrop-filter: blur(14px);
-
   box-shadow:
     0 28px 70px rgba(0,0,0,0.42),
     0 0 0 1px rgba(255,255,255,0.03);
-
   transition:
     opacity 0.24s ease,
     transform 0.24s ease,
@@ -1153,6 +1179,7 @@ label {
 
   .home-ticker-item {
     margin-right: 36px;
+    font-size: 15px;
   }
 
   .gallery-card-image-wrap {
@@ -1174,7 +1201,7 @@ label {
 }
 
 /* -----------------------------------------------------------
-   PREMIUM LANGUAGE UX
+   Sprachflaggen
 ----------------------------------------------------------- */
 
 .lang-switch {
@@ -1252,7 +1279,6 @@ body.lang-fade #app {
 }
 
 /* Page transition */
-
 .fade-out {
   opacity: 0;
   transform: translateY(10px);
@@ -1265,59 +1291,9 @@ body.lang-fade #app {
   transition: all 0.2s ease;
 }
 
-/* ---------------------------------------------------------
+/* -----------------------------------------------------------
    BRANDING / LOGO
---------------------------------------------------------- */
-
-#admin-branding,
-#admin-branding .card,
-#admin-branding .card__pad {
-  overflow: visible;
-}
-
-.site-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.site-brand img,
-#brandLogo {
-  width: 70px;
-  height: 70px;
-  object-fit: contain;
-  border-radius: 12px;
-  display: block;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.site-brand img:hover,
-#brandLogo:hover {
-  transform: scale(2);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
-  position: relative;
-  z-index: 50;
-}
-
-#brandLogo.hidden {
-  display: none !important;
-}
-
-#admin-branding {
-  position: relative;
-  overflow: visible;
-}
-
-#admin-branding label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-#siteTitleInput,
-#siteLogoInput {
-  width: 100%;
-}
+----------------------------------------------------------- */
 
 #siteLogoPreview {
   width: 100px;
@@ -1344,6 +1320,58 @@ body.lang-fade #app {
   border-color: rgba(255,255,255,0.35);
   background: rgba(255,255,255,0.08);
   box-shadow: 0 18px 50px rgba(0,0,0,0.42);
+}
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-brand img,
+#brandLogo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 12px;
+  display: block;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.site-brand img:hover,
+#brandLogo:hover {
+  transform: scale(1.25);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  position: relative;
+  z-index: 50;
+}
+
+#brandLogo.hidden {
+  display: none !important;
+}
+
+#admin-branding,
+#admin-branding .card,
+#admin-branding .card__pad,
+.admin-grid,
+.page {
+  overflow: visible;
+}
+
+#admin-branding {
+  position: relative;
+  overflow: visible;
+}
+
+#admin-branding label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+#siteTitleInput,
+#siteLogoInput {
+  width: 100%;
 }
 
 #siteLogoPreview[style*="display:none"] {
@@ -1379,49 +1407,11 @@ body.lang-fade #app {
     height: 46px;
   }
 }
-/* =========================================
-   FLEX TILE SYSTEM (ADMIN STEUERBAR)
-========================================= */
 
-/* BREITE */
-.tile-width-full { grid-column: span 12; }
-.tile-width-half { grid-column: span 6; }
-.tile-width-third { grid-column: span 4; }
-.tile-width-quarter { grid-column: span 3; }
-.tile-width-fifth { grid-column: span 2; }
+/* -----------------------------------------------------------
+   ADMIN ACCORDION / NAV
+----------------------------------------------------------- */
 
-/* HÖHE */
-.tile-height-small .home-tile-image {
-  height: 50px;
-}
-
-.tile-height-medium .home-tile-image {
-  height: 140px;
-}
-
-.tile-height-large .home-tile-image {
-  height: 220px;
-}
-
-/* optional: schöner */
-.tile-height-small {
-  min-height: 90px;
-}
-
-.tile-height-medium {
-  min-height: 180px;
-}
-
-.tile-height-large {
-  min-height: 260px;
-}
-.btn.active {
-  background: linear-gradient(135deg, #ff7a18, #ff3d00);
-  color: #fff;
-  border-color: transparent;
-  box-shadow: 0 8px 20px rgba(255, 80, 0, 0.28);
-  transform: scale(1.03);
-}
 .admin-section {
   overflow: hidden;
 }
