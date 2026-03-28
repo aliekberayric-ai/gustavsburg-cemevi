@@ -619,66 +619,71 @@ export async function renderAdmin(root) {
             </table>
           </div>
 
-          ${isEditor ? `
-            <div id="admin-home-ticker" class="card card__pad">
-              <h2 style="margin:0">Startseite – Live-Ticker</h2>
+         ${isEditor ? `
+  <div id="admin-home-ticker" class="card card__pad">
+    <h2 style="margin:0">Startseite – Live-Ticker</h2>
 
-              <div class="grid" style="gap:8px;margin-top:12px">
-                <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
-                <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
-                <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
+    <div class="grid" style="gap:8px;margin-top:12px">
+      <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
+      <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
+      <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
 
-                <select id="tickerColor" class="input">
-                <select id="tickerDisplayType" class="input">
-                  <option value="info">ℹ️ Hinweis</option>
-                  <option value="urgent">🔥 Dringend</option>
-                  <option value="future">📅 Zukunft</option>
-                  <option value="today">🟢 Heute</option>
-                 </select>
-               
+      <select id="tickerColor" class="input">
+        <option value="neutral">Neutral</option>
+        <option value="green">Grün</option>
+        <option value="yellow">Gelb</option>
+        <option value="red">Rot</option>
+      </select>
 
-                <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+      <select id="tickerDisplayType" class="input">
+        <option value="info">ℹ️ Hinweis</option>
+        <option value="urgent">🔥 Dringend</option>
+        <option value="future">📅 Zukunft</option>
+        <option value="today">🟢 Heute</option>
+      </select>
 
-                <label style="display:flex;align-items:center;gap:8px">
-                  <input id="tickerActive" type="checkbox" checked />
-                  Aktiv
-                </label>
+      <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
 
-                <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
-              </div>
+      <label style="display:flex;align-items:center;gap:8px">
+        <input id="tickerActive" type="checkbox" checked />
+        Aktiv
+      </label>
 
-              <table class="table" style="margin-top:14px">
-                <thead>
-                  <tr>
-                    <th>Text</th>
-                    <th>Farbe</th>
-                    <th>Aktiv</th>
-                    <th>Reihenfolge</th>
-                    <th class="mono">ID</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${tickerItems.map((item) => {
-                    const text = pickLocalized(item.text, lang);
-                    return `
-                      <tr>
-                        <td>${escapeHtml(text)}</td>
-                        <td>${escapeHtml(safeText(item.color, "neutral"))}</td>
-                        <td>${item.active ? "ja" : "nein"}</td>
-                        <td>${Number(item.sort_order ?? 0)}</td>
-                        <td class="mono">${escapeHtml(String(item.id))}</td>
-                        <td style="white-space:nowrap">
-                          <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
-                          <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
-                        </td>
-                      </tr>
-                    `;
-                  }).join("")}
-                </tbody>
-              </table>
-            </div>
-          ` : ""}
+      <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
+    </div>
+
+    <table class="table" style="margin-top:14px">
+      <thead>
+        <tr>
+          <th>Text</th>
+          <th>Farbe</th>
+          <th>Aktiv</th>
+          <th>Reihenfolge</th>
+          <th class="mono">ID</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tickerItems.map((item) => {
+          const text = pickLocalized(item.text, lang);
+          return `
+            <tr>
+              <td>${escapeHtml(text)}</td>
+              <td>${escapeHtml(safeText(item.color, "neutral"))}</td>
+              <td>${item.active ? "ja" : "nein"}</td>
+              <td>${Number(item.sort_order ?? 0)}</td>
+              <td class="mono">${escapeHtml(String(item.id))}</td>
+              <td style="white-space:nowrap">
+                <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
+                <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
+              </td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    </table>
+  </div>
+` : ""}
 
           ${isEditor ? `
             <div id="admin-home-tiles" class="card card__pad">
