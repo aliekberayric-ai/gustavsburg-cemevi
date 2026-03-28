@@ -199,7 +199,7 @@ export async function renderHome(root) {
       <section class="home-ticker-section">
         ${
           manualItems.length
-            ? buildTickerRow(manualItems, true)
+            ? buildTickerRow(manualItems, false)
             : `
               <div class="home-ticker">
                 <div class="home-ticker-track">
