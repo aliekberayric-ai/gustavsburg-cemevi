@@ -1418,3 +1418,9 @@ body.lang-fade #app {
 .tile-height-large {
   min-height: 260px;
 }
+.btn.active {
+  background: linear-gradient(135deg, #ff7a18, #ff3d00);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(255, 80, 0, 0.28);
+}
