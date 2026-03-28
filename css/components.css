@@ -1425,3 +1425,46 @@ body.lang-fade #app {
   box-shadow: 0 8px 20px rgba(255, 80, 0, 0.28);
   transform: scale(1.03);
 }
+.admin-section {
+  overflow: hidden;
+}
+
+.admin-toggle {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-toggle::after {
+  content: "▾";
+  font-size: 14px;
+  transition: transform 0.25s ease;
+}
+
+.admin-section.is-collapsed .admin-toggle::after {
+  transform: rotate(-90deg);
+}
+
+.admin-content {
+  overflow: hidden;
+  max-height: 4000px;
+  opacity: 1;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.25s ease;
+}
+
+.admin-section.is-collapsed .admin-content {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0 !important;
+}
+
+.btn.active {
+  background: linear-gradient(135deg, #ff7a18, #ff3d00);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(255, 80, 0, 0.28);
+  transform: scale(1.03);
+}
