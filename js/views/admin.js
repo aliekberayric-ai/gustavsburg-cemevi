@@ -1450,17 +1450,18 @@ root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
 
 
 // 👉 Scroll Navigation (linke Buttons)
-root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const targetId = btn.getAttribute("data-scroll-target");
+btn.addEventListener("click", () => {
+  document.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
 
-    const targetEl = root.querySelector(`#${targetId}`);
-    if (!targetEl) return;
+  const targetId = btn.getAttribute("data-scroll-target");
+  const targetEl = root.querySelector(`#${targetId}`);
 
-    targetEl.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+  if (!targetEl) return;
+
+  targetEl.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
   });
 });
 
