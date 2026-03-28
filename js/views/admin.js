@@ -1470,6 +1470,34 @@ root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
   });
 });
 
+    // 👉 Standard aktiv setzen (z.B. Branding)
+const firstBtn = root.querySelector('[data-scroll-target="admin-branding"]');
+if (firstBtn) {
+  firstBtn.classList.add("active");
+}
+
+    const sections = root.querySelectorAll("[id^='admin-']");
+
+window.addEventListener("scroll", () => {
+  let current = "";
+
+  sections.forEach((section) => {
+    const rect = section.getBoundingClientRect();
+
+    if (rect.top <= 150 && rect.bottom >= 150) {
+      current = section.id;
+    }
+  });
+
+  root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
+    btn.classList.remove("active");
+
+    if (btn.getAttribute("data-scroll-target") === current) {
+      btn.classList.add("active");
+    }
+  });
+});
+
     
     root.querySelectorAll("[data-edit-tile]").forEach((btn) => {
       btn.addEventListener("click", async () => {
