@@ -833,7 +833,7 @@ export async function renderAdmin(root) {
     const siteTitleInput = document.querySelector("#siteTitleInput");
     const siteLogoInput = document.querySelector("#siteLogoInput");
     const siteLogoPreview = document.querySelector("#siteLogoPreview");
-    const saveBrandingBtn = qdocument.uerySelector("#saveBrandingBtn");
+    const saveBrandingBtn = document.querySelector("#saveBrandingBtn");
 
     let uploadedLogoUrl = siteSettings?.logo_url || "";
 
