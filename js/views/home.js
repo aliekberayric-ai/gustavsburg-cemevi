@@ -218,11 +218,30 @@ export async function renderHome(root) {
             `
         }
 
-        ${
-          eventItems.length
-            ? buildTickerRow(eventItems, false)
-            : ""
-        }
+${
+  eventItems.length
+    ? buildTickerRow(eventItems, true)
+    : `
+      <div class="home-ticker home-ticker--reverse" style="--ticker-duration:24s">
+        <div class="home-ticker-track">
+          <span class="home-ticker-item">
+            <span class="ticker-icon">📅</span>
+            <span class="ticker-label ticker-label-neutral">INFO</span>
+            <span class="ticker-text">
+              ${escapeHtml(
+                lang === "tr"
+                  ? "Şu anda yaklaşan etkinlik bulunmuyor."
+                  : lang === "en"
+                    ? "There are currently no upcoming events."
+                    : "Zurzeit sind keine kommenden Termine vorhanden."
+              )}
+            </span>
+          </span>
+        </div>
+      </div>
+    `
+}
+       
       </section>
 
       <section class="home-tiles-section">
