@@ -445,19 +445,19 @@ select:focus {
 
 @keyframes tickerFullLeft {
   0% {
-    transform: translateX(100%);
+    transform: translateX(-100%);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(100%);
   }
 }
 
 @keyframes tickerFullRight {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(100%);
   }
   100% {
-    transform: translateX(100%);
+    transform: translateX(-100%);
   }
 }
 
