@@ -363,11 +363,11 @@ select:focus {
   width: max-content;
   min-width: max-content;
   will-change: transform;
-  animation: tickerFullLeft var(--ticker-duration, 30s) linear infinite;
+  animation: tickerTop var(--ticker-duration, 30s) linear infinite;
 }
 
 .home-ticker--reverse .home-ticker-track {
-  animation: tickerFullRight var(--ticker-duration, 30s) linear infinite;
+  animation: tickerBottom var(--ticker-duration, 30s) linear infinite;
 }
 
 .home-ticker-item {
@@ -443,7 +443,7 @@ select:focus {
   color: #fff;
 }
 
-@keyframes tickerFullLeft {
+@keyframes tickerTop {
   0% {
     transform: translateX(-100%);
   }
@@ -452,7 +452,7 @@ select:focus {
   }
 }
 
-@keyframes tickerFullRight {
+@keyframes tickerBottom {
   0% {
     transform: translateX(100%);
   }
