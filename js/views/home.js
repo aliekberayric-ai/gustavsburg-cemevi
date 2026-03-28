@@ -106,7 +106,11 @@ function formatEventText(event, lang) {
 function buildTickerRow(items, reverse = false) {
   if (!items.length) return "";
 
-  const duration = Math.max(18, items.length * 8);
+  const totalChars = items.reduce((sum, item) => {
+    return sum + String(item.text || "").length + String(item.label || "").length + 12;
+  }, 0);
+
+  const duration = Math.max(20, Math.ceil(totalChars / 7));
 
   return `
     <div
@@ -117,8 +121,12 @@ function buildTickerRow(items, reverse = false) {
         ${items.map((item) => `
           <span class="home-ticker-item">
             <span class="ticker-icon">${item.icon}</span>
-            <span class="ticker-label ticker-label-${escapeHtml(item.color)}">${escapeHtml(item.label)}</span>
-            <span class="ticker-text">${escapeHtml(item.text)}</span>
+            <span class="ticker-label ticker-label-${escapeHtml(item.color)}">
+              ${escapeHtml(item.label)}
+            </span>
+            <span class="ticker-text">
+              ${escapeHtml(item.text)}
+            </span>
           </span>
         `).join("")}
       </div>
