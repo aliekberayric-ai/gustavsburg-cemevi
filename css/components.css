@@ -419,21 +419,21 @@ select:focus {
   color: #fff;
 }
 
-@keyframes tickerLeftToRight {
+@keyframes tickerLTR {
   0% {
-    transform: translateX(calc(-100% + 85vw));
+    transform: translateX(-100%);
   }
   100% {
-    transform: translateX(0);
+    transform: translateX(100%);
   }
 }
 
-@keyframes tickerRightToLeft {
+@keyframes tickerRTL {
   0% {
-    transform: translateX(0);
+    transform: translateX(100%);
   }
   100% {
-    transform: translateX(calc(-100% + 85vw));
+    transform: translateX(-100%);
   }
 }
 
