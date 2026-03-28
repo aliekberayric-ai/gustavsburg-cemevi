@@ -435,13 +435,13 @@ export async function renderAdmin(root) {
                 <input id="eventDate" class="input" type="date" />
                 <input id="eventTime" class="input" type="time" />
                 <input id="eventLocation" class="input" placeholder="Ort" />
-                  <select id="eventDisplayType" class="input">
-                   <option value="auto">Auto</option>
-                   <option value="today">🟢 Heute</option>
-                   <option value="urgent">🔥 Dringend</option>
-                   <option value="future">📅 Zukunft</option>
-                   <option value="info">ℹ️ Hinweis</option>
-                  </select>             
+                <select id="eventDisplayType" class="input">
+                  <option value="auto">Auto</option>
+                  <option value="today">🟢 Heute</option>
+                  <option value="urgent">🔥 Dringend</option>
+                  <option value="future">📅 Zukunft</option>
+                  <option value="info">ℹ️ Hinweis</option>
+                </select>
                 <input id="eventPreviewImageFile" class="input" type="file" accept="image/*" />
                 <div id="eventPreviewImageInfo" class="mono">Kein Bild ausgewählt</div>
                 <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
@@ -619,71 +619,71 @@ export async function renderAdmin(root) {
             </table>
           </div>
 
-         ${isEditor ? `
-  <div id="admin-home-ticker" class="card card__pad">
-    <h2 style="margin:0">Startseite – Live-Ticker</h2>
+          ${isEditor ? `
+            <div id="admin-home-ticker" class="card card__pad">
+              <h2 style="margin:0">Startseite – Live-Ticker</h2>
 
-    <div class="grid" style="gap:8px;margin-top:12px">
-      <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
-      <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
-      <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
+              <div class="grid" style="gap:8px;margin-top:12px">
+                <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
+                <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
+                <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
 
-      <select id="tickerColor" class="input">
-        <option value="neutral">Neutral</option>
-        <option value="green">Grün</option>
-        <option value="yellow">Gelb</option>
-        <option value="red">Rot</option>
-      </select>
+                <select id="tickerColor" class="input">
+                  <option value="neutral">Neutral</option>
+                  <option value="green">Grün</option>
+                  <option value="yellow">Gelb</option>
+                  <option value="red">Rot</option>
+                </select>
 
-      <select id="tickerDisplayType" class="input">
-        <option value="info">ℹ️ Hinweis</option>
-        <option value="urgent">🔥 Dringend</option>
-        <option value="future">📅 Zukunft</option>
-        <option value="today">🟢 Heute</option>
-      </select>
+                <select id="tickerDisplayType" class="input">
+                  <option value="info">ℹ️ Hinweis</option>
+                  <option value="urgent">🔥 Dringend</option>
+                  <option value="future">📅 Zukunft</option>
+                  <option value="today">🟢 Heute</option>
+                </select>
 
-      <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+                <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
 
-      <label style="display:flex;align-items:center;gap:8px">
-        <input id="tickerActive" type="checkbox" checked />
-        Aktiv
-      </label>
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input id="tickerActive" type="checkbox" checked />
+                  Aktiv
+                </label>
 
-      <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
-    </div>
+                <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
+              </div>
 
-    <table class="table" style="margin-top:14px">
-      <thead>
-        <tr>
-          <th>Text</th>
-          <th>Farbe</th>
-          <th>Aktiv</th>
-          <th>Reihenfolge</th>
-          <th class="mono">ID</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tickerItems.map((item) => {
-          const text = pickLocalized(item.text, lang);
-          return `
-            <tr>
-              <td>${escapeHtml(text)}</td>
-              <td>${escapeHtml(safeText(item.color, "neutral"))}</td>
-              <td>${item.active ? "ja" : "nein"}</td>
-              <td>${Number(item.sort_order ?? 0)}</td>
-              <td class="mono">${escapeHtml(String(item.id))}</td>
-              <td style="white-space:nowrap">
-                <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
-                <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
-              </td>
-            </tr>
-          `;
-        }).join("")}
-      </tbody>
-    </table>
-  </div>
-` : ""}
+              <table class="table" style="margin-top:14px">
+                <thead>
+                  <tr>
+                    <th>Text</th>
+                    <th>Farbe</th>
+                    <th>Aktiv</th>
+                    <th>Reihenfolge</th>
+                    <th class="mono">ID</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tickerItems.map((item) => {
+                    const text = pickLocalized(item.text, lang);
+                    return `
+                      <tr>
+                        <td>${escapeHtml(text)}</td>
+                        <td>${escapeHtml(safeText(item.color, "neutral"))}</td>
+                        <td>${item.active ? "ja" : "nein"}</td>
+                        <td>${Number(item.sort_order ?? 0)}</td>
+                        <td class="mono">${escapeHtml(String(item.id))}</td>
+                        <td style="white-space:nowrap">
+                          <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
+                          <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
 
           ${isEditor ? `
             <div id="admin-home-tiles" class="card card__pad">
@@ -706,18 +706,19 @@ export async function renderAdmin(root) {
                 <input id="tileImageFile" class="input" type="file" accept="image/*" />
                 <div id="tileImageInfo" class="mono">Kein Bild ausgewählt</div>
                 <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+
                 <select id="tileLayoutWidth" class="input">
-                   <option value="full">Ganze Breite</option>
-                   <option value="half">1/2 Breite</option>
-                   <option value="third" selected>1/3 Breite</option>
-                   <option value="quarter">1/4 Breite</option>
-                   <option value="fifth">1/5 Breite</option>
+                  <option value="full">Ganze Breite</option>
+                  <option value="half">1/2 Breite</option>
+                  <option value="third" selected>1/3 Breite</option>
+                  <option value="quarter">1/4 Breite</option>
+                  <option value="fifth">1/5 Breite</option>
                 </select>
 
                 <select id="tileLayoutHeight" class="input">
-                   <option value="small">Flach</option>
-                   <option value="medium" selected>Mittel</option>
-                   <option value="large">Groß</option>
+                  <option value="small">Flach</option>
+                  <option value="medium" selected>Mittel</option>
+                  <option value="large">Groß</option>
                 </select>
 
                 <label style="display:flex;align-items:center;gap:8px">
@@ -835,10 +836,10 @@ export async function renderAdmin(root) {
      BRANDING
   ----------------------------------------------------------- */
   if (isEditor) {
-    const siteTitleInput = document.querySelector("#siteTitleInput");
-    const siteLogoInput = document.querySelector("#siteLogoInput");
-    const siteLogoPreview = document.querySelector("#siteLogoPreview");
-    const saveBrandingBtn = document.querySelector("#saveBrandingBtn");
+    const siteTitleInput = root.querySelector("#siteTitleInput");
+    const siteLogoInput = root.querySelector("#siteLogoInput");
+    const siteLogoPreview = root.querySelector("#siteLogoPreview");
+    const saveBrandingBtn = root.querySelector("#saveBrandingBtn");
 
     let uploadedLogoUrl = siteSettings?.logo_url || "";
 
@@ -870,7 +871,7 @@ export async function renderAdmin(root) {
         });
 
         toast("Branding gespeichert", "ok");
-        location.reload();
+        await renderAdmin(root);
       } catch (err) {
         console.error(err);
         toast("Branding konnte nicht gespeichert werden", "bad");
@@ -922,6 +923,7 @@ export async function renderAdmin(root) {
     try {
       await signOut();
       location.hash = "#/admin";
+      await renderAdmin(root);
       location.reload();
     } catch (err) {
       console.error(err);
@@ -941,7 +943,7 @@ export async function renderAdmin(root) {
         const date = root.querySelector("#eventDate")?.value || "";
         const time = root.querySelector("#eventTime")?.value || "";
         const loc = root.querySelector("#eventLocation")?.value.trim() || "";
-          const displayType = root.querySelector("#eventDisplayType")?.value || "auto";        
+        const displayType = root.querySelector("#eventDisplayType")?.value || "auto";
         const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
 
         if (!de) {
@@ -1008,9 +1010,10 @@ export async function renderAdmin(root) {
           if (!newTime) return;
 
           const newLoc = prompt("Neuer Ort?", current.location ?? "") ?? "";
-           const newDisplayType = prompt("Anzeige-Typ? (auto/today/urgent/future/info)",
-           current.display_type ?? "auto") ?? "auto";
-          
+          const newDisplayType = prompt(
+            "Anzeige-Typ? (auto/today/urgent/future/info)",
+            current.display_type ?? "auto"
+          ) ?? "auto";
           const newPreviewImage = prompt("Neue Bild-URL?", current.preview_image_url ?? "") ?? "";
 
           const newStartISO = parseEventDateTime(newDate, newTime);
@@ -1288,10 +1291,8 @@ export async function renderAdmin(root) {
         const tr = root.querySelector("#tickerTextTr")?.value.trim() || "";
         const en = root.querySelector("#tickerTextEn")?.value.trim() || "";
         const color = root.querySelector("#tickerColor")?.value || "neutral";
-        const displayType = root.querySelector("#tickerDisplayType")?.value || "info";        
+        const displayType = root.querySelector("#tickerDisplayType")?.value || "info";
         const sortOrder = Number(root.querySelector("#tickerSortOrder")?.value || "0") || 0;
-        const layoutWidth = root.querySelector("#tileLayoutWidth")?.value || "third";
-        const layoutHeight = root.querySelector("#tileLayoutHeight")?.value || "medium";
         const active = !!root.querySelector("#tickerActive")?.checked;
 
         if (!de) {
@@ -1302,7 +1303,7 @@ export async function renderAdmin(root) {
         await createHomeTicker({
           text: { de, tr, en },
           color,
-          display_type: display_type,
+          display_type: displayType,
           sort_order: sortOrder,
           active
         });
@@ -1328,8 +1329,10 @@ export async function renderAdmin(root) {
           const tr = prompt("Ticker Text TR?", current.text?.tr ?? "") ?? "";
           const en = prompt("Ticker Text EN?", current.text?.en ?? "") ?? "";
           const color = prompt("Farbe? (green/yellow/red/neutral)", current.color ?? "neutral") ?? "neutral";
-            const displayType = prompt("Anzeige-Typ? (info/urgent/future/today)",
-            current.display_type ?? "info") ?? "info";       
+          const displayType = prompt(
+            "Anzeige-Typ? (info/urgent/future/today)",
+            current.display_type ?? "info"
+          ) ?? "info";
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
           const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
 
@@ -1389,6 +1392,8 @@ export async function renderAdmin(root) {
         const linkUrl = root.querySelector("#tileLinkUrl")?.value.trim() || "";
         const tileImageFile = root.querySelector("#tileImageFile")?.files?.[0] || null;
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
+        const layoutWidth = root.querySelector("#tileLayoutWidth")?.value || "third";
+        const layoutHeight = root.querySelector("#tileLayoutHeight")?.value || "medium";
         const active = !!root.querySelector("#tileActive")?.checked;
 
         if (!titleDe) {
@@ -1452,22 +1457,25 @@ export async function renderAdmin(root) {
           const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
           const layoutWidth = prompt(
-          "Breite? (full/half/third/quarter/fifth)",
-          current.layout_width ?? "third") ?? "third";
-          const layoutHeight = prompt("Höhe? (small/medium/large)",
-          current.layout_height ?? "medium") ?? "medium";
+            "Breite? (full/half/third/quarter/fifth)",
+            current.layout_width ?? "third"
+          ) ?? "third";
+          const layoutHeight = prompt(
+            "Höhe? (small/medium/large)",
+            current.layout_height ?? "medium"
+          ) ?? "medium";
           const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
 
-         await updateHomeTile(id, {
-           title: { de: titleDe, tr: titleTr, en: titleEn },
-           text: { de: textDe, tr: textTr, en: textEn },
-           button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
-           link_url: linkUrl,
-           image_url: imageUrl,
-           sort_order: sortOrder,
-           layout_width: layoutWidth,
-           layout_height: layoutHeight,
-           active: activeText.toLowerCase() === "yes"
+          await updateHomeTile(id, {
+            title: { de: titleDe, tr: titleTr, en: titleEn },
+            text: { de: textDe, tr: textTr, en: textEn },
+            button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
+            link_url: linkUrl,
+            image_url: imageUrl,
+            sort_order: sortOrder,
+            layout_width: layoutWidth,
+            layout_height: layoutHeight,
+            active: activeText.toLowerCase() === "yes"
           });
 
           toast("Kachel aktualisiert", "ok");
