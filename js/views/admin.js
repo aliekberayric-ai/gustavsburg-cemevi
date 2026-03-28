@@ -476,7 +476,7 @@ export async function renderAdmin(root) {
     <h2 style="margin:0">Branding</h2>
     ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
   </div>
-  <7div>
+  </div>
 
   <div class="admin-content">
               ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
