@@ -1423,4 +1423,5 @@ body.lang-fade #app {
   color: #fff;
   border-color: transparent;
   box-shadow: 0 8px 20px rgba(255, 80, 0, 0.28);
+  transform: scale(1.03);
 }
