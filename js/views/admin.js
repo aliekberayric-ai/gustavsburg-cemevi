@@ -296,6 +296,20 @@ export async function renderAdmin(root) {
       </div>
     `;
 
+root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const targetId = btn.getAttribute("data-scroll-target");
+    const targetEl = root.querySelector(`#${targetId}`);
+    if (!targetEl) return;
+
+    targetEl.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+});
+    
+
     root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -366,14 +380,14 @@ export async function renderAdmin(root) {
           <p class="mono">${t("admin.rolesHint")}</p>
 
           <div style="display:grid;gap:8px">
-            <a href="#admin-branding" class="btn">Branding</a>
-            <a href="#admin-events" class="btn">Events</a>
-            <a href="#admin-galleries" class="btn">Galerien</a>
-            <a href="#admin-people" class="btn">Team</a>
-            <a href="#admin-home-ticker" class="btn">Live-Ticker</a>
-            <a href="#admin-home-tiles" class="btn">Startseiten-Kacheln</a>
-            ${isEditor ? `<a href="#admin-forms" class="btn">Formulare</a>` : ""}
-            ${isAdmin ? `<a href="#admin-audit" class="btn">Audit Log</a>` : ""}
+           button type="button" class="btn" data-scroll-target="admin-branding">Branding</button>
+           <button type="button" class="btn" data-scroll-target="admin-events">Events</button>
+           <button type="button" class="btn" data-scroll-target="admin-galleries">Galerien</button>
+           <button type="button" class="btn" data-scroll-target="admin-people">Team</button>
+           <button type="button" class="btn" data-scroll-target="admin-home-ticker">Live-Ticker</button>
+           <button type="button" class="btn" data-scroll-target="admin-home-tiles">Startseiten-Kacheln</button>
+           ${isEditor ? `<button type="button" class="btn" data-scroll-target="admin-forms">Formulare</button>` : ""}
+           ${isAdmin ? `<button type="button" class="btn" data-scroll-target="admin-audit">Audit Log</button>` : ""}
           </div>
         </div>
 
