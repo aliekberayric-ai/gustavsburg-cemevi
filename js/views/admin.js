@@ -271,6 +271,64 @@ async function openAdminGallery(root, gallery) {
   bindGallerySorting(root, gallery, items);
 }
 
+function setupAdminNav(root) {
+  const navButtons = Array.from(root.querySelectorAll("[data-scroll-target]"));
+  const sections = navButtons
+    .map((btn) => {
+      const id = btn.getAttribute("data-scroll-target");
+      const el = root.querySelector(`#${id}`);
+      return el ? { id, el, btn } : null;
+    })
+    .filter(Boolean);
+
+  const setActive = (id) => {
+    navButtons.forEach((btn) => {
+      btn.classList.toggle("active", btn.getAttribute("data-scroll-target") === id);
+    });
+  };
+
+  navButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-scroll-target");
+      const targetEl = root.querySelector(`#${targetId}`);
+      if (!targetEl) return;
+
+      setActive(targetId);
+
+      targetEl.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+  });
+
+  setActive("admin-branding");
+
+  if (root._adminNavObserver) {
+    root._adminNavObserver.disconnect();
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+      if (visible.length) {
+        setActive(visible[0].target.id);
+      }
+    },
+    {
+      root: null,
+      threshold: [0.2, 0.35, 0.5],
+      rootMargin: "-100px 0px -55% 0px"
+    }
+  );
+
+  sections.forEach(({ el }) => observer.observe(el));
+  root._adminNavObserver = observer;
+}
+
 /* -----------------------------------------------------------
    MAIN
 ----------------------------------------------------------- */
@@ -295,20 +353,6 @@ export async function renderAdmin(root) {
         </div>
       </div>
     `;
-
-root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const targetId = btn.getAttribute("data-scroll-target");
-    const targetEl = root.querySelector(`#${targetId}`);
-    if (!targetEl) return;
-
-    targetEl.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  });
-});
-    
 
     root.querySelector("#loginForm")?.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -380,20 +424,20 @@ root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
           <p class="mono">${t("admin.rolesHint")}</p>
 
           <div style="display:grid;gap:8px">
-           <button type="button" class="btn" data-scroll-target="admin-branding">Branding</button>
-           <button type="button" class="btn" data-scroll-target="admin-events">Events</button>
-           <button type="button" class="btn" data-scroll-target="admin-galleries">Galerien</button>
-           <button type="button" class="btn" data-scroll-target="admin-people">Team</button>
-           <button type="button" class="btn" data-scroll-target="admin-home-ticker">Live-Ticker</button>
-           <button type="button" class="btn" data-scroll-target="admin-home-tiles">Startseiten-Kacheln</button>
-           ${isEditor ? `<button type="button" class="btn" data-scroll-target="admin-forms">Formulare</button>` : ""}
-           ${isAdmin ? `<button type="button" class="btn" data-scroll-target="admin-audit">Audit Log</button>` : ""}
+            <button type="button" class="btn" data-scroll-target="admin-branding">Branding</button>
+            <button type="button" class="btn" data-scroll-target="admin-events">Events</button>
+            <button type="button" class="btn" data-scroll-target="admin-galleries">Galerien</button>
+            <button type="button" class="btn" data-scroll-target="admin-people">Team</button>
+            <button type="button" class="btn" data-scroll-target="admin-home-ticker">Live-Ticker</button>
+            <button type="button" class="btn" data-scroll-target="admin-home-tiles">Startseiten-Kacheln</button>
+            ${isEditor ? `<button type="button" class="btn" data-scroll-target="admin-forms">Formulare</button>` : ""}
+            ${isAdmin ? `<button type="button" class="btn" data-scroll-target="admin-audit">Audit Log</button>` : ""}
           </div>
         </div>
 
         <div class="grid" style="gap:14px">
 
-          <div id="admin-branding" class="card card__pad">
+          <div id="admin-branding" class="card card__pad admin-section">
             <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
               <h2 style="margin:0">Branding</h2>
               ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
@@ -563,8 +607,6 @@ root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
                       </td>
                     </tr>
                   `;
-
-                  
                 }).join("")}
               </tbody>
             </table>
@@ -847,6 +889,8 @@ root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
       </div>
     </div>
   `;
+
+  setupAdminNav(root);
 
   /* -----------------------------------------------------------
      BRANDING
@@ -1448,57 +1492,6 @@ root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
       }
     });
 
-
-
-// 👉 Scroll Navigation (linke Buttons)
-root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    root.querySelectorAll("[data-scroll-target]").forEach((b) => {
-      b.classList.remove("active");
-    });
-
-    btn.classList.add("active");
-
-    const targetId = btn.getAttribute("data-scroll-target");
-    const targetEl = root.querySelector(`#${targetId}`);
-    if (!targetEl) return;
-
-    targetEl.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  });
-});
-
-    // 👉 Standard aktiv setzen (z.B. Branding)
-const firstBtn = root.querySelector('[data-scroll-target="admin-branding"]');
-if (firstBtn) {
-  firstBtn.classList.add("active");
-}
-
-    const sections = root.querySelectorAll("[id^='admin-']");
-
-window.addEventListener("scroll", () => {
-  let current = "";
-
-  sections.forEach((section) => {
-    const rect = section.getBoundingClientRect();
-
-    if (rect.top <= 150 && rect.bottom >= 150) {
-      current = section.id;
-    }
-  });
-
-  root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
-    btn.classList.remove("active");
-
-    if (btn.getAttribute("data-scroll-target") === current) {
-      btn.classList.add("active");
-    }
-  });
-});
-
-    
     root.querySelectorAll("[data-edit-tile]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         try {
