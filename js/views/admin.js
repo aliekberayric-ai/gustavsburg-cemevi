@@ -271,6 +271,33 @@ async function openAdminGallery(root, gallery) {
   bindGallerySorting(root, gallery, items);
 }
 
+function setAdminSectionState(section, expand) {
+  if (!section) return;
+  section.classList.toggle("is-collapsed", !expand);
+}
+
+function setupAdminAccordion(root) {
+  const sections = root.querySelectorAll(".admin-section");
+
+  sections.forEach((section) => {
+    const toggle = section.querySelector(".admin-toggle");
+    if (!toggle) return;
+
+    toggle.addEventListener("click", () => {
+      const isCollapsed = section.classList.contains("is-collapsed");
+      setAdminSectionState(section, isCollapsed);
+    });
+  });
+
+  sections.forEach((section) => {
+    if (section.id === "admin-branding") {
+      setAdminSectionState(section, true);
+    } else {
+      setAdminSectionState(section, false);
+    }
+  });
+}
+
 function setupAdminNav(root) {
   const navButtons = Array.from(root.querySelectorAll("[data-scroll-target]"));
   const sections = navButtons
@@ -287,6 +314,12 @@ function setupAdminNav(root) {
     });
   };
 
+  const expandTargetSection = (targetId) => {
+    root.querySelectorAll(".admin-section").forEach((section) => {
+      setAdminSectionState(section, section.id === targetId);
+    });
+  };
+
   navButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const targetId = btn.getAttribute("data-scroll-target");
@@ -294,6 +327,7 @@ function setupAdminNav(root) {
       if (!targetEl) return;
 
       setActive(targetId);
+      expandTargetSection(targetId);
 
       targetEl.scrollIntoView({
         behavior: "smooth",
@@ -438,8 +472,13 @@ export async function renderAdmin(root) {
         <div class="grid" style="gap:14px">
 
           <div id="admin-branding" class="card card__pad admin-section">
-            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
-              <h2 style="margin:0">Branding</h2>
+  <div class="admin-toggle" style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+    <h2 style="margin:0">Branding</h2>
+    ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+  </div>
+  <7div>
+
+  <div class="admin-content">
               ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
             </div>
 
@@ -890,6 +929,7 @@ export async function renderAdmin(root) {
     </div>
   `;
 
+  setupAdminAccordion(root);
   setupAdminNav(root);
 
   /* -----------------------------------------------------------
