@@ -380,7 +380,7 @@ root.querySelectorAll("[data-scroll-target]").forEach((btn) => {
           <p class="mono">${t("admin.rolesHint")}</p>
 
           <div style="display:grid;gap:8px">
-           button type="button" class="btn" data-scroll-target="admin-branding">Branding</button>
+           <button type="button" class="btn" data-scroll-target="admin-branding">Branding</button>
            <button type="button" class="btn" data-scroll-target="admin-events">Events</button>
            <button type="button" class="btn" data-scroll-target="admin-galleries">Galerien</button>
            <button type="button" class="btn" data-scroll-target="admin-people">Team</button>
