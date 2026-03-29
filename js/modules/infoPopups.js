@@ -1,17 +1,67 @@
-export async function getInfoPopupBySlug(slug) {
-  console.log("Popup geladen für slug:", slug);
+import { supabase } from "../api.js";
 
-  return {
-    title: {
-      de: "Test Titel",
-      tr: "Test Başlık",
-      en: "Test Title"
-    },
-    content: {
-      de: "Das ist ein Test-Popup auf Deutsch.",
-      tr: "Bu Türkçe test popup içeriğidir.",
-      en: "This is a test popup in English."
-    },
-    image_url: ""
-  };
+export async function listInfoPopups() {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getInfoPopupBySlug(slug) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data || null;
+}
+
+export async function listInfoPopupsAdmin() {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .order("sort_order", { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createInfoPopup(payload) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .insert([payload])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateInfoPopup(id, payload) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteInfoPopup(id) {
+  const { error } = await supabase
+    .from("info_popups")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+  return true;
 }
