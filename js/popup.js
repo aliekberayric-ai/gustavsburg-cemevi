@@ -14,7 +14,9 @@ export function initInfoPopup() {
   const imageWrap = document.querySelector("#infoPopupImageWrap");
   const imageEl = document.querySelector("#infoPopupImage");
 
-  if (!modal || !titleEl || !contentEl || !imageWrap || !imageEl) return;
+  if (!modal || !titleEl || !contentEl || !imageWrap || !imageEl) {
+    return;
+  }
 
   document.querySelectorAll("[data-popup-close]").forEach((el) => {
     el.addEventListener("click", () => {
@@ -48,7 +50,7 @@ export function initInfoPopup() {
 
       modal.classList.remove("hidden");
     } catch (err) {
-      console.error(err);
+      console.error("Popup Fehler:", err);
     }
   });
 }
