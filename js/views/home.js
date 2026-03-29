@@ -256,9 +256,15 @@ export async function renderHome(root) {
                           : ""
                       }
 
-                      <div class="home-tile-body">
-                        <h3>${escapeHtml(title)}</h3>
-                        <p>${escapeHtml(text)}</p>
+                      <ddiv class="home-tile-body">
+  <h3>${escapeHtml(title)}</h3>
+  <p>${escapeHtml(text)}</p>
+
+  <button class="btn btn--accent" data-popup-slug="test">
+    Mehr erfahren
+  </button>
+</div>
+</p>
 
                         ${
                           tile.link_url
