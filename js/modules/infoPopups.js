@@ -1,7 +1,6 @@
 import { supabase } from "../api.js";
 
-export async function getInfoPopupBySlug(slug) {
-  console.log("Popup geladen für slug:", slug);
+
 
   return {
     title: {
