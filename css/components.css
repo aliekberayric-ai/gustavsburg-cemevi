@@ -1471,3 +1471,72 @@ body.lang-fade #app {
     <div id="infoPopupContent" class="info-popup__content"></div>
   </div>
 </div>
+.info-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.info-popup.hidden {
+  display: none;
+}
+
+.info-popup__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.68);
+  backdrop-filter: blur(4px);
+}
+
+.info-popup__card {
+  position: relative;
+  z-index: 2;
+  width: min(760px, calc(100% - 32px));
+  max-height: 86vh;
+  overflow: auto;
+  margin: 6vh auto 0;
+  padding: 22px;
+  border-radius: 24px;
+  background: #131722;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.35);
+}
+
+.info-popup__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.info-popup__image-wrap {
+  margin-bottom: 16px;
+}
+
+.info-popup__image-wrap.hidden {
+  display: none;
+}
+
+.info-popup__image-wrap img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.info-popup__content {
+  color: var(--muted);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.popup-open {
+  overflow: hidden;
+}
