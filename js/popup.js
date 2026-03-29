@@ -1,5 +1,5 @@
 import { getLang } from "./i18n.js";
-import { getInfoPopupBySlug } from "./modules/infoPopups.js";
+import { getInfoPopupBySlug } from "./infoPopups.js";
 
 function pickLocalized(obj, lang) {
   if (!obj) return "";
