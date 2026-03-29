@@ -1,5 +1,8 @@
 import { getSiteSettings } from "./modules/siteSettings.js";
 import { initRouter } from "./router.js";
+import { initInfoPopup } from "./popup.js";
+
+initInfoPopup();
 
 import {
   initI18n,
