@@ -21,6 +21,7 @@ export function initInfoPopup() {
   document.querySelectorAll("[data-popup-close]").forEach((el) => {
     el.addEventListener("click", () => {
       modal.classList.add("hidden");
+      document.body.classList.remove("popup-open");
     });
   });
 
@@ -42,15 +43,25 @@ export function initInfoPopup() {
 
       if (popup.image_url) {
         imageEl.src = popup.image_url;
+        imageEl.alt = pickLocalized(popup.title, lang);
         imageWrap.classList.remove("hidden");
       } else {
         imageEl.src = "";
+        imageEl.alt = "";
         imageWrap.classList.add("hidden");
       }
 
       modal.classList.remove("hidden");
+      document.body.classList.add("popup-open");
     } catch (err) {
       console.error("Popup Fehler:", err);
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      modal.classList.add("hidden");
+      document.body.classList.remove("popup-open");
     }
   });
 }
