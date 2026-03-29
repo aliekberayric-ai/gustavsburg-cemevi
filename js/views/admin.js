@@ -5,6 +5,13 @@ import { getSiteSettings, updateSiteSettings, uploadBrandLogo } from "../modules
 import { uploadTileImage } from "../modules/homeTiles.js";
 
 import {
+  listInfoPopupsAdmin,
+  createInfoPopup,
+  updateInfoPopup,
+  deleteInfoPopup
+} from "./modules/infoPopups.js";
+
+import {
   listEventsPublic,
   createEvent,
   updateEvent,
