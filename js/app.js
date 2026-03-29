@@ -1,4 +1,4 @@
-import { getSiteSettings } from "./siteSettings.js";
+import { getSiteSettings } from "./modules/siteSettings.js";
 import { initRouter } from "./router.js";
 import { initInfoPopup } from "./popup.js";
 import {
