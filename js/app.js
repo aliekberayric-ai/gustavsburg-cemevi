@@ -41,6 +41,10 @@ async function applyBranding() {
   }
 }
 
+<button class="btn btn--accent" data-popup-slug="mitgliedschaft">
+  Mehr erfahren
+</button>
+
 async function main() {
   try {
     // 🔥 1. Sprache laden
