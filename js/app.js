@@ -2,13 +2,13 @@ import { getSiteSettings } from "./modules/siteSettings.js";
 import { initRouter } from "./router.js";
 import { initInfoPopup } from "./modules/popup.js";
 
-initInfoPopup();
-
 import {
   initI18n,
   setLangFromStorage,
   bindLangButtons
 } from "./i18n.js";
+
+initInfoPopup();
 
 async function applyBranding() {
   try {
