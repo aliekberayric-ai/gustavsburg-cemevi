@@ -50,57 +50,6 @@ import {
   deleteHomeTile
 } from "../modules/homeTiles.js";
 
-// ============================
-// GLOBAL ADMIN MODAL (AUTO)
-// ============================
-
-function injectAdminModal() {
-  if (document.getElementById("adminModal")) return;
-
-  const modal = document.createElement("div");
-  modal.id = "adminModal";
-  modal.className = "modal hidden";
-
-  modal.innerHTML = `
-    <div class="modal-content modal-content--xl">
-      <button id="adminModalClose" class="modal-close">✕</button>
-      <h2 id="adminModalTitle">Bearbeiten</h2>
-
-      <div id="adminModalBody"></div>
-
-      <div class="modal-actions">
-        <button id="adminModalCancel" class="btn">Abbrechen</button>
-        <button id="adminModalSave" class="btn btn--accent">Speichern</button>
-      </div>
-    </div>
-  `;
-
-  let modalContext = {
-  type: null,
-  data: null
-};
-
-function openAdminModal(type, data = {}) {
-  injectAdminModal();
-
-  modalContext = { type, data };
-
-  document.getElementById("adminModal").classList.remove("hidden");
-
-  document.getElementById("adminModalTitle").textContent =
-    getModalTitle(type);
-
-  document.getElementById("adminModalBody").innerHTML =
-    renderModalFields(type, data);
-
-  bindModalEvents();
-}
-
-function closeAdminModal() {
-  document.getElementById("adminModal")?.classList.add("hidden");
-}
-
-
 
 /* -----------------------------------------------------------
    HELPERS
