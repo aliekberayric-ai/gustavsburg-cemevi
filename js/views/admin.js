@@ -423,6 +423,7 @@ export async function renderAdmin(root) {
   let audits = [];
   let tickerItems = [];
   let homeTiles = [];
+  let infoPopups = [];
 
   try {
     [
@@ -442,7 +443,8 @@ export async function renderAdmin(root) {
       isEditor ? listFormSubmissions() : Promise.resolve([]),
       isAdmin ? listAuditLogs() : Promise.resolve([]),
       isEditor ? listHomeTickerAdmin() : Promise.resolve([]),
-      isEditor ? listHomeTilesAdmin() : Promise.resolve([])
+      isEditor ? listHomeTilesAdmin() : Promise.resolve([]),
+      isEditor ? listInfoPopupAdmin() : Promise.resolve([])
     ]);
   } catch (err) {
     console.error("Admin load error:", err);
@@ -477,6 +479,33 @@ export async function renderAdmin(root) {
             ${isAdmin ? `<button type="button" class="btn" data-scroll-target="admin-audit">Audit Log</button>` : ""}
           </div>
         </div>
+
+<div class="card card__pad">
+  <h2>Info Popups</h2>
+
+  <div class="grid" style="gap:10px;margin-top:10px">
+
+    <input id="popupSlug" class="input" placeholder="Slug (z.B. mitgliedschaft)" />
+
+    <input id="popupTitleDe" class="input" placeholder="Titel DE" />
+    <input id="popupTitleTr" class="input" placeholder="Titel TR" />
+    <input id="popupTitleEn" class="input" placeholder="Titel EN" />
+
+    <textarea id="popupContentDe" class="input" placeholder="Text DE"></textarea>
+    <textarea id="popupContentTr" class="input" placeholder="Text TR"></textarea>
+    <textarea id="popupContentEn" class="input" placeholder="Text EN"></textarea>
+
+    <input id="popupImageUrl" class="input" placeholder="Bild URL" />
+
+    <button id="addPopupBtn" class="btn btn--accent">
+      Popup erstellen
+    </button>
+
+  </div>
+
+  <div id="popupList" style="margin-top:20px"></div>
+</div>
+
 
         <div class="grid" style="gap:14px">
 
