@@ -1548,3 +1548,32 @@ body.lang-fade #app {
 .popup-open {
   overflow: hidden;
 }
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5000;
+  background: rgba(10, 12, 18, 0.94);
+  backdrop-filter: blur(10px);
+}
+
+.home-ticker-section {
+  position: sticky;
+  top: 96px;
+  z-index: 4900;
+  background: rgba(10, 12, 18, 0.94);
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.home-ticker-section .home-ticker + .home-ticker {
+  margin-top: 8px;
+}
+
+.home-tiles-section {
+  position: relative;
+  z-index: 1;
+}
+
+.app {
+  padding-top: 12px;
+}
