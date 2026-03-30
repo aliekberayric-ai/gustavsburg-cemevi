@@ -1332,7 +1332,7 @@ body.lang-fade #app {
 
 .site-brand span,
 #brandTitle {
-  font-size: 36px;      /* 🔥 Schrift größer */
+  font-size:20px;      /* 🔥 Schrift größer */
   font-weight: 800;
   color: #ffffff;       /* 🔥 Farbe ändern */
   line-height: 1.1;
