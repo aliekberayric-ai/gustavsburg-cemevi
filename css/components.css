@@ -1558,7 +1558,7 @@ body.lang-fade #app {
 
 .home-ticker-section {
   position: sticky;
-  top: 96px;
+  top: 115px;
   z-index: 4900;
   background: rgba(10, 12, 18, 0.94);
   padding-top: 8px;
