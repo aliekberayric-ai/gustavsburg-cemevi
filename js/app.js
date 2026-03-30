@@ -1,6 +1,6 @@
 import { getSiteSettings } from "./modules/siteSettings.js";
 import { initRouter } from "./router.js";
-import { initInfoPopup } from "./popup.js";
+import { initInfoPopup } from "./infoPopup.js";
 import {
   initI18n,
   setLangFromStorage,
