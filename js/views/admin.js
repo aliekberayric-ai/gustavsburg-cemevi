@@ -5,13 +5,6 @@ import { getSiteSettings, updateSiteSettings, uploadBrandLogo } from "../modules
 import { uploadTileImage } from "../modules/homeTiles.js";
 
 import {
-  listInfoPopupsAdmin,
-  createInfoPopup,
-  updateInfoPopup,
-  deleteInfoPopup
-} from "../modules/infoPopups.js";
-
-import {
   listEventsPublic,
   createEvent,
   updateEvent,
@@ -57,7 +50,12 @@ import {
   deleteHomeTile
 } from "../modules/homeTiles.js";
 
-
+import {
+  listInfoPopupsAdmin,
+  createInfoPopup,
+  updateInfoPopup,
+  deleteInfoPopup
+} from "../modules/infoPopups.js";
 
 /* -----------------------------------------------------------
    HELPERS
@@ -261,69 +259,28 @@ async function openAdminGallery(root, gallery) {
   bindGallerySorting(root, gallery, items);
 }
 
-function bindSectionNavigation(root) {
-  const navButtons = root.querySelectorAll("[data-scroll-target]");
-  const sections = root.querySelectorAll(".admin-section");
+function bindAdminScrollButtons(root) {
+  const buttons = root.querySelectorAll("[data-scroll-target]");
+  if (!buttons.length) return;
 
-  navButtons.forEach((btn) => {
+  buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      const targetId = btn.getAttribute("data-scroll-target");
-      const section = root.querySelector(`#${targetId}`);
-      if (!section) return;
-
-      navButtons.forEach((b) => b.classList.remove("active"));
+      buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
 
-      const body = section.querySelector(".admin-section__body");
-      const toggle = section.querySelector(".admin-section__toggle");
+      const targetId = btn.getAttribute("data-scroll-target");
+      const targetEl = root.querySelector(`#${targetId}`);
+      if (!targetEl) return;
 
-      if (body?.classList.contains("hidden")) {
-        body.classList.remove("hidden");
-        toggle?.classList.add("active");
-      }
-
-      section.scrollIntoView({
+      targetEl.scrollIntoView({
         behavior: "smooth",
         block: "start"
       });
     });
   });
 
-  root.querySelectorAll(".admin-section__toggle").forEach((toggle) => {
-    toggle.addEventListener("click", () => {
-      const section = toggle.closest(".admin-section");
-      if (!section) return;
-
-      const body = section.querySelector(".admin-section__body");
-      if (!body) return;
-
-      body.classList.toggle("hidden");
-      toggle.classList.toggle("active");
-    });
-  });
-
   const firstBtn = root.querySelector('[data-scroll-target="admin-branding"]');
   if (firstBtn) firstBtn.classList.add("active");
-}
-
-function sectionCard(id, title, badgeHtml, innerHtml, startOpen = true) {
-  return `
-    <div id="${id}" class="card card__pad admin-section">
-      <div class="admin-section__head" style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <h2 style="margin:0">${title}</h2>
-          ${badgeHtml || ""}
-        </div>
-        <button type="button" class="btn admin-section__toggle ${startOpen ? "active" : ""}">
-          ${startOpen ? "Einklappen" : "Ausklappen"}
-        </button>
-      </div>
-
-      <div class="admin-section__body ${startOpen ? "" : "hidden"}" style="margin-top:12px">
-        ${innerHtml}
-      </div>
-    </div>
-  `;
 }
 
 /* -----------------------------------------------------------
@@ -406,526 +363,6 @@ export async function renderAdmin(root) {
     toast("Einige Admin-Daten konnten nicht geladen werden", "bad");
   }
 
-  const brandingSection = sectionCard(
-    "admin-branding",
-    "Branding",
-    isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`,
-    `
-      <div class="grid" style="gap:12px">
-        <div>
-          <label for="siteTitleInput">Seitentitel</label>
-          <input
-            id="siteTitleInput"
-            class="input"
-            type="text"
-            value="${escapeHtml(siteSettings?.site_title || "Gustavsburg Cem Evi")}"
-            placeholder="Seitentitel"
-            ${isEditor ? "" : "disabled"}
-          />
-        </div>
-
-        <div>
-          <label for="siteLogoInput">Logo hochladen</label>
-          <input
-            id="siteLogoInput"
-            class="input"
-            type="file"
-            accept="image/*"
-            ${isEditor ? "" : "disabled"}
-          />
-        </div>
-
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-          <img
-            id="siteLogoPreview"
-            src="${escapeHtml(siteSettings?.logo_url || "")}"
-            alt="Logo Preview"
-            style="width:64px;height:64px;object-fit:contain;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,0.04);${siteSettings?.logo_url ? "" : "display:none;"}"
-          />
-          ${isEditor ? `<button id="saveBrandingBtn" class="btn btn--accent">Branding speichern</button>` : ""}
-        </div>
-      </div>
-    `
-  );
-
-  const eventsSection = sectionCard(
-    "admin-events",
-    "Events",
-    isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`,
-    `
-      ${isEditor ? `
-        <div class="grid" style="gap:8px">
-          <input id="eventTitleDe" class="input" placeholder="Titel DE" />
-          <input id="eventTitleTr" class="input" placeholder="Titel TR" />
-          <input id="eventTitleEn" class="input" placeholder="Titel EN" />
-          <input id="eventDate" class="input" type="date" />
-          <input id="eventTime" class="input" type="time" />
-          <input id="eventLocation" class="input" placeholder="Ort" />
-          <select id="eventDisplayType" class="input">
-            <option value="auto">Auto</option>
-            <option value="today">🟢 Heute</option>
-            <option value="urgent">🔥 Dringend</option>
-            <option value="future">📅 Zukunft</option>
-            <option value="info">ℹ️ Hinweis</option>
-          </select>
-          <input id="eventPreviewImageFile" class="input" type="file" accept="image/*" />
-          <div id="eventPreviewImageInfo" class="mono">Kein Bild ausgewählt</div>
-          <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
-        </div>
-      ` : ""}
-
-      <table class="table" style="margin-top:10px">
-        <thead>
-          <tr>
-            <th>${t("calendar.th1")}</th>
-            <th>${t("calendar.th2")}</th>
-            <th>${t("calendar.th3")}</th>
-            <th class="mono">ID</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${events.map((e) => {
-            const title = pickLocalized(e.title, lang) || "—";
-            return `
-              <tr>
-                <td class="mono">${escapeHtml(fmtDateTime(e.start_time))}</td>
-                <td>${escapeHtml(title)}</td>
-                <td>${escapeHtml(safeText(e.location))}</td>
-                <td class="mono">${escapeHtml(String(e.id))}</td>
-                <td style="white-space:nowrap">
-                  ${isEditor ? `<button class="btn" data-edit-event="${e.id}">${t("admin.edit")}</button>` : ""}
-                  ${isAdmin ? `<button class="btn btn--danger" data-del-event="${e.id}">${t("admin.delete")}</button>` : ""}
-                </td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
-    `
-  );
-
-  const galleriesSection = sectionCard(
-    "admin-galleries",
-    "Galerien",
-    isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`,
-    `
-      ${isEditor ? `
-        <div class="grid" style="gap:10px">
-          <input id="galleryTitle" class="input" placeholder="Galerietitel" />
-
-          <select id="galleryStatus" class="input">
-            <option value="active">Aktiv</option>
-            <option value="archived">Archiv</option>
-          </select>
-
-          <div id="galleryDropzone" class="gallery-dropzone">
-            <div class="gallery-dropzone__inner">
-              <strong>Bilder hier hineinziehen</strong>
-              <span>oder unten auswählen</span>
-            </div>
-          </div>
-
-          <input id="galleryFiles" class="input" type="file" accept="image/*" multiple />
-          <div id="galleryFileCount" class="mono">0 Bilder ausgewählt</div>
-          <div id="galleryFilePreview" class="upload-preview-grid"></div>
-
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <button id="gallerySaveButton" class="btn btn--accent" type="button">Galerie speichern</button>
-            <span id="galleryUploadStatus" class="mono"></span>
-          </div>
-        </div>
-      ` : ""}
-
-      <table class="table" style="margin-top:16px">
-        <thead>
-          <tr>
-            <th>Cover</th>
-            <th>${t("admin.title")}</th>
-            <th>${t("admin.status")}</th>
-            <th>Bilder</th>
-            <th class="mono">ID</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${galleries.map((g) => {
-            const title = pickLocalized(g.title, lang) || "—";
-            const cover = g.cover_url || "";
-            return `
-              <tr>
-                <td>
-                  ${
-                    cover
-                      ? `<img src="${escapeHtml(cover)}" alt="Cover" style="width:72px;height:52px;object-fit:cover;border-radius:10px;">`
-                      : `—`
-                  }
-                </td>
-                <td>
-                  <button class="btn" type="button" data-open-gallery="${g.id}">
-                    ${escapeHtml(title)}
-                  </button>
-                </td>
-                <td>${escapeHtml(safeText(g.status))}</td>
-                <td class="mono" data-gallery-count="${g.id}">…</td>
-                <td class="mono">${escapeHtml(String(g.id))}</td>
-                <td style="white-space:nowrap">
-                  ${isEditor ? `<button class="btn" data-edit-gallery="${g.id}">${t("admin.edit")}</button>` : ""}
-                  ${isAdmin ? `<button class="btn btn--danger" data-del-gallery="${g.id}">${t("admin.delete")}</button>` : ""}
-                </td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
-
-      <div id="adminGalleryDetail" class="gallery-detail hidden" style="margin-top:16px">
-        <div class="gallery-detail-head">
-          <h3 id="adminGalleryDetailTitle">Galerie</h3>
-          <p id="adminGalleryDetailMeta">0 Bilder</p>
-        </div>
-        <div id="adminGalleryItems" class="gallery-items-grid"></div>
-      </div>
-
-      <p class="mono" style="margin-top:10px">${t("admin.galleryItemsNote")}</p>
-    `
-  );
-
-  const peopleSection = sectionCard(
-    "admin-people",
-    "Team",
-    isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`,
-    `
-      ${isEditor ? `
-        <div class="grid" style="gap:8px;width:100%">
-          <input id="personName" class="input" placeholder="Name" />
-          <input id="personImageFile" class="input" type="file" accept="image/*" />
-          <div id="personImageInfo" class="mono">Kein Bild ausgewählt</div>
-
-          <input id="personRoleDe" class="input" placeholder="Aufgabe DE" />
-          <input id="personRoleTr" class="input" placeholder="Aufgabe TR" />
-          <input id="personRoleEn" class="input" placeholder="Aufgabe EN" />
-
-          <textarea id="personBioDe" class="input" placeholder="Beschreibung DE" rows="4"></textarea>
-          <textarea id="personBioTr" class="input" placeholder="Beschreibung TR" rows="4"></textarea>
-          <textarea id="personBioEn" class="input" placeholder="Beschreibung EN" rows="4"></textarea>
-
-          <input id="personSortOrder" class="input" type="number" placeholder="Reihenfolge (z.B. 1, 2, 3)" />
-          <label style="display:flex;align-items:center;gap:8px">
-            <input id="personVisible" type="checkbox" checked />
-            Sichtbar
-          </label>
-
-          <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
-        </div>
-      ` : ""}
-
-      <table class="table" style="margin-top:10px">
-        <thead>
-          <tr>
-            <th>${t("admin.name")}</th>
-            <th>${t("admin.visible")}</th>
-            <th class="mono">ID</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${people.map((p) => `
-            <tr>
-              <td>${escapeHtml(safeText(p.name))}</td>
-              <td>${p.is_visible ? `<span class="badge badge--ok">yes</span>` : `<span class="badge badge--warn">no</span>`}</td>
-              <td class="mono">${escapeHtml(String(p.id))}</td>
-              <td style="white-space:nowrap">
-                ${isEditor ? `<button class="btn" data-edit-person="${p.id}">${t("admin.edit")}</button>` : ""}
-                ${isAdmin ? `<button class="btn btn--danger" data-del-person="${p.id}">${t("admin.delete")}</button>` : ""}
-              </td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-    `
-  );
-
-  const tickerSection = isEditor ? sectionCard(
-    "admin-home-ticker",
-    "Startseite – Live-Ticker",
-    `<span class="badge badge--ok">Editor</span>`,
-    `
-      <div class="grid" style="gap:8px">
-        <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
-        <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
-        <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
-
-        <select id="tickerColor" class="input">
-          <option value="neutral">Neutral</option>
-          <option value="green">Grün</option>
-          <option value="yellow">Gelb</option>
-          <option value="red">Rot</option>
-        </select>
-
-        <select id="tickerDisplayType" class="input">
-          <option value="info">ℹ️ Hinweis</option>
-          <option value="urgent">🔥 Dringend</option>
-          <option value="future">📅 Zukunft</option>
-          <option value="today">🟢 Heute</option>
-        </select>
-
-        <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
-
-        <label style="display:flex;align-items:center;gap:8px">
-          <input id="tickerActive" type="checkbox" checked />
-          Aktiv
-        </label>
-
-        <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
-      </div>
-
-      <table class="table" style="margin-top:14px">
-        <thead>
-          <tr>
-            <th>Text</th>
-            <th>Farbe</th>
-            <th>Aktiv</th>
-            <th>Reihenfolge</th>
-            <th class="mono">ID</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${tickerItems.map((item) => {
-            const text = pickLocalized(item.text, lang);
-            return `
-              <tr>
-                <td>${escapeHtml(text)}</td>
-                <td>${escapeHtml(safeText(item.color, "neutral"))}</td>
-                <td>${item.active ? "ja" : "nein"}</td>
-                <td>${Number(item.sort_order ?? 0)}</td>
-                <td class="mono">${escapeHtml(String(item.id))}</td>
-                <td style="white-space:nowrap">
-                  <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
-                  <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
-                </td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
-    `,
-    false
-  ) : "";
-
-  const tilesSection = isEditor ? sectionCard(
-    "admin-home-tiles",
-    "Startseite – Kacheln",
-    `<span class="badge badge--ok">Editor</span>`,
-    `
-      <div class="grid" style="gap:8px">
-        <input id="tileTitleDe" class="input" placeholder="Titel DE" />
-        <input id="tileTitleTr" class="input" placeholder="Titel TR" />
-        <input id="tileTitleEn" class="input" placeholder="Titel EN" />
-
-        <textarea id="tileTextDe" class="input" placeholder="Text DE" rows="3"></textarea>
-        <textarea id="tileTextTr" class="input" placeholder="Text TR" rows="3"></textarea>
-        <textarea id="tileTextEn" class="input" placeholder="Text EN" rows="3"></textarea>
-
-        <input id="tileButtonTextDe" class="input" placeholder="Button Text DE" />
-        <input id="tileButtonTextTr" class="input" placeholder="Button Text TR" />
-        <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
-
-        <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
-
-        <input id="tilePopupSlug" class="input" placeholder="Popup Slug (z.B. sommerfest)" />
-        
-        <input id="tileImageFile" class="input" type="file" accept="image/*" />
-        <div id="tileImageInfo" class="mono">Kein Bild ausgewählt</div>
-        <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
-
-        <select id="tileLayoutWidth" class="input">
-          <option value="full">Ganze Breite</option>
-          <option value="half">1/2 Breite</option>
-          <option value="third" selected>1/3 Breite</option>
-          <option value="quarter">1/4 Breite</option>
-          <option value="fifth">1/5 Breite</option>
-        </select>
-
-        <select id="tileLayoutHeight" class="input">
-          <option value="small">Flach</option>
-          <option value="medium" selected>Mittel</option>
-          <option value="large">Groß</option>
-        </select>
-
-        <label style="display:flex;align-items:center;gap:8px">
-          <input id="tileActive" type="checkbox" checked />
-          Aktiv
-        </label>
-
-        <button id="addTileBtn" class="btn btn--accent">Kachel hinzufügen</button>
-      </div>
-
-      <table class="table" style="margin-top:14px">
-        <thead>
-          <tr>
-            <th>Titel</th>
-            <th>Aktiv</th>
-            <th>Reihenfolge</th>
-            <th class="mono">ID</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${homeTiles.map((tile) => {
-            const title = pickLocalized(tile.title, lang);
-            return `
-              <tr>
-                <td>${escapeHtml(title)}</td>
-                <td>${tile.active ? "ja" : "nein"}</td>
-                <td>${Number(tile.sort_order ?? 0)}</td>
-                <td class="mono">${escapeHtml(String(tile.id))}</td>
-                <td style="white-space:nowrap">
-                  <button class="btn" data-edit-tile="${tile.id}">Bearbeiten</button>
-                  <button class="btn btn--danger" data-del-tile="${tile.id}">Löschen</button>
-                </td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
-    `,
-    false
-  ) : "";
-
-  const popupsSection = isEditor ? sectionCard(
-    "admin-info-popups",
-    "Info-Popups",
-    `<span class="badge badge--ok">Editor</span>`,
-    `
-      <div class="grid" style="gap:8px">
-        <input id="popupSlug" class="input" placeholder="Slug (z.B. mitgliedschaft)" />
-
-        <input id="popupTitleDe" class="input" placeholder="Titel DE" />
-        <input id="popupTitleTr" class="input" placeholder="Titel TR" />
-        <input id="popupTitleEn" class="input" placeholder="Titel EN" />
-
-        <textarea id="popupContentDe" class="input" placeholder="Text DE" rows="4"></textarea>
-        <textarea id="popupContentTr" class="input" placeholder="Text TR" rows="4"></textarea>
-        <textarea id="popupContentEn" class="input" placeholder="Text EN" rows="4"></textarea>
-
-        <input id="popupImageUrl" class="input" placeholder="Bild-URL (optional)" />
-        <input id="popupSortOrder" class="input" type="number" placeholder="Reihenfolge" />
-
-        <label style="display:flex;align-items:center;gap:8px">
-          <input id="popupActive" type="checkbox" checked />
-          Aktiv
-        </label>
-
-        <button id="addPopupBtn" class="btn btn--accent">Popup hinzufügen</button>
-      </div>
-
-      <table class="table" style="margin-top:14px">
-        <thead>
-          <tr>
-            <th>Slug</th>
-            <th>Titel</th>
-            <th>Aktiv</th>
-            <th>Reihenfolge</th>
-            <th class="mono">ID</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${infoPopups.map((popup) => `
-            <tr>
-              <td>${escapeHtml(safeText(popup.slug))}</td>
-              <td>${escapeHtml(pickLocalized(popup.title, lang))}</td>
-              <td>${popup.is_active ? "ja" : "nein"}</td>
-              <td>${Number(popup.sort_order ?? 0)}</td>
-              <td class="mono">${escapeHtml(String(popup.id))}</td>
-              <td style="white-space:nowrap">
-                <button class="btn" data-edit-popup="${popup.id}">Bearbeiten</button>
-                <button class="btn btn--danger" data-del-popup="${popup.id}">Löschen</button>
-              </td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-    `,
-    false
-  ) : "";
-
-  const formsSection = isEditor ? sectionCard(
-    "admin-forms",
-    "Formulare",
-    `<span class="badge badge--ok">Editor</span>`,
-    `
-      <p class="mono">${t("admin.formsHint")}</p>
-
-      <table class="table" style="margin-top:10px">
-        <thead>
-          <tr>
-            <th>${t("admin.type")}</th>
-            <th>${t("admin.created")}</th>
-            <th>${t("admin.status")}</th>
-            <th>${t("admin.payload")}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${forms.map((f) => `
-            <tr>
-              <td>${escapeHtml(safeText(f.form_type))}</td>
-              <td class="mono">${escapeHtml(fmtDateTime(f.created_at))}</td>
-              <td>${escapeHtml(safeText(f.status))}</td>
-              <td class="mono">${escapeHtml(JSON.stringify(f.payload ?? {}).slice(0, 160))}</td>
-              <td style="white-space:nowrap">
-                <button class="btn" data-form-status="${f.id}" data-next="in_review">in_review</button>
-                <button class="btn" data-form-status="${f.id}" data-next="done">done</button>
-                <button class="btn" data-form-status="${f.id}" data-next="archived">archived</button>
-              </td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-
-      <div style="margin-top:10px">
-        <button class="btn" id="printFormsBtn">${t("admin.print")}</button>
-      </div>
-    `,
-    false
-  ) : "";
-
-  const auditSection = isAdmin ? sectionCard(
-    "admin-audit",
-    "Audit Log",
-    `<span class="badge badge--ok">Admin</span>`,
-    `
-      <p class="mono">${t("admin.auditHint")}</p>
-
-      <table class="table" style="margin-top:10px">
-        <thead>
-          <tr>
-            <th>${t("admin.created")}</th>
-            <th>${t("admin.action")}</th>
-            <th>${t("admin.table")}</th>
-            <th>${t("admin.actor")}</th>
-            <th class="mono">row_id</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${audits.map((a) => `
-            <tr>
-              <td class="mono">${escapeHtml(fmtDateTime(a.created_at))}</td>
-              <td>${escapeHtml(safeText(a.action))}</td>
-              <td>${escapeHtml(safeText(a.table_name))}</td>
-              <td>${escapeHtml(safeText(a.actor_email))}</td>
-              <td class="mono">${escapeHtml(safeText(a.row_id))}</td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-    `,
-    false
-  ) : "";
-
   root.innerHTML = `
     <div class="page">
       <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-end;flex-wrap:wrap">
@@ -948,30 +385,529 @@ export async function renderAdmin(root) {
             <button type="button" class="btn" data-scroll-target="admin-events">Events</button>
             <button type="button" class="btn" data-scroll-target="admin-galleries">Galerien</button>
             <button type="button" class="btn" data-scroll-target="admin-people">Team</button>
-            ${isEditor ? `<button type="button" class="btn" data-scroll-target="admin-home-ticker">Live-Ticker</button>` : ""}
-            ${isEditor ? `<button type="button" class="btn" data-scroll-target="admin-home-tiles">Startseiten-Kacheln</button>` : ""}
+            <button type="button" class="btn" data-scroll-target="admin-home-ticker">Live-Ticker</button>
+            <button type="button" class="btn" data-scroll-target="admin-home-tiles">Startseiten-Kacheln</button>
             ${isEditor ? `<button type="button" class="btn" data-scroll-target="admin-info-popups">Info-Popups</button>` : ""}
             ${isEditor ? `<button type="button" class="btn" data-scroll-target="admin-forms">Formulare</button>` : ""}
             ${isAdmin ? `<button type="button" class="btn" data-scroll-target="admin-audit">Audit Log</button>` : ""}
           </div>
         </div>
- 
+
         <div class="grid" style="gap:14px">
-          ${brandingSection}
-          ${eventsSection}
-          ${galleriesSection}
-          ${peopleSection}
-          ${tickerSection}
-          ${tilesSection}
-          ${popupsSection}
-          ${formsSection}
-          ${auditSection}
+
+          <div id="admin-branding" class="card card__pad admin-section">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+              <h2 style="margin:0">Branding</h2>
+              ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+            </div>
+
+            <div class="grid" style="gap:12px;margin-top:12px">
+              <div>
+                <label for="siteTitleInput">Seitentitel</label>
+                <input
+                  id="siteTitleInput"
+                  class="input"
+                  type="text"
+                  value="${escapeHtml(siteSettings?.site_title || "Gustavsburg Cem Evi")}"
+                  placeholder="Seitentitel"
+                  ${isEditor ? "" : "disabled"}
+                />
+              </div>
+
+              <div>
+                <label for="siteLogoInput">Logo hochladen</label>
+                <input
+                  id="siteLogoInput"
+                  class="input"
+                  type="file"
+                  accept="image/*"
+                  ${isEditor ? "" : "disabled"}
+                />
+              </div>
+
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                <img
+                  id="siteLogoPreview"
+                  src="${escapeHtml(siteSettings?.logo_url || "")}"
+                  alt="Logo Preview"
+                  style="width:64px;height:64px;object-fit:contain;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,0.04);${siteSettings?.logo_url ? "" : "display:none;"}"
+                />
+                ${isEditor ? `<button id="saveBrandingBtn" class="btn btn--accent">Branding speichern</button>` : ""}
+              </div>
+            </div>
+          </div>
+
+          <div id="admin-events" class="card card__pad admin-section">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+              <h2 style="margin:0">Events</h2>
+              ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+            </div>
+
+            ${isEditor ? `
+              <div class="grid" style="gap:8px;margin-top:12px">
+                <input id="eventTitleDe" class="input" placeholder="Titel DE" />
+                <input id="eventTitleTr" class="input" placeholder="Titel TR" />
+                <input id="eventTitleEn" class="input" placeholder="Titel EN" />
+                <input id="eventDate" class="input" type="date" />
+                <input id="eventTime" class="input" type="time" />
+                <input id="eventLocation" class="input" placeholder="Ort" />
+                <select id="eventDisplayType" class="input">
+                  <option value="auto">Auto</option>
+                  <option value="today">🟢 Heute</option>
+                  <option value="urgent">🔥 Dringend</option>
+                  <option value="future">📅 Zukunft</option>
+                  <option value="info">ℹ️ Hinweis</option>
+                </select>
+                <input id="eventPreviewImageFile" class="input" type="file" accept="image/*" />
+                <div id="eventPreviewImageInfo" class="mono">Kein Bild ausgewählt</div>
+                <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
+              </div>
+            ` : ""}
+
+            <table class="table" style="margin-top:10px">
+              <thead>
+                <tr>
+                  <th>${t("calendar.th1")}</th>
+                  <th>${t("calendar.th2")}</th>
+                  <th>${t("calendar.th3")}</th>
+                  <th class="mono">ID</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${events.map((e) => {
+                  const title = pickLocalized(e.title, lang) || "—";
+                  return `
+                    <tr>
+                      <td class="mono">${escapeHtml(fmtDateTime(e.start_time))}</td>
+                      <td>${escapeHtml(title)}</td>
+                      <td>${escapeHtml(safeText(e.location))}</td>
+                      <td class="mono">${escapeHtml(String(e.id))}</td>
+                      <td style="white-space:nowrap">
+                        ${isEditor ? `<button class="btn" data-edit-event="${e.id}">${t("admin.edit")}</button>` : ""}
+                        ${isAdmin ? `<button class="btn btn--danger" data-del-event="${e.id}">${t("admin.delete")}</button>` : ""}
+                      </td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <div id="admin-galleries" class="card card__pad admin-section">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+              <h2 style="margin:0">Galerien</h2>
+              ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+            </div>
+
+            ${isEditor ? `
+              <div class="grid" style="gap:10px;margin-top:14px">
+                <input id="galleryTitle" class="input" placeholder="Galerietitel" />
+                <select id="galleryStatus" class="input">
+                  <option value="active">Aktiv</option>
+                  <option value="archived">Archiv</option>
+                </select>
+
+                <div id="galleryDropzone" class="gallery-dropzone">
+                  <div class="gallery-dropzone__inner">
+                    <strong>Bilder hier hineinziehen</strong>
+                    <span>oder unten auswählen</span>
+                  </div>
+                </div>
+
+                <input id="galleryFiles" class="input" type="file" accept="image/*" multiple />
+                <div id="galleryFileCount" class="mono">0 Bilder ausgewählt</div>
+                <div id="galleryFilePreview" class="upload-preview-grid"></div>
+
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                  <button id="gallerySaveButton" class="btn btn--accent" type="button">Galerie speichern</button>
+                  <span id="galleryUploadStatus" class="mono"></span>
+                </div>
+              </div>
+            ` : ""}
+
+            <table class="table" style="margin-top:16px">
+              <thead>
+                <tr>
+                  <th>Cover</th>
+                  <th>${t("admin.title")}</th>
+                  <th>${t("admin.status")}</th>
+                  <th>Bilder</th>
+                  <th class="mono">ID</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${galleries.map((g) => {
+                  const title = pickLocalized(g.title, lang) || "—";
+                  const cover = g.cover_url || "";
+                  return `
+                    <tr>
+                      <td>
+                        ${cover
+                          ? `<img src="${escapeHtml(cover)}" alt="Cover" style="width:72px;height:52px;object-fit:cover;border-radius:10px;">`
+                          : `—`
+                        }
+                      </td>
+                      <td>
+                        <button class="btn" type="button" data-open-gallery="${g.id}">
+                          ${escapeHtml(title)}
+                        </button>
+                      </td>
+                      <td>${escapeHtml(safeText(g.status))}</td>
+                      <td class="mono" data-gallery-count="${g.id}">…</td>
+                      <td class="mono">${escapeHtml(String(g.id))}</td>
+                      <td style="white-space:nowrap">
+                        ${isEditor ? `<button class="btn" data-edit-gallery="${g.id}">${t("admin.edit")}</button>` : ""}
+                        ${isAdmin ? `<button class="btn btn--danger" data-del-gallery="${g.id}">${t("admin.delete")}</button>` : ""}
+                      </td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+
+            <div id="adminGalleryDetail" class="gallery-detail hidden" style="margin-top:16px">
+              <div class="gallery-detail-head">
+                <h3 id="adminGalleryDetailTitle">Galerie</h3>
+                <p id="adminGalleryDetailMeta">0 Bilder</p>
+              </div>
+              <div id="adminGalleryItems" class="gallery-items-grid"></div>
+            </div>
+
+            <p class="mono" style="margin-top:10px">${t("admin.galleryItemsNote")}</p>
+          </div>
+
+          <div id="admin-people" class="card card__pad admin-section">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+              <h2 style="margin:0">Team</h2>
+              ${isEditor ? `<span class="badge badge--ok">Editor</span>` : `<span class="badge badge--warn">${t("admin.readOnly")}</span>`}
+            </div>
+
+            ${isEditor ? `
+              <div style="display:grid;gap:8px;width:100%;margin-top:12px">
+                <input id="personName" class="input" placeholder="Name" />
+                <input id="personImageFile" class="input" type="file" accept="image/*" />
+                <div id="personImageInfo" class="mono">Kein Bild ausgewählt</div>
+
+                <input id="personRoleDe" class="input" placeholder="Aufgabe DE" />
+                <input id="personRoleTr" class="input" placeholder="Aufgabe TR" />
+                <input id="personRoleEn" class="input" placeholder="Aufgabe EN" />
+
+                <textarea id="personBioDe" class="input" placeholder="Beschreibung DE" rows="4"></textarea>
+                <textarea id="personBioTr" class="input" placeholder="Beschreibung TR" rows="4"></textarea>
+                <textarea id="personBioEn" class="input" placeholder="Beschreibung EN" rows="4"></textarea>
+
+                <input id="personSortOrder" class="input" type="number" placeholder="Reihenfolge (z.B. 1, 2, 3)" />
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input id="personVisible" type="checkbox" checked />
+                  Sichtbar
+                </label>
+
+                <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
+              </div>
+            ` : ""}
+
+            <table class="table" style="margin-top:10px">
+              <thead>
+                <tr>
+                  <th>${t("admin.name")}</th>
+                  <th>${t("admin.visible")}</th>
+                  <th class="mono">ID</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${people.map((p) => `
+                  <tr>
+                    <td>${escapeHtml(safeText(p.name))}</td>
+                    <td>${p.is_visible ? `<span class="badge badge--ok">yes</span>` : `<span class="badge badge--warn">no</span>`}</td>
+                    <td class="mono">${escapeHtml(String(p.id))}</td>
+                    <td style="white-space:nowrap">
+                      ${isEditor ? `<button class="btn" data-edit-person="${p.id}">${t("admin.edit")}</button>` : ""}
+                      ${isAdmin ? `<button class="btn btn--danger" data-del-person="${p.id}">${t("admin.delete")}</button>` : ""}
+                    </td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          ${isEditor ? `
+            <div id="admin-home-ticker" class="card card__pad admin-section">
+              <h2 style="margin:0">Startseite – Live-Ticker</h2>
+
+              <div class="grid" style="gap:8px;margin-top:12px">
+                <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
+                <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
+                <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
+
+                <select id="tickerColor" class="input">
+                  <option value="neutral">Neutral</option>
+                  <option value="green">Grün</option>
+                  <option value="yellow">Gelb</option>
+                  <option value="red">Rot</option>
+                </select>
+
+                <select id="tickerDisplayType" class="input">
+                  <option value="info">ℹ️ Hinweis</option>
+                  <option value="urgent">🔥 Dringend</option>
+                  <option value="future">📅 Zukunft</option>
+                  <option value="today">🟢 Heute</option>
+                </select>
+
+                <input id="tickerSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input id="tickerActive" type="checkbox" checked />
+                  Aktiv
+                </label>
+
+                <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
+              </div>
+
+              <table class="table" style="margin-top:14px">
+                <thead>
+                  <tr>
+                    <th>Text</th>
+                    <th>Farbe</th>
+                    <th>Aktiv</th>
+                    <th>Reihenfolge</th>
+                    <th class="mono">ID</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tickerItems.map((item) => {
+                    const text = pickLocalized(item.text, lang);
+                    return `
+                      <tr>
+                        <td>${escapeHtml(text)}</td>
+                        <td>${escapeHtml(safeText(item.color, "neutral"))}</td>
+                        <td>${item.active ? "ja" : "nein"}</td>
+                        <td>${Number(item.sort_order ?? 0)}</td>
+                        <td class="mono">${escapeHtml(String(item.id))}</td>
+                        <td style="white-space:nowrap">
+                          <button class="btn" data-edit-ticker="${item.id}">Bearbeiten</button>
+                          <button class="btn btn--danger" data-del-ticker="${item.id}">Löschen</button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
+
+          ${isEditor ? `
+            <div id="admin-home-tiles" class="card card__pad admin-section">
+              <h2 style="margin:0">Startseite – Kacheln</h2>
+
+              <div class="grid" style="gap:8px;margin-top:12px">
+                <input id="tileTitleDe" class="input" placeholder="Titel DE" />
+                <input id="tileTitleTr" class="input" placeholder="Titel TR" />
+                <input id="tileTitleEn" class="input" placeholder="Titel EN" />
+
+                <textarea id="tileTextDe" class="input" placeholder="Text DE" rows="3"></textarea>
+                <textarea id="tileTextTr" class="input" placeholder="Text TR" rows="3"></textarea>
+                <textarea id="tileTextEn" class="input" placeholder="Text EN" rows="3"></textarea>
+
+                <input id="tileButtonTextDe" class="input" placeholder="Button Text DE" />
+                <input id="tileButtonTextTr" class="input" placeholder="Button Text TR" />
+                <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
+
+                <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
+                <input id="tilePopupSlug" class="input" placeholder="Popup Slug (z.B. sommerfest)" />
+                <input id="tileImageFile" class="input" type="file" accept="image/*" />
+                <div id="tileImageInfo" class="mono">Kein Bild ausgewählt</div>
+                <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+
+                <select id="tileLayoutWidth" class="input">
+                  <option value="full">Ganze Breite</option>
+                  <option value="half">1/2 Breite</option>
+                  <option value="third" selected>1/3 Breite</option>
+                  <option value="quarter">1/4 Breite</option>
+                  <option value="fifth">1/5 Breite</option>
+                </select>
+
+                <select id="tileLayoutHeight" class="input">
+                  <option value="small">Flach</option>
+                  <option value="medium" selected>Mittel</option>
+                  <option value="large">Groß</option>
+                </select>
+
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input id="tileActive" type="checkbox" checked />
+                  Aktiv
+                </label>
+
+                <button id="addTileBtn" class="btn btn--accent">Kachel hinzufügen</button>
+              </div>
+
+              <table class="table" style="margin-top:14px">
+                <thead>
+                  <tr>
+                    <th>Titel</th>
+                    <th>Popup</th>
+                    <th>Aktiv</th>
+                    <th>Reihenfolge</th>
+                    <th class="mono">ID</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${homeTiles.map((tile) => {
+                    const title = pickLocalized(tile.title, lang);
+                    return `
+                      <tr>
+                        <td>${escapeHtml(title)}</td>
+                        <td>${escapeHtml(safeText(tile.popup_slug))}</td>
+                        <td>${tile.active ? "ja" : "nein"}</td>
+                        <td>${Number(tile.sort_order ?? 0)}</td>
+                        <td class="mono">${escapeHtml(String(tile.id))}</td>
+                        <td style="white-space:nowrap">
+                          <button class="btn" data-edit-tile="${tile.id}">Bearbeiten</button>
+                          <button class="btn btn--danger" data-del-tile="${tile.id}">Löschen</button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
+
+          ${isEditor ? `
+            <div id="admin-info-popups" class="card card__pad admin-section">
+              <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+                <h2 style="margin:0">Info-Popups</h2>
+                <span class="badge badge--ok">Editor</span>
+              </div>
+
+              <div class="grid" style="gap:8px;margin-top:12px">
+                <input id="popupSlug" class="input" placeholder="Slug (z.B. sommerfest)" />
+                <input id="popupTitleDe" class="input" placeholder="Titel DE" />
+                <input id="popupTitleTr" class="input" placeholder="Titel TR" />
+                <input id="popupTitleEn" class="input" placeholder="Titel EN" />
+
+                <textarea id="popupContentDe" class="input" placeholder="Text DE" rows="4"></textarea>
+                <textarea id="popupContentTr" class="input" placeholder="Text TR" rows="4"></textarea>
+                <textarea id="popupContentEn" class="input" placeholder="Text EN" rows="4"></textarea>
+
+                <input id="popupImageUrl" class="input" placeholder="Bild-URL (optional)" />
+                <input id="popupSortOrder" class="input" type="number" placeholder="Reihenfolge" />
+
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input id="popupActive" type="checkbox" checked />
+                  Aktiv
+                </label>
+
+                <button id="addPopupBtn" class="btn btn--accent">Popup hinzufügen</button>
+              </div>
+
+              <table class="table" style="margin-top:14px">
+                <thead>
+                  <tr>
+                    <th>Slug</th>
+                    <th>Titel</th>
+                    <th>Aktiv</th>
+                    <th>Reihenfolge</th>
+                    <th class="mono">ID</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${infoPopups.map((popup) => `
+                    <tr>
+                      <td>${escapeHtml(safeText(popup.slug))}</td>
+                      <td>${escapeHtml(pickLocalized(popup.title, lang))}</td>
+                      <td>${popup.active ? "ja" : "nein"}</td>
+                      <td>${Number(popup.sort_order ?? 0)}</td>
+                      <td class="mono">${escapeHtml(String(popup.id))}</td>
+                      <td style="white-space:nowrap">
+                        <button class="btn" data-edit-popup="${popup.id}">Bearbeiten</button>
+                        <button class="btn btn--danger" data-del-popup="${popup.id}">Löschen</button>
+                      </td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
+
+          ${isEditor ? `
+            <div id="admin-forms" class="card card__pad admin-section">
+              <h2 style="margin:0">Formulare</h2>
+              <p class="mono">${t("admin.formsHint")}</p>
+
+              <table class="table" style="margin-top:10px">
+                <thead>
+                  <tr>
+                    <th>${t("admin.type")}</th>
+                    <th>${t("admin.created")}</th>
+                    <th>${t("admin.status")}</th>
+                    <th>${t("admin.payload")}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${forms.map((f) => `
+                    <tr>
+                      <td>${escapeHtml(safeText(f.form_type))}</td>
+                      <td class="mono">${escapeHtml(fmtDateTime(f.created_at))}</td>
+                      <td>${escapeHtml(safeText(f.status))}</td>
+                      <td class="mono">${escapeHtml(JSON.stringify(f.payload ?? {}).slice(0, 160))}</td>
+                      <td style="white-space:nowrap">
+                        <button class="btn" data-form-status="${f.id}" data-next="in_review">in_review</button>
+                        <button class="btn" data-form-status="${f.id}" data-next="done">done</button>
+                        <button class="btn" data-form-status="${f.id}" data-next="archived">archived</button>
+                      </td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+
+              <div style="margin-top:10px">
+                <button class="btn" id="printFormsBtn">${t("admin.print")}</button>
+              </div>
+            </div>
+          ` : ""}
+
+          ${isAdmin ? `
+            <div id="admin-audit" class="card card__pad admin-section">
+              <h2 style="margin:0">Audit Log</h2>
+              <p class="mono">${t("admin.auditHint")}</p>
+
+              <table class="table" style="margin-top:10px">
+                <thead>
+                  <tr>
+                    <th>${t("admin.created")}</th>
+                    <th>${t("admin.action")}</th>
+                    <th>${t("admin.table")}</th>
+                    <th>${t("admin.actor")}</th>
+                    <th class="mono">row_id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${audits.map((a) => `
+                    <tr>
+                      <td class="mono">${escapeHtml(fmtDateTime(a.created_at))}</td>
+                      <td>${escapeHtml(safeText(a.action))}</td>
+                      <td>${escapeHtml(safeText(a.table_name))}</td>
+                      <td>${escapeHtml(safeText(a.actor_email))}</td>
+                      <td class="mono">${escapeHtml(safeText(a.row_id))}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
         </div>
       </div>
     </div>
   `;
 
-  bindSectionNavigation(root);
+  bindAdminScrollButtons(root);
 
   /* -----------------------------------------------------------
      BRANDING
@@ -1064,6 +1000,7 @@ export async function renderAdmin(root) {
     try {
       await signOut();
       location.hash = "#/admin";
+      await renderAdmin(root);
       location.reload();
     } catch (err) {
       console.error(err);
@@ -1086,18 +1023,12 @@ export async function renderAdmin(root) {
         const displayType = root.querySelector("#eventDisplayType")?.value || "auto";
         const previewImageFile = root.querySelector("#eventPreviewImageFile")?.files?.[0] || null;
 
-        if (!de) {
-          toast("Titel DE fehlt", "bad");
-          return;
-        }
-
-        if (!date || !time) {
-          toast("Datum oder Uhrzeit fehlt", "bad");
+        if (!de || !date || !time) {
+          toast("Titel, Datum oder Uhrzeit fehlt", "bad");
           return;
         }
 
         const startISO = parseEventDateTime(date, time);
-
         if (!startISO) {
           toast("Ungültiges Datum oder Uhrzeit", "bad");
           return;
@@ -1322,7 +1253,8 @@ export async function renderAdmin(root) {
         const bioTr = root.querySelector("#personBioTr")?.value.trim() || "";
         const bioEn = root.querySelector("#personBioEn")?.value.trim() || "";
 
-        const sortOrder = Number(root.querySelector("#personSortOrder")?.value || "0") || 0;
+        const sortOrderRaw = root.querySelector("#personSortOrder")?.value || "0";
+        const sortOrder = Number(sortOrderRaw) || 0;
         const isVisible = !!root.querySelector("#personVisible")?.checked;
 
         if (!name) {
@@ -1519,7 +1451,6 @@ export async function renderAdmin(root) {
 
         const linkUrl = root.querySelector("#tileLinkUrl")?.value.trim() || "";
         const popupSlug = root.querySelector("#tilePopupSlug")?.value.trim() || "";
-
         const tileImageFile = root.querySelector("#tileImageFile")?.files?.[0] || null;
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
         const layoutWidth = root.querySelector("#tileLayoutWidth")?.value || "third";
@@ -1541,18 +1472,19 @@ export async function renderAdmin(root) {
             return;
           }
         }
-await createHomeTile({
-  title: { de: titleDe, tr: titleTr, en: titleEn },
-  text: { de: textDe, tr: textTr, en: textEn },
-  button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
-  link_url: linkUrl,
-  popup_slug: popupSlug,
-  image_url: imageUrl,
-  sort_order: sortOrder,
-  layout_width: layoutWidth,
-  layout_height: layoutHeight,
-  active
-});
+
+        await createHomeTile({
+          title: { de: titleDe, tr: titleTr, en: titleEn },
+          text: { de: textDe, tr: textTr, en: textEn },
+          button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
+          link_url: linkUrl,
+          popup_slug: popupSlug,
+          image_url: imageUrl,
+          sort_order: sortOrder,
+          layout_width: layoutWidth,
+          layout_height: layoutHeight,
+          active
+        });
 
         toast("Kachel hinzugefügt", "ok");
         await renderAdmin(root);
@@ -1585,7 +1517,6 @@ await createHomeTile({
 
           const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
           const popupSlug = prompt("Popup Slug?", current.popup_slug ?? "") ?? "";
-          
           const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
           const layoutWidth = prompt("Breite? (full/half/third/quarter/fifth)", current.layout_width ?? "third") ?? "third";
@@ -1649,7 +1580,7 @@ await createHomeTile({
 
         const imageUrl = root.querySelector("#popupImageUrl")?.value.trim() || "";
         const sortOrder = Number(root.querySelector("#popupSortOrder")?.value || "0") || 0;
-        const isActive = !!root.querySelector("#popupActive")?.checked;
+        const active = !!root.querySelector("#popupActive")?.checked;
 
         if (!slug) {
           toast("Slug fehlt", "bad");
@@ -1665,10 +1596,9 @@ await createHomeTile({
           slug,
           title: { de: titleDe, tr: titleTr, en: titleEn },
           content: { de: contentDe, tr: contentTr, en: contentEn },
-          button_text: { de: "Mehr erfahren", tr: "Daha fazla", en: "Learn more" },
           image_url: imageUrl,
-          is_active: isActive,
-          sort_order: sortOrder
+          sort_order: sortOrder,
+          active
         });
 
         toast("Popup hinzugefügt", "ok");
@@ -1699,7 +1629,7 @@ await createHomeTile({
 
           const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
-          const activeText = prompt("Aktiv? (yes/no)", current.is_active ? "yes" : "no") ?? "yes";
+          const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
 
           await updateInfoPopup(id, {
             slug,
@@ -1707,7 +1637,7 @@ await createHomeTile({
             content: { de: contentDe, tr: contentTr, en: contentEn },
             image_url: imageUrl,
             sort_order: sortOrder,
-            is_active: activeText.toLowerCase() === "yes"
+            active: activeText.toLowerCase() === "yes"
           });
 
           toast("Popup aktualisiert", "ok");
