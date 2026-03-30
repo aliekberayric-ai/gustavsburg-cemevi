@@ -256,22 +256,20 @@ export async function renderHome(root) {
                           : ""
                       }
 
-                      <ddiv class="home-tile-body">
+<div class="home-tile-body">
   <h3>${escapeHtml(title)}</h3>
   <p>${escapeHtml(text)}</p>
 
   <button class="btn btn--accent" data-popup-slug="test">
     Mehr erfahren
   </button>
-</div>
-</p>
 
-                        ${
-                          tile.link_url
-                            ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
-                            : ""
-                        }
-                      </div>
+  ${
+    tile.link_url
+      ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
+      : ""
+  }
+</div
                     </div>
                   `;
                 }).join("")}
