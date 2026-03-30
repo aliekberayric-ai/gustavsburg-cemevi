@@ -15,7 +15,7 @@ export function initInfoPopup() {
   const imageEl = document.querySelector("#infoPopupImage");
 
   if (!modal || !titleEl || !contentEl || !imageWrap || !imageEl) {
-    console.warn("Info popup elements not found.");
+    console.warn("Popup Elemente nicht gefunden");
     return;
   }
 
@@ -34,7 +34,7 @@ export function initInfoPopup() {
     try {
       const popup = await getInfoPopupBySlug(slug);
       if (!popup) {
-        console.warn("Popup nicht gefunden für slug:", slug);
+        console.warn("Kein Popup gefunden für slug:", slug);
         return;
       }
 
@@ -48,22 +48,22 @@ export function initInfoPopup() {
         imageEl.alt = pickLocalized(popup.title, lang) || "Popup Bild";
         imageWrap.classList.remove("hidden");
       } else {
+        imageWrap.classList.add("hidden");
         imageEl.src = "";
         imageEl.alt = "";
-        imageWrap.classList.add("hidden");
       }
 
       modal.classList.remove("hidden");
     } catch (err) {
-      console.error("Popup konnte nicht geladen werden:", err);
+      console.error("Popup konnte nicht geöffnet werden:", err);
     }
   }
 
   document.addEventListener("click", async (e) => {
-    const popupBtn = e.target.closest("[data-popup-slug]");
-    if (popupBtn) {
+    const openBtn = e.target.closest("[data-popup-slug]");
+    if (openBtn) {
       e.preventDefault();
-      const slug = popupBtn.getAttribute("data-popup-slug");
+      const slug = openBtn.getAttribute("data-popup-slug");
       await openPopup(slug);
       return;
     }
