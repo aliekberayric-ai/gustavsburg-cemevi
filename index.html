@@ -1,12 +1,50 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
+
+  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Gustavsburg Cem Evi</title>
 
   <link rel="stylesheet" href="css/components.css" />
+
+HTML
+<style>
+  .nav-link {
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 800;
+    text-decoration: none;
+    line-height: 1.2;
+    padding: 8px 14px;
+    border-radius: 14px;
+    transition:
+      color 0.2s ease,
+      background 0.2s ease,
+      transform 0.15s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: #ffd54a;
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+
+  .nav-link:active {
+    transform: scale(0.96);
+    background: rgba(255,255,255,0.14);
+  }
+
+  .nav-link.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #d83444, #ff6b57);
+    box-shadow: 0 10px 24px rgba(216,52,68,0.35);
+  }
+</style>
+    
 </head>
 <body>
   <!-- HEADER -->
@@ -21,13 +59,13 @@
         </a>
 
         <!-- NAV -->
-       <nav class="main-nav" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;">
-  <a href="#/" style="color:#ffffff;font-size:22px;font-weight:700;text-decoration:none;">Start</a>
-  <a href="#/gallery" style="color:#ffffff;font-size:22px;font-weight:700;text-decoration:none;">Galerie</a>
-  <a href="#/calendar" style="color:#ffffff;font-size:22px;font-weight:700;text-decoration:none;">Kalender</a>
-  <a href="#/people" style="color:#ffffff;font-size:22px;font-weight:700;text-decoration:none;">Team</a>
-  <a href="#/forms" style="color:#ffffff;font-size:22px;font-weight:700;text-decoration:none;">Formulare</a>
-  <a href="#/admin" style="color:#ffffff;font-size:22px;font-weight:700;text-decoration:none;">Admin</a>
+<nav class="main-nav" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;">
+  <a href="#/" class="nav-link">Start</a>
+  <a href="#/gallery" class="nav-link">Galerie</a>
+  <a href="#/calendar" class="nav-link">Kalender</a>
+  <a href="#/people" class="nav-link">Team</a>
+  <a href="#/forms" class="nav-link">Formulare</a>
+  <a href="#/admin" class="nav-link">Admin</a>
 </nav>
 
         <!-- RIGHT SIDE -->
