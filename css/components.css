@@ -1330,6 +1330,14 @@ body.lang-fade #app {
   gap: 12px;
 }
 
+.site-brand span,
+#brandTitle {
+  font-size: 36px;      /* 🔥 Schrift größer */
+  font-weight: 800;
+  color: #ffffff;       /* 🔥 Farbe ändern */
+  line-height: 1.1;
+}
+
 .site-brand img,
 #brandLogo {
   width: 100px;
