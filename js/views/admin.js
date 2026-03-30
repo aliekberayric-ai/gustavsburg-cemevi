@@ -960,7 +960,7 @@ export async function renderAdmin(root) {
             ${isAdmin ? `<button type="button" class="btn" data-scroll-target="admin-audit">Audit Log</button>` : ""}
           </div>
         </div>
-
+ 
         <div class="grid" style="gap:14px">
           ${brandingSection}
           ${eventsSection}
