@@ -257,19 +257,23 @@ export async function renderHome(root) {
                       }
 
 <div class="home-tile-body">
-  <h3>${escapeHtml(title)}</h3>
-  <p>${escapeHtml(text)}</p>
-
-  <button class="btn btn--accent" data-popup-slug="test">
-    Mehr erfahren
-  </button>
+  ${title ? `<h3>${escapeHtml(title)}</h3>` : ""}
+  ${text ? `<p>${escapeHtml(text)}</p>` : ""}
 
   ${
-    tile.link_url
-      ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
+    tile.popup_slug
+      ? `<button class="btn btn--accent" data-popup-slug="${escapeHtml(tile.popup_slug)}">
+          ${escapeHtml(button || "Mehr erfahren")}
+        </button>`
       : ""
   }
-</div
+
+  ${
+    tile.link_url && !tile.popup_slug
+      ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button || "Mehr erfahren")}</a>`
+      : ""
+  }
+</div>
                     </div>
                   `;
                 }).join("")}
