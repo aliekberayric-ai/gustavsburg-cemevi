@@ -65,3 +65,6 @@ export async function deleteInfoPopup(id) {
   if (error) throw error;
   return true;
 }
+function nl2brSafe(text) {
+  return escapeHtml(text || "").replace(/\n/g, "<br>");
+}
