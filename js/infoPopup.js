@@ -1,4 +1,4 @@
-import { supabase } from "../api.js";
+/*import { supabase } from "../api.js";*/
 
 export async function listInfoPopups() {
   const { data, error } = await supabase
