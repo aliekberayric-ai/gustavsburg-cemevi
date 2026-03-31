@@ -7,6 +7,23 @@ function pickLocalized(obj, lang) {
   return obj?.[lang] || obj?.de || obj?.tr || obj?.en || "";
 }
 
+
+export async function listInfoPopupsAdmin() {
+  return [];
+}
+
+export async function createInfoPopup() {
+  return null;
+}
+
+export async function updateInfoPopup() {
+  return null;
+}
+
+export async function deleteInfoPopup() {
+  return null;
+}
+
 export function initInfoPopup() {
   const modal = document.querySelector("#infoPopupModal");
   const titleEl = document.querySelector("#infoPopupTitle");
