@@ -1517,7 +1517,7 @@ export async function renderAdmin(root) {
         const buttonEn = root.querySelector("#tileButtonTextEn")?.value.trim() || "";
 
         const linkUrl = root.querySelector("#tileLinkUrl")?.value.trim() || "";
-        const popupSlug = root.querySelector("#tilePopupSlug")?,value.trim() || "";
+        const popupSlug = root.querySelector("#tilePopupSlug")?.value.trim() || "";
         const tileImageFile = root.querySelector("#tileImageFile")?.files?.[0] || null;
         
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
