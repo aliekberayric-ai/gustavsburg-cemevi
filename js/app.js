@@ -1,6 +1,6 @@
 import { getSiteSettings } from "./modules/siteSettings.js";
 import { initRouter } from "./router.js";
-import { initInfoPopup } from "./infoPopup.js?v=10";
+import { initInfoPopup } from "/gustavsburg-cemevi/js/infoPopup.js?v=11";
 import {
   initI18n,
   setLangFromStorage,
