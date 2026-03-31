@@ -1653,3 +1653,108 @@ body.lang-fade #app {
   color: rgba(255,255,255,0.92);
   font-size: 17px;
 }
+/* =========================
+   LIGHTBOX FIX
+========================= */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.lightbox.hidden {
+  display: none !important;
+}
+
+.lightbox-content {
+  max-width: 90%;
+  max-height: 80%;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 12px;
+}
+
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  font-size: 28px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.lightbox-close {
+  top: 20px;
+  right: 20px;
+}
+
+.lightbox-prev {
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lightbox-next {
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* =========================
+   INFO POPUP FIX
+========================= */
+.info-popup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.info-popup.hidden {
+  display: none !important;
+}
+
+.info-popup__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+
+.info-popup__card {
+  position: relative;
+  background: #fff;
+  padding: 24px;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 90%;
+  z-index: 2;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.info-popup__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.info-popup__image-wrap img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
