@@ -763,6 +763,7 @@ export async function renderAdmin(root) {
         <thead>
           <tr>
             <th>Titel</th>
+            <th>Popup Slug</th>
             <th>Aktiv</th>
             <th>Reihenfolge</th>
             <th class="mono">ID</th>
@@ -775,6 +776,7 @@ export async function renderAdmin(root) {
             return `
               <tr>
                 <td>${escapeHtml(title)}</td>
+                <td class="mono">${escapeHtml(tile.popup_slug ||  "")}</td>
                 <td>${tile.active ? "ja" : "nein"}</td>
                 <td>${Number(tile.sort_order ?? 0)}</td>
                 <td class="mono">${escapeHtml(String(tile.id))}</td>
@@ -1544,6 +1546,7 @@ export async function renderAdmin(root) {
           text: { de: textDe, tr: textTr, en: textEn },
           button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
           link_url: linkUrl,
+          popup_slug: popupSlug,
           image_url: imageUrl,
           sort_order: sortOrder,
           layout_width: layoutWidth,
@@ -1581,6 +1584,7 @@ export async function renderAdmin(root) {
           const buttonEn = prompt("Button Text EN?", current.button_text?.en ?? "") ?? "";
 
           const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
+          const popupSlug = prompt("PopupSlug?", current.popup_slug ?? "") ?? "";
           const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
           const layoutWidth = prompt("Breite? (full/half/third/quarter/fifth)", current.layout_width ?? "third") ?? "third";
@@ -1592,6 +1596,7 @@ export async function renderAdmin(root) {
             text: { de: textDe, tr: textTr, en: textEn },
             button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
             link_url: linkUrl,
+            popup_slug: popupSlug,
             image_url: imageUrl,
             sort_order: sortOrder,
             layout_width: layoutWidth,
