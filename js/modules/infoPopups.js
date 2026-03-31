@@ -1,19 +1,67 @@
-import { Supabase } from "../supabase.js";
+import { supabase } from "../api.js";
+
+export async function listInfoPopups() {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
 
 export async function getInfoPopupBySlug(slug) {
-  const supabase = getSupabaseClient();
-
   const { data, error } = await supabase
     .from("info_popups")
     .select("*")
     .eq("slug", slug)
-    .eq("active", true)
+    .eq("is_active", true)
     .maybeSingle();
 
-  if (error) {
-    console.error(error);
-    return null;
-  }
+  if (error) throw error;
+  return data || null;
+}
 
+export async function listInfoPopupsAdmin() {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .order("sort_order", { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createInfoPopup(payload) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .insert([payload])
+    .select()
+    .single();
+
+  if (error) throw error;
   return data;
+}
+
+export async function updateInfoPopup(id, payload) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteInfoPopup(id) {
+  const { error } = await supabase
+    .from("info_popups")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+  return true;
 }
