@@ -1577,3 +1577,95 @@ body.lang-fade #app {
 .app {
   padding-top: 12px;
 }
+/* Overlay über den ganzen Bildschirm */
+.info-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+/* sichtbar */
+.info-popup-overlay.is-open {
+  display: flex;
+}
+
+/* eigentliche Popup-Box */
+.info-popup-modal {
+  width: min(680px, 92vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(52,58,74,0.96), rgba(32,36,46,0.96));
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  padding: 24px;
+  position: relative;
+  color: #fff;
+}
+
+/* Titel */
+.info-popup-modal h3 {
+  margin: 0 0 12px;
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+/* Text */
+.info-popup-modal p {
+  margin: 0 0 14px;
+  line-height: 1.7;
+  font-size: 18px;
+}
+
+/* Schließen-Button */
+.info-popup-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255,255,255,0.16);
+}
+
+/* Optional Button im Popup */
+.info-popup-modal .popup-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ff8a00, #ffb347);
+  box-shadow: 0 8px 20px rgba(255,140,0,0.35);
+}
+
+/* Handy */
+@media (max-width: 768px) {
+  .info-popup-modal {
+    width: 94vw;
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .info-popup-modal h3 {
+    font-size: 24px;
+  }
+
+  .info-popup-modal p {
+    font-size: 16px;
+  }
+}
