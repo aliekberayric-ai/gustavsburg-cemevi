@@ -117,6 +117,103 @@ function formatEventText(event, lang) {
 function buildTickerRow(items, reverse = false) {
   if (!items.length) return "";
 
+
+function renderPopupMarkup() {
+  return `
+    <div id="infoPopupOverlay" class="info-popup-overlay hidden" aria-hidden="true">
+      <div class="info-popup-backdrop" data-popup-close="true"></div>
+
+      <div class="info-popup-box" role="dialog" aria-modal="true">
+        <button id="infoPopupClose" class="info-popup-close" type="button" aria-label="Schließen">×</button>
+
+        <div id="infoPopupImageWrap" class="info-popup-image-wrap hidden">
+          <img id="infoPopupImage" class="info-popup-image" src="" alt="">
+        </div>
+
+        <h3 id="infoPopupTitle" class="info-popup-title"></h3>
+        <div id="infoPopupContent" class="info-popup-content"></div>
+      </div>
+    </div>
+  `;
+}
+
+function openInfoPopup(popup, lang) {
+  const overlay = document.getElementById("infoPopupOverlay");
+  const titleEl = document.getElementById("infoPopupTitle");
+  const contentEl = document.getElementById("infoPopupContent");
+  const imageWrap = document.getElementById("infoPopupImageWrap");
+  const imageEl = document.getElementById("infoPopupImage");
+
+  if (!overlay || !titleEl || !contentEl || !imageWrap || !imageEl) return;
+
+  const title = pickLocalized(popup.title, lang);
+  const content = pickLocalized(popup.content, lang);
+  const imageUrl = popup.image_url || "";
+
+  titleEl.textContent = title || "";
+  contentEl.innerHTML = nl2brSafe(content);
+
+  if (imageUrl) {
+    imageEl.src = imageUrl;
+    imageEl.alt = title || "Popup Bild";
+    imageWrap.classList.remove("hidden");
+  } else {
+    imageEl.src = "";
+    imageEl.alt = "";
+    imageWrap.classList.add("hidden");
+  }
+
+  overlay.classList.remove("hidden");
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("popup-open");
+}
+
+function closeInfoPopup() {
+  const overlay = document.getElementById("infoPopupOverlay");
+  if (!overlay) return;
+
+  overlay.classList.add("hidden");
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("popup-open");
+}
+
+function bindPopupEvents(popups, lang) {
+  const popupMap = new Map(
+    (popups || [])
+      .filter((popup) => popup.is_active !== false && popup.slug)
+      .map((popup) => [String(popup.slug).trim(), popup])
+  );
+
+  document.querySelectorAll("[data-popup-slug]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const slug = btn.getAttribute("data-popup-slug")?.trim();
+      if (!slug) return;
+
+      const popup = popupMap.get(slug);
+      if (!popup) {
+        console.warn("Popup nicht gefunden für Slug:", slug);
+        return;
+      }
+
+      openInfoPopup(popup, lang);
+    });
+  });
+
+  document.getElementById("infoPopupClose")?.addEventListener("click", closeInfoPopup);
+
+  document.querySelectorAll("[data-popup-close='true']").forEach((el) => {
+    el.addEventListener("click", closeInfoPopup);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeInfoPopup();
+    }
+  });
+}
+  
   const totalChars = items.reduce((sum, item) => {
     return sum + String(item.text || "").length + String(item.label || "").length + 10;
   }, 0);
