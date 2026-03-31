@@ -3,6 +3,7 @@ import { listHomeTiles } from "../modules/homeTiles.js";
 import { listEventsPublic } from "../modules/events.js";
 import { getLang } from "../i18n.js";
 import { escapeHtml } from "../ui.js";
+import { listInfoPopupsPublic } from "../modules/infoPopups.js";
 
 function pickLocalized(obj, lang) {
   if (!obj) return "";
