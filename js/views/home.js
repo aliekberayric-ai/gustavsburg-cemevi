@@ -11,6 +11,10 @@ function pickLocalized(obj, lang) {
   return obj?.[lang] || obj?.de || obj?.tr || obj?.en || "";
 }
 
+function nl2brSafe(text) {
+  return escapeHtml(text || "").replace(/\n/g, "<br>");
+}
+
 function getDefaultButtonText(lang) {
   if (lang === "tr") return "Daha fazla";
   if (lang === "en") return "More";
