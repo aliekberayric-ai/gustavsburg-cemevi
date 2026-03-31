@@ -1,5 +1,5 @@
-import { getLang } from "./i18n.js";
-import { getInfoPopupBySlug } from "./modules/infoPopups.js?v=10";
+import { getLang } from "/gustavsburg-cemevi/js/i18n.js?v=11";
+import { getInfoPopupBySlug } from "/gustavsburg-cemevi/js/modules/infoPopups.js?v=11";
 
 function pickLocalized(obj, lang) {
   if (!obj) return "";
