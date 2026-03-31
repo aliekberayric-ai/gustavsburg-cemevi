@@ -1,4 +1,4 @@
-import { getSupabaseClient } from "../supabase.js";
+import { Supabase } from "../supabase.js";
 
 export async function getInfoPopupBySlug(slug) {
   const supabase = getSupabaseClient();
