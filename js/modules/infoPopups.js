@@ -1,8 +1,28 @@
 import { supabase } from "../api.js";
 
-// --------------------------------------------------
-// LISTE (ADMIN)
-// --------------------------------------------------
+export async function listInfoPopups() {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getInfoPopupBySlug(slug) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data || null;
+}
+
 export async function listInfoPopupsAdmin() {
   const { data, error } = await supabase
     .from("info_popups")
@@ -13,32 +33,29 @@ export async function listInfoPopupsAdmin() {
   return data || [];
 }
 
-// --------------------------------------------------
-// CREATE
-// --------------------------------------------------
 export async function createInfoPopup(payload) {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("info_popups")
-    .insert([payload]);
+    .insert([payload])
+    .select()
+    .single();
 
   if (error) throw error;
+  return data;
 }
 
-// --------------------------------------------------
-// UPDATE
-// --------------------------------------------------
 export async function updateInfoPopup(id, payload) {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("info_popups")
     .update(payload)
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) throw error;
+  return data;
 }
 
-// --------------------------------------------------
-// DELETE
-// --------------------------------------------------
 export async function deleteInfoPopup(id) {
   const { error } = await supabase
     .from("info_popups")
@@ -46,4 +63,5 @@ export async function deleteInfoPopup(id) {
     .eq("id", id);
 
   if (error) throw error;
+  return true;
 }
