@@ -60,7 +60,7 @@ async function main() {
     bindLangButtons();
 
     // 📢 Popup initialisieren
-    // initInfoPopup(); //
+    initInfoPopup(); 
 
     // 🎨 Branding laden
     await applyBranding();
