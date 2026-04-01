@@ -54,7 +54,7 @@ import {
   listInfoPopupsAdmin,
   // createInfoPopup, //
   updateInfoPopup,
-  deleteInfoPopup 
+ // deleteInfoPopup 
 } from "../modules/infoPopups.js"; 
 
 /* -----------------------------------------------------------
