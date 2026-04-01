@@ -74,10 +74,3 @@ async function main() {
     console.error("❌ App Fehler:", err);
   }
 }
-
-
-// ================================
-// START
-// ================================
-
-main();
