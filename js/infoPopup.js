@@ -11,16 +11,10 @@ export function initInfoPopup() {
   const modal = document.querySelector("#infoPopupModal");
   const titleEl = document.querySelector("#infoPopupTitle");
   const contentEl = document.querySelector("#infoPopupContent");
-  const imageWrap = document.querySelector("#infoPopupImageWrap");
-  const imageEl = document.querySelector("#infoPopupImage");
 
-  if (!modal || !titleEl || !contentEl || !imageWrap || !imageEl) {
-    console.warn("Popup Elemente nicht gefunden");
+  if (!modal || !titleEl || !contentEl) {
+    console.warn("Popup fehlt im HTML");
     return;
-  }
-
-  function closePopup() {
-    modal.classList.add("hidden");
   }
 
   async function openPopup(slug) {
@@ -32,13 +26,6 @@ export function initInfoPopup() {
 
       titleEl.textContent = pickLocalized(popup.title, lang);
       contentEl.textContent = pickLocalized(popup.content, lang);
-
-      if (popup.image_url) {
-        imageEl.src = popup.image_url;
-        imageWrap.classList.remove("hidden");
-      } else {
-        imageWrap.classList.add("hidden");
-      }
 
       modal.classList.remove("hidden");
     } catch (err) {
@@ -52,9 +39,5 @@ export function initInfoPopup() {
 
     const slug = btn.dataset.popupSlug;
     openPopup(slug);
-  });
-
-  document.querySelectorAll("[data-popup-close]").forEach(el => {
-    el.addEventListener("click", closePopup);
   });
 }
