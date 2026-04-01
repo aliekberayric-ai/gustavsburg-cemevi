@@ -162,7 +162,6 @@ export async function renderHome(root) {
     console.error("Events Fehler:", err);
   }
 
-  // 👉 TEST: IMMER ETWAS RENDERN
   root.innerHTML = `
     <div style="padding:40px; color:white;">
       <h1>🔥 Home funktioniert</h1>
