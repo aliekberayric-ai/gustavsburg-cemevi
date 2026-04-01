@@ -53,7 +53,7 @@ import {
  import {
   // listInfoPopupsAdmin,
   // createInfoPopup, //
-  updateInfoPopup,
+  // updateInfoPopup,
  // deleteInfoPopup 
 } from "../modules/infoPopups.js"; 
 
