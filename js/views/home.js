@@ -147,20 +147,31 @@ export async function renderHome(root) {
   try {
     ticker = await listHomeTicker();
   } catch (err) {
-    console.error("Fehler beim Laden des Tickers:", err);
+    console.error("Ticker Fehler:", err);
   }
 
   try {
     tiles = await listHomeTiles();
   } catch (err) {
-    console.error("Fehler beim Laden der Startseiten-Kacheln:", err);
+    console.error("Tiles Fehler:", err);
   }
 
   try {
     events = await listEventsPublic();
   } catch (err) {
-    console.error("Fehler beim Laden der Events:", err);
+    console.error("Events Fehler:", err);
   }
+
+  // 👉 TEST: IMMER ETWAS RENDERN
+  root.innerHTML = `
+    <div style="padding:40px; color:white;">
+      <h1>🔥 Home funktioniert</h1>
+      <p>Ticker: ${ticker.length}</p>
+      <p>Tiles: ${tiles.length}</p>
+      <p>Events: ${events.length}</p>
+    </div>
+  `;
+}
 
   const manualItems = ticker
     .filter((item) => item.active)
