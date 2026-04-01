@@ -260,7 +260,7 @@ export async function renderHome(root) {
   <h3>${escapeHtml(title)}</h3>
   <p>${escapeHtml(text)}</p>
 
-JavaScript
+
 <button class="btn btn--accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
     Mehr erfahren
   </button>
