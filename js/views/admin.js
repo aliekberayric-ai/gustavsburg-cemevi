@@ -50,12 +50,12 @@ import {
   deleteHomeTile
 } from "../modules/homeTiles.js";
 
-   import {
-    listInfoPopupsAdmin,
-    createInfoPopup, //
-    updateInfoPopup,
-    deleteInfoPopup 
-   } from "../modules/infoPopups.js"; 
+import {
+  listInfoPopupsAdmin,
+  createInfoPopup,
+  updateInfoPopup,
+  deleteInfoPopup
+} from "../modules/infoPopups.js";
 
 /* -----------------------------------------------------------
    HELPERS
@@ -731,8 +731,6 @@ export async function renderAdmin(root) {
         <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
 
         <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
-        <input id="tilePopupSlug" class="input" placeholder="Popup Slug (optional, z.B. mitgliedschaft" />
-        
         <input id="tileImageFile" class="input" type="file" accept="image/*" />
         <div id="tileImageInfo" class="mono">Kein Bild ausgewählt</div>
         <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
@@ -763,7 +761,6 @@ export async function renderAdmin(root) {
         <thead>
           <tr>
             <th>Titel</th>
-            <th>Popup Slug</th>
             <th>Aktiv</th>
             <th>Reihenfolge</th>
             <th class="mono">ID</th>
@@ -776,7 +773,6 @@ export async function renderAdmin(root) {
             return `
               <tr>
                 <td>${escapeHtml(title)}</td>
-                <td class="mono">${escapeHtml(tile.popup_slug ||  "")}</td>
                 <td>${tile.active ? "ja" : "nein"}</td>
                 <td>${Number(tile.sort_order ?? 0)}</td>
                 <td class="mono">${escapeHtml(String(tile.id))}</td>
@@ -1517,9 +1513,7 @@ export async function renderAdmin(root) {
         const buttonEn = root.querySelector("#tileButtonTextEn")?.value.trim() || "";
 
         const linkUrl = root.querySelector("#tileLinkUrl")?.value.trim() || "";
-        const popupSlug = root.querySelector("#tilePopupSlug")?.value.trim() || "";
         const tileImageFile = root.querySelector("#tileImageFile")?.files?.[0] || null;
-        
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
         const layoutWidth = root.querySelector("#tileLayoutWidth")?.value || "third";
         const layoutHeight = root.querySelector("#tileLayoutHeight")?.value || "medium";
@@ -1546,7 +1540,6 @@ export async function renderAdmin(root) {
           text: { de: textDe, tr: textTr, en: textEn },
           button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
           link_url: linkUrl,
-          popup_slug: popupSlug,
           image_url: imageUrl,
           sort_order: sortOrder,
           layout_width: layoutWidth,
@@ -1584,7 +1577,6 @@ export async function renderAdmin(root) {
           const buttonEn = prompt("Button Text EN?", current.button_text?.en ?? "") ?? "";
 
           const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
-          const popupSlug = prompt("PopupSlug?", current.popup_slug ?? "") ?? "";
           const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
           const layoutWidth = prompt("Breite? (full/half/third/quarter/fifth)", current.layout_width ?? "third") ?? "third";
@@ -1596,7 +1588,6 @@ export async function renderAdmin(root) {
             text: { de: textDe, tr: textTr, en: textEn },
             button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
             link_url: linkUrl,
-            popup_slug: popupSlug,
             image_url: imageUrl,
             sort_order: sortOrder,
             layout_width: layoutWidth,
