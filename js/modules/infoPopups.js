@@ -1,47 +1,49 @@
-export function initInfoPopup() {
-  const popupHtml = `
-    <div id="infoPopup" class="info-popup-overlay">
-      <div class="info-popup-box">
-        <button id="infoPopupClose" class="info-popup-close">×</button>
-        <div id="infoPopupTitle" class="info-popup-title"></div>
-        <div id="infoPopupText" class="info-popup-text"></div>
-      </div>
-    </div>
-  `;
+import { supabase } from "../api.js";
 
-  document.body.insertAdjacentHTML("beforeend", popupHtml);
+// --------------------------------------------------
+// LISTE (ADMIN)
+// --------------------------------------------------
+export async function listInfoPopupsAdmin() {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .order("sort_order", { ascending: true });
 
-  const popup = document.getElementById("infoPopup");
-  const closeBtn = document.getElementById("infoPopupClose");
-  const titleEl = document.getElementById("infoPopupTitle");
-  const textEl = document.getElementById("infoPopupText");
+  if (error) throw error;
+  return data || [];
+}
 
-  function openPopup(title, text) {
-    titleEl.textContent = title || "";
-    textEl.textContent = text || "";
-    popup.classList.add("show");
-  }
+// --------------------------------------------------
+// CREATE
+// --------------------------------------------------
+export async function createInfoPopup(payload) {
+  const { error } = await supabase
+    .from("info_popups")
+    .insert([payload]);
 
-  function closePopup() {
-    popup.classList.remove("show");
-  }
+  if (error) throw error;
+}
 
-  closeBtn.addEventListener("click", closePopup);
+// --------------------------------------------------
+// UPDATE
+// --------------------------------------------------
+export async function updateInfoPopup(id, payload) {
+  const { error } = await supabase
+    .from("info_popups")
+    .update(payload)
+    .eq("id", id);
 
-  popup.addEventListener("click", function (e) {
-    if (e.target === popup) {
-      closePopup();
-    }
-  });
+  if (error) throw error;
+}
 
-  document.addEventListener("click", function (e) {
-    const btn = e.target.closest("[data-popup='true']");
-    if (!btn) return;
+// --------------------------------------------------
+// DELETE
+// --------------------------------------------------
+export async function deleteInfoPopup(id) {
+  const { error } = await supabase
+    .from("info_popups")
+    .delete()
+    .eq("id", id);
 
-    e.preventDefault();
-
-    const title = btn.dataset.title || "Popup";
-    const text = btn.dataset.text || "";
-    openPopup(title, text);
-  });
+  if (error) throw error;
 }
