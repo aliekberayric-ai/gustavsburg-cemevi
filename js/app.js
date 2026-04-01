@@ -3,7 +3,7 @@
 // ================================
 
 import { getSiteSettings } from "./modules/siteSettings.js";
-import { initRouter } from "./router.js";
+import { initRouter } from "./router.js?v=22";
 /* import { initInfoPopup } from "./infoPopup.js"; // ✅ FIXED */
 
 import {
