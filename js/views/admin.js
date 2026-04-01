@@ -52,9 +52,9 @@ import {
 
 import {
   listInfoPopupsAdmin,
-  /* createInfoPopup, */
+  /* createInfoPopup, 
   updateInfoPopup,
-  deleteInfoPopup
+  deleteInfoPopup */
 } from "../modules/infoPopups.js";
 
 /* -----------------------------------------------------------
