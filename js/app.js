@@ -4,7 +4,7 @@
 
 import { getSiteSettings } from "./modules/siteSettings.js";
 import { initRouter } from "./router.js";
-import { initInfoPopup } from "./infoPopup.js"; // ✅ FIXED
+/* import { initInfoPopup } from "./infoPopup.js"; // ✅ FIXED */
 
 import {
   initI18n,
