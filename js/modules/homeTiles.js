@@ -35,7 +35,7 @@ export async function createHomeTile(payload) {
 export async function updateHomeTile(id, payload) {
   const { data, error } = await supabase
     .from("home_tiles")
-    .update(payoad)
+    .update(payload)
     .eq("id", id)
     .select()
     .single();
