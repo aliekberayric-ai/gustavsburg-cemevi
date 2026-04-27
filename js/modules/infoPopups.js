@@ -54,3 +54,21 @@ export async function deleteInfoPopup(id) {
   if (error) throw error;
   return true;
 }
+
+import { supabase } from "../api.js";
+
+export async function getInfoPopupBySlug(slug) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .single();
+
+  if (error) {
+    console.error("Popup fetch error:", error);
+    return null;
+  }
+
+  return data;
+}
