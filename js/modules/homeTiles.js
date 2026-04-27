@@ -75,3 +75,24 @@ export async function uploadTileImage(file) {
 
   return data?.publicUrl || "";
 }
+export async function updateHomeTile(id, payload) {
+  const { data, error } = await supabase
+    .from("home_tiles")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteHomeTile(id) {
+  const { error } = await supabase
+    .from("home_tiles")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+  return true;
+}
