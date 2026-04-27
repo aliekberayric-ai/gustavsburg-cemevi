@@ -1,77 +1,56 @@
-/*import { getLang } from "./i18n.js"; 
-import { getInfoPopupBySlug } from "./modules/infoPopups.js"; */
-function pickLocalized(obj, lang) {
-  if (!obj) return "";
-  if (typeof obj === "string") return obj;
-  return obj?.[lang] || obj?.de || obj?.tr || obj?.en || "";
+import { supabase } from "../api.js";
+
+export async function getInfoPopupBySlug(slug) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data || null;
 }
 
-export function initInfoPopup() {
-  const modal = document.querySelector("#infoPopupModal");
-  const titleEl = document.querySelector("#infoPopupTitle");
-  const contentEl = document.querySelector("#infoPopupContent");
-  const imageWrap = document.querySelector("#infoPopupImageWrap");
-  const imageEl = document.querySelector("#infoPopupImage");
+export async function listInfoPopupsAdmin() {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .select("*")
+    .order("sort_order", { ascending: true });
 
-  if (!modal || !titleEl || !contentEl || !imageWrap || !imageEl) {
-    console.warn("Popup Elemente nicht gefunden");
-    return;
-  }
+  if (error) throw error;
+  return data || [];
+}
 
-  function closePopup() {
-    modal.classList.add("hidden");
-    titleEl.textContent = "";
-    contentEl.innerHTML = "";
-    imageEl.src = "";
-    imageEl.alt = "";
-    imageWrap.classList.add("hidden");
-  }
+export async function createInfoPopup(payload) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .insert([payload])
+    .select()
+    .single();
 
-  async function openPopup(slug) {
-    if (!slug) return;
+  if (error) throw error;
+  return data;
+}
 
-    try {
-      const popup = await getInfoPopupBySlug(slug);
-      if (!popup) {
-        console.warn("Kein Popup gefunden für slug:", slug);
-        return;
-      }
+export async function updateInfoPopup(id, payload) {
+  const { data, error } = await supabase
+    .from("info_popups")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
 
-      const lang = getLang();
+  if (error) throw error;
+  return data;
+}
 
-      titleEl.textContent = pickLocalized(popup.title, lang);
-      contentEl.textContent = pickLocalized(popup.content, lang);
+export async function deleteInfoPopup(id) {
+  const { error } = await supabase
+    .from("info_popups")
+    .delete()
+    .eq("id", id);
 
-      if (popup.image_url) {
-        imageEl.src = popup.image_url;
-        imageEl.alt = pickLocalized(popup.title, lang) || "Popup Bild";
-        imageWrap.classList.remove("hidden");
-      } else {
-        imageEl.src = "";
-        imageEl.alt = "";
-        imageWrap.classList.add("hidden");
-      }
-
-      modal.classList.remove("hidden");
-    } catch (err) {
-      console.error("Popup Fehler:", err);
-    }
-  }
-
-  document.querySelectorAll("[data-popup-close]").forEach((el) => {
-    el.addEventListener("click", closePopup);
-  });
-
-  document.addEventListener("click", (event) => {
-    const trigger = event.target.closest(".home-popup-btn[data-popup-slug]");
-    if (!trigger) return;
-
-    const hash = location.hash || "#/";
-    if (hash !== "#/" && hash !== "") return;
-
-    const slug = trigger.getAttribute("data-popup-slug");
-    if (!slug) return;
-
-    openPopup(slug);
-  });
+  if (error) throw error;
+  return true;
 }
