@@ -8,8 +8,12 @@ export async function getInfoPopupBySlug(slug) {
     .eq("is_active", true)
     .maybeSingle();
 
-  if (error) throw error;
-  return data || null;
+    if (error) {
+    console.error("Popup fetch error:", error);
+    return null;
+  }
+
+  return data;
 }
 
 export async function listInfoPopupsAdmin() {
@@ -66,8 +70,8 @@ export async function deleteInfoPopup(id) {
   if (error) {
     console.error("Popup fetch error:", error);
     return null;
-  }
-*/
+
 
   return data;
 }
+*/
