@@ -55,7 +55,7 @@ export async function deleteInfoPopup(id) {
   return true;
 }
 
-export async function getInfoPopupBySlug(slug) {
+/* export async function getInfoPopupBySlug(slug) {
   const { data, error } = await supabase
     .from("info_popups")
     .select("*")
@@ -67,6 +67,7 @@ export async function getInfoPopupBySlug(slug) {
     console.error("Popup fetch error:", error);
     return null;
   }
+*/
 
   return data;
 }
