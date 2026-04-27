@@ -731,6 +731,7 @@ export async function renderAdmin(root) {
         <input id="tileButtonTextEn" class="input" placeholder="Button Text EN" />
 
         <input id="tileLinkUrl" class="input" placeholder="Link URL (optional)" />
+        <input id="tilePopupSlug" class="input" placeholder="Popup Slug (z.B. lokma)" />
         <input id="tileImageFile" class="input" type="file" accept="image/*" />
         <div id="tileImageInfo" class="mono">Kein Bild ausgewählt</div>
         <input id="tileSortOrder" class="input" type="number" placeholder="Reihenfolge" />
@@ -1513,6 +1514,7 @@ export async function renderAdmin(root) {
         const buttonEn = root.querySelector("#tileButtonTextEn")?.value.trim() || "";
 
         const linkUrl = root.querySelector("#tileLinkUrl")?.value.trim() || "";
+        const popupSlug = root.querySelector("#tilePopupSlug")?.value.trim() || "";
         const tileImageFile = root.querySelector("#tileImageFile")?.files?.[0] || null;
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
         const layoutWidth = root.querySelector("#tileLayoutWidth")?.value || "third";
@@ -1540,6 +1542,7 @@ export async function renderAdmin(root) {
           text: { de: textDe, tr: textTr, en: textEn },
           button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
           link_url: linkUrl,
+          popup_slug: popupSlug,
           image_url: imageUrl,
           sort_order: sortOrder,
           layout_width: layoutWidth,
