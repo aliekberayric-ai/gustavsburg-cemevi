@@ -50,12 +50,12 @@ import {
   deleteHomeTile
 } from "../modules/homeTiles.js";
 
-/*import {
+import {
   listInfoPopupsAdmin,
   createInfoPopup,
   updateInfoPopup,
   deleteInfoPopup
-} from "../modules/infoPopups.js"; */
+} from "../modules/infoPopups.js"; 
 
 /* -----------------------------------------------------------
    HELPERS
