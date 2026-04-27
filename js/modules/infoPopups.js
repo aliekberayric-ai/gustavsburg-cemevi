@@ -13,9 +13,6 @@ export async function getInfoPopupBySlug(slug) {
     return null;
   }
 
-  return data;
-}
-
 export async function listInfoPopupsAdmin() {
   const { data, error } = await supabase
     .from("info_popups")
