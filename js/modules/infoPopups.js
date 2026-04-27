@@ -55,8 +55,6 @@ export async function deleteInfoPopup(id) {
   return true;
 }
 
-import { supabase } from "../api.js";
-
 export async function getInfoPopupBySlug(slug) {
   const { data, error } = await supabase
     .from("info_popups")
