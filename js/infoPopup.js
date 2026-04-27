@@ -20,7 +20,9 @@ export function initInfoPopup() {
   async function openPopup(slug) {
     try {
       const popup = await getInfoPopupBySlug(slug);
-      if (!popup) return;
+      if (!popup) { 
+        console.warn("Popup nicht gefunden:", slug); 
+        return;
 
       const lang = getLang();
 
