@@ -1720,3 +1720,56 @@ body.lang-fade #app {
   font-size: 16px;
   line-height: 1.6;
 }
+.info-popup {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+}
+
+.info-popup.hidden {
+  display: none !important;
+}
+
+.info-popup__overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.68) !important;
+  backdrop-filter: blur(6px);
+}
+
+.info-popup__card {
+  position: relative !important;
+  z-index: 1 !important;
+  width: min(760px, 92vw) !important;
+  max-height: 82vh !important;
+  overflow: auto !important;
+  padding: 28px !important;
+  border-radius: 24px !important;
+  background: #20283a !important;
+  border: 1px solid rgba(255,255,255,0.22) !important;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.6) !important;
+}
+
+.info-popup__close {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  border: 0 !important;
+  cursor: pointer !important;
+  font-size: 22px !important;
+}
+
+.info-popup__image-wrap img {
+  width: 100% !important;
+  max-height: 320px !important;
+  object-fit: cover !important;
+  border-radius: 18px !important;
+  margin-bottom: 18px !important;
+}
