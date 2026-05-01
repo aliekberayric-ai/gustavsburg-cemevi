@@ -247,7 +247,6 @@ export async function renderHome(root) {
 
                   const widthClass = tile.layout_width ? `tile-width-${tile.layout_width}` : "tile-width-third";
                   const heightClass = tile.layout_height ? `tile-height-${tile.layout_height}` : "tile-height-medium";
-                  const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
                   
                   return `
                     <div class="home-tile-card ${escapeHtml(widthClass)} ${escapeHtml(heightClass)}">
