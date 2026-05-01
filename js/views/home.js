@@ -261,12 +261,12 @@ export async function renderHome(root) {
   <p>${escapeHtml(text)}</p>
 
 
-   ${
+${
   tile.popup_slug
-    ? ´<button class="btn btn--accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
+    ? `<button class="btn btn--accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
         ${escapeHtml(button)}
-      </button>´
-     : ""
+      </button>`
+    : ""
 }
                                   
 
