@@ -260,9 +260,10 @@ export async function renderHome(root) {
   <h3>${escapeHtml(title)}</h3>
   <p>${escapeHtml(text)}</p>
 
+const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
 
 <button class="btn btn- -accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
-    Mehr erfahren
+    $(escapeHtml(button)}
   </button>
 
   ${
