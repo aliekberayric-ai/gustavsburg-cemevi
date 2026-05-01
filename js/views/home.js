@@ -245,7 +245,14 @@ export async function renderHome(root) {
                   const text = pickLocalized(tile.text, lang);
                   const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
 
-                  const widthClass = tile.layout_width ? `tile-width-${tile.layout_width}` : "tile-width-third";
+                 const widthMap = {
+  "1/1": "tile-width-full",
+  "1/2": "tile-width-half",
+  "1/3": "tile-width-third",
+  "1/4": "tile-width-quarter"
+};
+
+const widthClass = widthMap[tile.layout_width] || "tile-width-third";
                   const heightClass = tile.layout_height ? `tile-height-${tile.layout_height}` : "tile-height-medium";
                   
                   return `
