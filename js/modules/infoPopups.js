@@ -65,3 +65,26 @@ export async function deleteInfoPopup(id) {
   if (error) throw error;
   return true;
 }
+
+export async function uploadInfoPopupImage(file) {
+  if (!file) return "";
+
+  const ext = file.name.split(".").pop();
+  const fileName = `${crypto.randomUUID()}.${ext}`;
+  const filePath = `images/${fileName}`;
+
+  const { error } = await supabase.storage
+    .from("info-popups")
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from("info-popups")
+    .getPublicUrl(filePath);
+
+  return data.publicUrl;
+}
