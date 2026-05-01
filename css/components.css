@@ -1773,3 +1773,54 @@ body.lang-fade #app {
   border-radius: 18px !important;
   margin-bottom: 18px !important;
 }
+
+display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.tile-width-full {
+  grid-column: span 4;
+}
+
+.tile-width-half {
+  grid-column: span 2;
+}
+
+.tile-width-third {
+  grid-column: span 1;
+}
+
+.tile-width-quarter {
+  grid-column: span 1;
+}
+
+.tile-width-fifth {
+  grid-column: span 1;
+}
+
+.tile-height-small {
+  min-height: 140px;
+}
+
+.tile-height-medium {
+  min-height: 220px;
+}
+
+.tile-height-large {
+  min-height: 340px;
+}
+
+@media (max-width: 900px) {
+  .home-tiles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tile-width-full,
+  .tile-width-half,
+  .tile-width-third,
+  .tile-width-quarter,
+  .tile-width-fifth {
+    grid-column: span 1;
+  }
+}
