@@ -263,7 +263,7 @@ export async function renderHome(root) {
 
  const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
 
- return `
+ 
     <button class="btn btn- -accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
     $(escapeHtml(button)}
   </button>
