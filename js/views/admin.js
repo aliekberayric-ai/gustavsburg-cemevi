@@ -807,7 +807,8 @@ export async function renderAdmin(root) {
         <textarea id="popupContentTr" class="input" placeholder="Text TR" rows="4"></textarea>
         <textarea id="popupContentEn" class="input" placeholder="Text EN" rows="4"></textarea>
 
-        <input id="popupImageUrl" class="input" placeholder="Bild-URL (optional)" />
+        <input id="popupImageFile" class="input" type="file" accept="image/*" />
+        <div id="popupImageInfo" class="mono">Kein Bild ausgewählt</div>
         <input id="popupSortOrder" class="input" type="number" placeholder="Reihenfolge" />
 
         <label style="display:flex;align-items:center;gap:8px">
@@ -1641,7 +1642,10 @@ export async function renderAdmin(root) {
         const contentTr = root.querySelector("#popupContentTr")?.value.trim() || "";
         const contentEn = root.querySelector("#popupContentEn")?.value.trim() || "";
 
-        const imageUrl = root.querySelector("#popupImageUrl")?.value.trim() || "";
+        const popupImageFile = root.querySelector("#popupImageFile")?.files?.[0] || null; 
+        let imageUrl ="";
+        if (popupImageFile) {imageUrl =await uploadInfoPopupImage(popupImageFile); 
+                            }
         const sortOrder = Number(root.querySelector("#popupSortOrder")?.value || "0") || 0;
         const isActive = !!root.querySelector("#popupActive")?.checked;
 
