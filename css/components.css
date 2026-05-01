@@ -1824,3 +1824,31 @@ display: grid;
     grid-column: span 1;
   }
 }
+
+.home-tiles-grid,
+.home-tiles,
+.home-tile-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.home-tile-card.tile-width-full {
+  grid-column: span 4 !important;
+}
+
+.home-tile-card.tile-width-half {
+  grid-column: span 2 !important;
+}
+
+.home-tile-card.tile-width-third {
+  grid-column: span 1 !important;
+}
+
+.home-tile-card.tile-width-quarter {
+  grid-column: span 1 !important;
+}
+
+.home-tile-card.tile-width-fifth {
+  grid-column: span 1 !important;
+}
