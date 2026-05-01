@@ -1644,6 +1644,13 @@ export async function renderAdmin(root) {
 
         const popupImageFile = root.querySelector("#popupImageFile")?.files?.[0] || null; 
         let imageUrl ="";
+        try {
+          if (popupImageFile) {
+            imageUrl = await uploadInfoPopupImage(popupImageFile);
+          }
+        } catch (err) {
+          console.warn("Bild Upload fehlgeschlagen: ", err);
+        }
         if (popupImageFile) {imageUrl =await uploadInfoPopupImage(popupImageFile); 
                             }
         const sortOrder = Number(root.querySelector("#popupSortOrder")?.value || "0") || 0;
