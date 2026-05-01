@@ -267,7 +267,7 @@ export async function renderHome(root) {
     <button class="btn btn- -accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
     $(escapeHtml(button)}
   </button>
- `;                                 
+                                  
 
   ${
     tile.link_url
