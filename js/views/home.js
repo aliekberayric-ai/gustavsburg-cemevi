@@ -264,11 +264,10 @@ export async function renderHome(root) {
  const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
 
  return `
-           <div class="home-tile> 
- 
-<button class="btn btn- -accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
+    <button class="btn btn- -accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
     $(escapeHtml(button)}
   </button>
+ `;                                 
 
   ${
     tile.link_url
