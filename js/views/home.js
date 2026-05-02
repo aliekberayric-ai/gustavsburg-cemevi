@@ -245,11 +245,18 @@ export async function renderHome(root) {
                   const text = pickLocalized(tile.text, lang);
                   const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
 
-                 const widthMap = {
+ const widthMap = {
   "1/1": "tile-width-full",
   "1/2": "tile-width-half",
   "1/3": "tile-width-third",
-  "1/4": "tile-width-quarter"
+  "1/4": "tile-width-quarter",
+  "1/5": "tile-width-fifth",
+
+  full: "tile-width-full",
+  half: "tile-width-half",
+  third: "tile-width-third",
+  quarter: "tile-width-quarter",
+  fifth: "tile-width-fifth"
 };
 
 const widthClass = widthMap[tile.layout_width] || "tile-width-third";
