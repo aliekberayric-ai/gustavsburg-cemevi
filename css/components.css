@@ -2084,3 +2084,122 @@ body.lang-fade #app {
 
 .home-tile-card.tile-width-fifth {
   flex: 0 0 20% !important;
+
+  /* =====================================================
+   CLEAN HOME TILE LAYOUT
+   Jede Kachel eigener Container, aber mehrere passen in eine Reihe
+===================================================== */
+
+.home-tiles-grid {
+  width: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+/* Grund-Kachel */
+.home-tile-card {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  width: auto !important;
+  min-width: 220px !important;
+  max-width: none !important;
+
+  grid-column: unset !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+/* Breiten */
+.home-tile-card.tile-width-full {
+  flex-basis: 100% !important;
+}
+
+.home-tile-card.tile-width-half {
+  flex-basis: calc(50% - 8px) !important;
+}
+
+.home-tile-card.tile-width-third {
+  flex-basis: calc(33.333% - 11px) !important;
+}
+
+.home-tile-card.tile-width-quarter {
+  flex-basis: calc(25% - 12px) !important;
+}
+
+.home-tile-card.tile-width-fifth {
+  flex-basis: calc(20% - 13px) !important;
+}
+
+/* Höhen */
+.home-tile-card.tile-height-small {
+  min-height: 140px !important;
+}
+
+.home-tile-card.tile-height-medium {
+  min-height: 220px !important;
+}
+
+.home-tile-card.tile-height-high,
+.home-tile-card.tile-height-large {
+  min-height: 340px !important;
+}
+
+/* Bild */
+.home-tile-image {
+  width: 100% !important;
+  height: 220px !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Inhalt */
+.home-tile-body {
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  flex: 1 !important;
+}
+
+/* Button */
+.home-tile-card .btn,
+.home-popup-btn {
+  width: 100% !important;
+  margin-top: auto !important;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .home-tile-card.tile-width-full,
+  .home-tile-card.tile-width-half,
+  .home-tile-card.tile-width-third,
+  .home-tile-card.tile-width-quarter,
+  .home-tile-card.tile-width-fifth {
+    flex-basis: calc(50% - 8px) !important;
+  }
+}
+
+/* Handy */
+@media (max-width: 600px) {
+  .home-tile-card.tile-width-full,
+  .home-tile-card.tile-width-half,
+  .home-tile-card.tile-width-third,
+  .home-tile-card.tile-width-quarter,
+  .home-tile-card.tile-width-fifth {
+    flex-basis: 100% !important;
+  }
+}
