@@ -1976,3 +1976,7 @@ body.lang-fade #app {
 .home-tile-card.tile-width-fifth {
   flex-basis: calc(20% - 13px) !important;
 }
+
+
+.home-tiles-grid { max-width: 1000px !important;
+                 }
