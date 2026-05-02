@@ -6,7 +6,7 @@
  * - Smooth Scroll nach oben
  */
 
-import { renderHome } from "./views/home.js";
+import { renderHome } from "./views/home.js?v=99";
 import { renderGallery } from "./views/gallery.js";
 import { renderCalendar } from "./views/calendar.js";
 import { renderPeople } from "./views/people.js";
