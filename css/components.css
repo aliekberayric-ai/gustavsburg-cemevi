@@ -1774,3 +1774,24 @@ body.lang-fade #app {
   margin-bottom: 18px !important;
 }
 
+/* neu eingegeben */
+
+.home-tile-card.tile-width-full {
+  grid-column: span 12 !important;
+}
+
+.home-tile-card.tile-width-half {
+  grid-column: span 6 !important;
+}
+
+.home-tile-card.tile-width-third {
+  grid-column: span 4 !important;
+}
+
+.home-tile-card.tile-width-quarter {
+  grid-column: span 3 !important;
+}
+
+.home-tile-card.tile-width-fifth {
+  grid-column: span 2 !important;
+}
