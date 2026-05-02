@@ -1774,6 +1774,8 @@ body.lang-fade #app {
   margin-bottom: 18px !important;
 }
 
+/* Komentar
+
 display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
@@ -1825,7 +1827,7 @@ display: grid;
   }
 }
 
-/* .home-tiles-grid,
+.home-tiles-grid,
 .home-tiles,
 .home-tile-grid {
   display: grid !important;
