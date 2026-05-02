@@ -1825,7 +1825,7 @@ display: grid;
   }
 }
 
-.home-tiles-grid,
+/* .home-tiles-grid,
 .home-tiles,
 .home-tile-grid {
   display: grid !important;
@@ -1851,7 +1851,7 @@ display: grid;
 
 .home-tile-card.tile-width-fifth {
   grid-column: span 1 !important;
-}
+} */
 
 .home-tiles-grid {
   display: grid !important;
