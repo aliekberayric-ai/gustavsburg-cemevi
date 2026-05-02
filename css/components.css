@@ -2047,3 +2047,40 @@ body.lang-fade #app {
 .home-tile-card.tile-width-fifth {
   flex-basis: calc(20% - 13px) !important;
 }
+
+/* ===== FINAL RESET ===== */
+
+.home-tiles-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+}
+
+/* WICHTIG: ALLES NEUTRALISIEREN */
+.home-tile-card {
+  width: auto !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+  grid-column: unset !important;
+}
+
+/* ===== BREITEN ===== */
+
+.home-tile-card.tile-width-full {
+  flex: 0 0 100% !important;
+}
+
+.home-tile-card.tile-width-half {
+  flex: 0 0 50% !important;
+}
+
+.home-tile-card.tile-width-third {
+  flex: 0 0 33.333% !important;
+}
+
+.home-tile-card.tile-width-quarter {
+  flex: 0 0 25% !important;
+}
+
+.home-tile-card.tile-width-fifth {
+  flex: 0 0 20% !important;
