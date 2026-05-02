@@ -1852,3 +1852,48 @@ display: grid;
 .home-tile-card.tile-width-fifth {
   grid-column: span 1 !important;
 }
+
+.home-tiles-grid {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+}
+
+.home-tile-card.tile-width-full {
+  grid-column: span 12 !important;
+}
+
+.home-tile-card.tile-width-half {
+  grid-column: span 6 !important;
+}
+
+.home-tile-card.tile-width-third {
+  grid-column: span 4 !important;
+}
+
+.home-tile-card.tile-width-quarter {
+  grid-column: span 3 !important;
+}
+
+.home-tile-card.tile-height-small {
+  min-height: 130px !important;
+}
+
+.home-tile-card.tile-height-medium {
+  min-height: 220px !important;
+}
+
+.home-tile-card.tile-height-large {
+  min-height: 340px !important;
+}
+
+@media (max-width: 900px) {
+  .home-tiles-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-tile-card {
+    grid-column: 1 / -1 !important;
+  }
+}
