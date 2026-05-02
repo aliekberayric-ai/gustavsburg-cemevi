@@ -445,14 +445,15 @@ select:focus {
   margin-top: 24px;
 }
 
- .home-tiles-grid {
-  display: grid !important;
-  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
-  gap: 16px !important;
+.home-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
 }
 
 .home-tile-card {
-  grid-column: auto;
+  grid-column: span 4;
   border-radius: 22px;
   overflow: hidden;
   background: rgba(255,255,255,0.05);
@@ -1771,52 +1772,4 @@ body.lang-fade #app {
   object-fit: cover !important;
   border-radius: 18px !important;
   margin-bottom: 18px !important;
-}
-
-/* neu eingegeben */
-
-.home-tile-card.tile-width-full {
-  grid-column: span 12 !important;
-}
-
-.home-tile-card.tile-width-half {
-  grid-column: span 6 !important;
-}
-
-.home-tile-card.tile-width-third {
-  grid-column: span 4 !important;
-}
-
-.home-tile-card.tile-width-quarter {
-  grid-column: span 3 !important;
-}
-
-.home-tile-card.tile-width-fifth {
-  grid-column: span 2 !important;
-}
-
-
-.home-tile-card.tile-width-full,
-.home-tile-card.tile-width-1\/1 {
-  grid-column: span 12 !important;
-}
-
-.home-tile-card.tile-width-half,
-.home-tile-card.tile-width-1\/2 {
-  grid-column: span 6 !important;
-}
-
-.home-tile-card.tile-width-third,
-.home-tile-card.tile-width-1\/3 {
-  grid-column: span 4 !important;
-}
-
-.home-tile-card.tile-width-quarter,
-.home-tile-card.tile-width-1\/4 {
-  grid-column: span 3 !important;
-}
-
-.home-tile-card.tile-width-fifth,
-.home-tile-card.tile-width-1\/5 {
-  grid-column: span 2 !important;
 }
