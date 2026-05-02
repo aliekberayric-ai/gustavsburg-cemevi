@@ -2007,3 +2007,43 @@ body.lang-fade #app {
 
 .home-tiles-grid { max-width: 1000px !important;
                  }
+
+/* FINAL: Kacheln flexibel in Reihen */
+.home-tiles-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+
+/* Grundregel */
+.home-tile-card {
+  grid-column: unset !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Breiten */
+.home-tile-card.tile-width-full {
+  flex-basis: 100% !important;
+}
+
+.home-tile-card.tile-width-half {
+  flex-basis: calc(50% - 8px) !important;
+}
+
+.home-tile-card.tile-width-third {
+  flex-basis: calc(33.333% - 11px) !important;
+}
+
+.home-tile-card.tile-width-quarter {
+  flex-basis: calc(25% - 12px) !important;
+}
+
+.home-tile-card.tile-width-fifth {
+  flex-basis: calc(20% - 13px) !important;
+}
