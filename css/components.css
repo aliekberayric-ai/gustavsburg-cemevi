@@ -453,7 +453,7 @@ select:focus {
 }
 
 .home-tile-card {
-  grid-column: span 4;
+  grid-column: auto;
   border-radius: 22px;
   overflow: hidden;
   background: rgba(255,255,255,0.05);
