@@ -1838,6 +1838,41 @@ body.lang-fade #app {
   grid-column: span 2 !important;
 }
 
+
+/* FINAL FLEX KACHEL LAYOUT */
+.home-tiles-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+
+.home-tile-card {
+  grid-column: unset !important;
+  width: auto !important;
+  flex: 0 0 calc(33.333% - 11px) !important;
+}
+
+.home-tile-card.tile-width-full {
+  flex-basis: 100% !important;
+}
+
+.home-tile-card.tile-width-half {
+  flex-basis: calc(50% - 8px) !important;
+}
+
+.home-tile-card.tile-width-third {
+  flex-basis: calc(33.333% - 11px) !important;
+}
+
+.home-tile-card.tile-width-quarter {
+  flex-basis: calc(25% - 12px) !important;
+}
+
+.home-tile-card.tile-width-fifth {
+  flex-basis: calc(20% - 13px) !important;
+}
 /* AUCH BEI KLEINEREM BILDSCHIRM NICHT UNTEREINANDER ZWINGEN */
 @media (max-width: 900px) {
   .home-tiles-grid {
