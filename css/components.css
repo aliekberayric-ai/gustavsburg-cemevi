@@ -1897,3 +1897,16 @@ display: grid;
     grid-column: 1 / -1 !important;
   }
 }
+
+/* GRID FIX */
+.home-tiles-grid {
+  display: grid !important;
+  grid-template-columns: repeat(12, 1fr) !important;
+  gap: 16px !important;
+}
+
+/* BREITEN */
+.tile-width-full { grid-column: span 12 !important; }
+.tile-width-half { grid-column: span 6 !important; }
+.tile-width-third { grid-column: span 4 !important; }
+.tile-width-quarter { grid-column: span 3 !important; }
