@@ -22,7 +22,9 @@ export async function fetchGalleryItems(galleryId) {
 }
 
 export async function createGalleryWithFiles({ title, status = "active", files = [] }) {
-  if (!title?.trim()) {
+  const normalizedTitle = normalizeGalleryTitle(title);
+
+  if (!normalizedTitle.de) {
     throw new Error("Bitte einen Galerietitel eingeben.");
   }
 
@@ -33,7 +35,7 @@ export async function createGalleryWithFiles({ title, status = "active", files =
   const { data: gallery, error: galleryError } = await supabase
     .from("galleries")
     .insert({
-      title: { de: title.trim(), tr: title.trim(), en: title.trim() },
+      title: normalizedTitle,
       description: { de: "", tr: "", en: "" },
       status,
       sort_order: 0
@@ -107,6 +109,18 @@ export async function createGalleryWithFiles({ title, status = "active", files =
   }
 
   return gallery.id;
+}
+
+function normalizeGalleryTitle(title) {
+  if (typeof title === "string") {
+    const value = title.trim();
+    return { de: value, tr: value, en: value };
+  }
+
+  const de = title?.de?.trim() || "";
+  const tr = title?.tr?.trim() || de;
+  const en = title?.en?.trim() || de;
+  return { de, tr, en };
 }
 
 export async function updateGalleryItemOrder(items = []) {

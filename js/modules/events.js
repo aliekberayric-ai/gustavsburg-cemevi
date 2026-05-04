@@ -19,6 +19,18 @@ export async function listEventsPublic() {
 export async function createEvent(payload) {
   const { error } = await supabase.from("events").insert([payload]);
   if (error) {
+    if (isMissingOptionalEventColumn(error)) {
+      const { error: fallbackError } = await supabase
+        .from("events")
+        .insert([stripOptionalEventColumns(payload)]);
+
+      if (!fallbackError) return;
+
+      console.error(fallbackError);
+      toast(fallbackError.message, "bad");
+      throw fallbackError;
+    }
+
     console.error(error);
     toast(error.message, "bad");
     throw error;
@@ -32,10 +44,37 @@ export async function updateEvent(id, patch) {
     .eq("id", id);
 
   if (error) {
+    if (isMissingOptionalEventColumn(error)) {
+      const { error: fallbackError } = await supabase
+        .from("events")
+        .update(stripOptionalEventColumns(patch))
+        .eq("id", id);
+
+      if (!fallbackError) return;
+
+      console.error(fallbackError);
+      toast(fallbackError.message, "bad");
+      throw fallbackError;
+    }
+
     console.error(error);
     toast(error.message, "bad");
     throw error;
   }
+}
+
+function isMissingOptionalEventColumn(error) {
+  const message = String(error?.message || "");
+  return (
+    message.includes("preview_image_url") ||
+    message.includes("display_type") ||
+    message.includes("schema cache")
+  );
+}
+
+function stripOptionalEventColumns(payload) {
+  const { preview_image_url, display_type, ...basePayload } = payload;
+  return basePayload;
 }
 
 export async function deleteEvent(id) {

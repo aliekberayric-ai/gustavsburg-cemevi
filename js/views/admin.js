@@ -10,7 +10,7 @@ import {
   updateEvent,
   deleteEvent,
   uploadEventPreviewImage
-} from "../modules/events.js";
+} from "../modules/events.js?v=104";
 
 import {
   listGalleriesPublic,
@@ -30,7 +30,7 @@ import {
   createGalleryWithFiles,
   fetchGalleryItems,
   updateGalleryItemOrder
-} from "../galleryService.js";
+} from "../galleryService.js?v=105";
 
 import { openLightbox, initLightbox } from "../lightbox.js";
 import { listFormSubmissions, updateFormStatus } from "../modules/forms.js";
@@ -594,6 +594,8 @@ export async function renderAdmin(root) {
     `
       ${isEditor ? `
         <div class="grid" style="gap:8px">
+          <input id="eventEditId" type="hidden" value="" />
+          <div id="eventEditModeInfo" class="badge badge--warn hidden">Bearbeitungsmodus</div>
           <input id="eventTitleDe" class="input" placeholder="Titel DE" />
           <input id="eventTitleTr" class="input" placeholder="Titel TR" />
           <input id="eventTitleEn" class="input" placeholder="Titel EN" />
@@ -609,7 +611,10 @@ export async function renderAdmin(root) {
           </select>
           <input id="eventPreviewImageFile" class="input" type="file" accept="image/*" />
           <div id="eventPreviewImageInfo" class="mono">Kein Bild ausgewählt</div>
-          <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="addEventBtn" class="btn btn--accent">${t("admin.add")}</button>
+            <button id="cancelEventEditBtn" class="btn hidden" type="button">Abbrechen</button>
+          </div>
         </div>
       ` : ""}
 
@@ -651,7 +656,11 @@ export async function renderAdmin(root) {
     `
       ${isEditor ? `
         <div class="grid" style="gap:10px">
-          <input id="galleryTitle" class="input" placeholder="Galerietitel" />
+          <input id="galleryEditId" type="hidden" value="" />
+          <div id="galleryEditModeInfo" class="badge badge--warn hidden">Bearbeitungsmodus</div>
+          <input id="galleryTitleDe" class="input" placeholder="Galerietitel DE" />
+          <input id="galleryTitleTr" class="input" placeholder="Galerietitel TR" />
+          <input id="galleryTitleEn" class="input" placeholder="Galerietitel EN" />
 
           <select id="galleryStatus" class="input">
             <option value="active">Aktiv</option>
@@ -671,6 +680,7 @@ export async function renderAdmin(root) {
 
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
             <button id="gallerySaveButton" class="btn btn--accent" type="button">Galerie speichern</button>
+            <button id="galleryCancelEditButton" class="btn hidden" type="button">Abbrechen</button>
             <span id="galleryUploadStatus" class="mono"></span>
           </div>
         </div>
@@ -812,6 +822,8 @@ export async function renderAdmin(root) {
     `<span class="badge badge--ok">Editor</span>`,
     `
       <div class="grid" style="gap:8px">
+        <input id="tickerEditId" type="hidden" value="" />
+        <div id="tickerEditModeInfo" class="badge badge--warn hidden">Bearbeitungsmodus</div>
         <input id="tickerTextDe" class="input" placeholder="Ticker Text DE" />
         <input id="tickerTextTr" class="input" placeholder="Ticker Text TR" />
         <input id="tickerTextEn" class="input" placeholder="Ticker Text EN" />
@@ -837,7 +849,10 @@ export async function renderAdmin(root) {
           Aktiv
         </label>
 
-        <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="addTickerBtn" class="btn btn--accent">Ticker hinzufügen</button>
+          <button id="cancelTickerEditBtn" class="btn hidden" type="button">Abbrechen</button>
+        </div>
       </div>
 
       <table class="table" style="margin-top:14px">
@@ -880,6 +895,8 @@ export async function renderAdmin(root) {
     `<span class="badge badge--ok">Editor</span>`,
     `
       <div class="grid" style="gap:8px">
+        <input id="tileEditId" type="hidden" value="" />
+        <div id="tileEditModeInfo" class="badge badge--warn hidden">Bearbeitungsmodus</div>
         <input id="tileTitleDe" class="input" placeholder="Titel DE" />
         <input id="tileTitleTr" class="input" placeholder="Titel TR" />
         <input id="tileTitleEn" class="input" placeholder="Titel EN" />
@@ -917,7 +934,10 @@ export async function renderAdmin(root) {
           Aktiv
         </label>
 
-        <button id="addTileBtn" class="btn btn--accent">Kachel hinzufügen</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="addTileBtn" class="btn btn--accent">Kachel hinzufügen</button>
+          <button id="cancelTileEditBtn" class="btn hidden" type="button">Abbrechen</button>
+        </div>
       </div>
 
       <table class="table" style="margin-top:14px">
@@ -962,6 +982,8 @@ export async function renderAdmin(root) {
     `<span class="badge badge--ok">Editor</span>`,
     `
       <div class="grid" style="gap:8px">
+        <input id="popupEditId" type="hidden" value="" />
+        <div id="popupEditModeInfo" class="badge badge--warn hidden">Bearbeitungsmodus</div>
         <input id="popupSlug" class="input" placeholder="Slug (z.B. mitgliedschaft)" />
 
         <input id="popupTitleDe" class="input" placeholder="Titel DE" />
@@ -981,7 +1003,10 @@ export async function renderAdmin(root) {
           Aktiv
         </label>
 
-        <button id="addPopupBtn" class="btn btn--accent">Popup hinzufügen</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="addPopupBtn" class="btn btn--accent">Popup hinzufügen</button>
+          <button id="cancelPopupEditBtn" class="btn hidden" type="button">Abbrechen</button>
+        </div>
       </div>
 
       <table class="table" style="margin-top:14px">
@@ -1246,6 +1271,26 @@ export async function renderAdmin(root) {
     `;
   });
 
+  root.querySelector("#popupImageFile")?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    const info = root.querySelector("#popupImageInfo");
+
+    if (!info) return;
+
+    if (!file) {
+      info.textContent = "Kein Bild ausgewählt";
+      return;
+    }
+
+    info.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="${URL.createObjectURL(file)}"
+             style="width:60px;height:60px;object-fit:cover;border-radius:10px;">
+        <span>${escapeHtml(file.name)}</span>
+      </div>
+    `;
+  });
+
   /* -----------------------------------------------------------
      LOGOUT
   ----------------------------------------------------------- */
@@ -1264,8 +1309,86 @@ export async function renderAdmin(root) {
      EVENTS
   ----------------------------------------------------------- */
   if (isEditor) {
+    const resetEventForm = () => {
+      [
+        "#eventEditId",
+        "#eventTitleDe",
+        "#eventTitleTr",
+        "#eventTitleEn",
+        "#eventDate",
+        "#eventTime",
+        "#eventLocation"
+      ].forEach((selector) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = "";
+      });
+
+      const displayType = root.querySelector("#eventDisplayType");
+      if (displayType) displayType.value = "auto";
+
+      const imageInput = root.querySelector("#eventPreviewImageFile");
+      if (imageInput) imageInput.value = "";
+
+      const imageInfo = root.querySelector("#eventPreviewImageInfo");
+      if (imageInfo) imageInfo.textContent = "Kein Bild ausgewählt";
+
+      root.querySelector("#eventEditModeInfo")?.classList.add("hidden");
+      root.querySelector("#cancelEventEditBtn")?.classList.add("hidden");
+
+      const saveBtn = root.querySelector("#addEventBtn");
+      if (saveBtn) saveBtn.textContent = t("admin.add");
+    };
+
+    const fillEventForm = (event) => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value ?? "";
+      };
+
+      const date = event.start_time ? new Date(event.start_time) : null;
+      const dateValue = date && !Number.isNaN(date.getTime())
+        ? date.toISOString().slice(0, 10)
+        : "";
+      const timeValue = date && !Number.isNaN(date.getTime())
+        ? date.toISOString().slice(11, 16)
+        : "";
+
+      setValue("#eventEditId", event.id);
+      setValue("#eventTitleDe", event.title?.de ?? "");
+      setValue("#eventTitleTr", event.title?.tr ?? "");
+      setValue("#eventTitleEn", event.title?.en ?? "");
+      setValue("#eventDate", dateValue);
+      setValue("#eventTime", timeValue);
+      setValue("#eventLocation", event.location ?? "");
+
+      const displayType = root.querySelector("#eventDisplayType");
+      if (displayType) displayType.value = event.display_type ?? "auto";
+
+      const imageInput = root.querySelector("#eventPreviewImageFile");
+      if (imageInput) imageInput.value = "";
+
+      const imageInfo = root.querySelector("#eventPreviewImageInfo");
+      if (imageInfo) {
+        imageInfo.textContent = event.preview_image_url
+          ? "Aktuelles Bild bleibt erhalten, falls kein neues ausgewählt wird."
+          : "Kein Bild ausgewählt";
+      }
+
+      root.querySelector("#eventEditModeInfo")?.classList.remove("hidden");
+      root.querySelector("#cancelEventEditBtn")?.classList.remove("hidden");
+
+      const saveBtn = root.querySelector("#addEventBtn");
+      if (saveBtn) saveBtn.textContent = "Änderungen speichern";
+    };
+
+    root.querySelector("#cancelEventEditBtn")?.addEventListener("click", resetEventForm);
+
     root.querySelector("#addEventBtn")?.addEventListener("click", async () => {
       try {
+        const editId = root.querySelector("#eventEditId")?.value || "";
+        const current = editId
+          ? events.find((event) => String(event.id) === String(editId))
+          : null;
         const de = root.querySelector("#eventTitleDe")?.value.trim() || "";
         const tr = root.querySelector("#eventTitleTr")?.value.trim() || "";
         const en = root.querySelector("#eventTitleEn")?.value.trim() || "";
@@ -1292,25 +1415,32 @@ export async function renderAdmin(root) {
           return;
         }
 
-        let previewImageUrl = "";
+        let previewImageUrl = current?.preview_image_url || "";
         if (previewImageFile) {
           previewImageUrl = await uploadEventPreviewImage(previewImageFile);
         }
 
-        await createEvent({
+        const payload = {
           title: { de, tr, en },
           start_time: startISO,
           location: loc,
           preview_image_url: previewImageUrl,
           display_type: displayType,
-          description: { de: "", tr: "", en: "" }
-        });
+          description: current?.description || { de: "", tr: "", en: "" }
+        };
 
-        toast("Event erstellt", "ok");
+        if (editId) {
+          await updateEvent(editId, payload);
+          toast("Event aktualisiert", "ok");
+        } else {
+          await createEvent(payload);
+          toast("Event erstellt", "ok");
+        }
+
         await renderAdmin(root);
       } catch (err) {
         console.error(err);
-        toast(err.message || "Event konnte nicht erstellt werden", "bad");
+        toast(err.message || "Event konnte nicht gespeichert werden", "bad");
       }
     });
 
@@ -1321,41 +1451,19 @@ export async function renderAdmin(root) {
           const current = events.find((x) => String(x.id) === String(id));
           if (!current) return;
 
-          const newDe = prompt("Neuer Titel DE?", current.title?.de ?? "");
-          if (!newDe) return;
+          const section = root.querySelector("#admin-events");
+          const body = section?.querySelector(".admin-section__body");
+          const toggle = section?.querySelector(".admin-section__toggle");
 
-          const newTr = prompt("Neuer Titel TR?", current.title?.tr ?? "") ?? "";
-          const newEn = prompt("Neuer Titel EN?", current.title?.en ?? "") ?? "";
-          const newDate = prompt("Neues Datum (YYYY-MM-DD)?", String(current.start_time || "").slice(0, 10));
-          if (!newDate) return;
+          body?.classList.remove("hidden");
+          toggle?.classList.add("active");
+          if (toggle) toggle.textContent = "Einklappen";
 
-          const currentTime = current.start_time ? new Date(current.start_time).toISOString().slice(11, 16) : "19:00";
-          const newTime = prompt("Neue Uhrzeit (HH:MM)?", currentTime);
-          if (!newTime) return;
-
-          const newLoc = prompt("Neuer Ort?", current.location ?? "") ?? "";
-          const newDisplayType = prompt("Anzeige-Typ? (auto/today/urgent/future/info)", current.display_type ?? "auto") ?? "auto";
-          const newPreviewImage = prompt("Neue Bild-URL?", current.preview_image_url ?? "") ?? "";
-
-          const newStartISO = parseEventDateTime(newDate, newTime);
-          if (!newStartISO) {
-            toast("Ungültiges Datum oder Uhrzeit", "bad");
-            return;
-          }
-
-          await updateEvent(id, {
-            title: { de: newDe, tr: newTr, en: newEn },
-            start_time: newStartISO,
-            location: newLoc,
-            preview_image_url: newPreviewImage,
-            display_type: newDisplayType
-          });
-
-          toast("Event aktualisiert", "ok");
-          await renderAdmin(root);
+          fillEventForm(current);
+          section?.scrollIntoView({ behavior: "smooth", block: "start" });
         } catch (err) {
           console.error(err);
-          toast("Event konnte nicht aktualisiert werden", "bad");
+          toast("Event konnte nicht geladen werden", "bad");
         }
       });
     });
@@ -1403,52 +1511,123 @@ export async function renderAdmin(root) {
   if (isEditor) {
     bindGalleryDropzone(root);
 
+    const resetGalleryForm = () => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value;
+      };
+
+      setValue("#galleryEditId", "");
+      setValue("#galleryTitleDe", "");
+      setValue("#galleryTitleTr", "");
+      setValue("#galleryTitleEn", "");
+      setValue("#galleryStatus", "active");
+
+      const filesInput = root.querySelector("#galleryFiles");
+      if (filesInput) filesInput.value = "";
+
+      const preview = root.querySelector("#galleryFilePreview");
+      if (preview) preview.innerHTML = "";
+
+      const count = root.querySelector("#galleryFileCount");
+      if (count) count.textContent = "0 Bilder ausgewählt";
+
+      const statusEl = root.querySelector("#galleryUploadStatus");
+      if (statusEl) statusEl.textContent = "";
+
+      root.querySelector("#galleryEditModeInfo")?.classList.add("hidden");
+      root.querySelector("#galleryCancelEditButton")?.classList.add("hidden");
+
+      const saveBtn = root.querySelector("#gallerySaveButton");
+      if (saveBtn) saveBtn.textContent = "Galerie speichern";
+    };
+
+    const fillGalleryForm = (gallery) => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value;
+      };
+
+      setValue("#galleryEditId", gallery.id || "");
+      setValue("#galleryTitleDe", gallery.title?.de || "");
+      setValue("#galleryTitleTr", gallery.title?.tr || "");
+      setValue("#galleryTitleEn", gallery.title?.en || "");
+      setValue("#galleryStatus", gallery.status || "active");
+
+      const filesInput = root.querySelector("#galleryFiles");
+      if (filesInput) filesInput.value = "";
+
+      const preview = root.querySelector("#galleryFilePreview");
+      if (preview) preview.innerHTML = "";
+
+      const count = root.querySelector("#galleryFileCount");
+      if (count) count.textContent = "Bilder bleiben unverändert";
+
+      const statusEl = root.querySelector("#galleryUploadStatus");
+      if (statusEl) statusEl.textContent = "Bearbeiten aktiv";
+
+      root.querySelector("#galleryEditModeInfo")?.classList.remove("hidden");
+      root.querySelector("#galleryCancelEditButton")?.classList.remove("hidden");
+
+      const saveBtn = root.querySelector("#gallerySaveButton");
+      if (saveBtn) saveBtn.textContent = "Aktualisieren";
+    };
+
     root.querySelector("#galleryFiles")?.addEventListener("change", (e) => {
       previewSelectedGalleryFiles(root, e.target.files);
     });
 
+    root.querySelector("#galleryCancelEditButton")?.addEventListener("click", resetGalleryForm);
+
     root.querySelector("#gallerySaveButton")?.addEventListener("click", async () => {
       const saveBtn = root.querySelector("#gallerySaveButton");
       const statusEl = root.querySelector("#galleryUploadStatus");
-      const titleInput = root.querySelector("#galleryTitle");
+      const editId = root.querySelector("#galleryEditId")?.value || "";
+      const titleDeInput = root.querySelector("#galleryTitleDe");
+      const titleTrInput = root.querySelector("#galleryTitleTr");
+      const titleEnInput = root.querySelector("#galleryTitleEn");
       const statusInput = root.querySelector("#galleryStatus");
       const filesInput = root.querySelector("#galleryFiles");
       const preview = root.querySelector("#galleryFilePreview");
       const count = root.querySelector("#galleryFileCount");
 
       try {
-        const title = titleInput?.value.trim() || "";
+        const title = {
+          de: titleDeInput?.value.trim() || "",
+          tr: titleTrInput?.value.trim() || "",
+          en: titleEnInput?.value.trim() || ""
+        };
         const status = statusInput?.value || "active";
         const files = Array.from(filesInput?.files || []);
 
-        if (!title) {
+        if (!title.de) {
           toast("Galerietitel fehlt", "bad");
           return;
         }
 
-        if (!files.length) {
+        if (!editId && !files.length) {
           toast("Bitte Bilder auswählen", "bad");
           return;
         }
 
         if (saveBtn) saveBtn.disabled = true;
-        if (statusEl) statusEl.textContent = "Bilder werden hochgeladen ...";
 
-        await createGalleryWithFiles({ title, status, files });
+        if (editId) {
+          if (statusEl) statusEl.textContent = "Galerie wird aktualisiert ...";
+          await updateGallery(editId, { title, status });
+          toast("Galerie aktualisiert", "ok");
+        } else {
+          if (statusEl) statusEl.textContent = "Bilder werden hochgeladen ...";
+          await createGalleryWithFiles({ title, status, files });
+          toast("Galerie erstellt", "ok");
+        }
 
-        toast("Galerie erstellt", "ok");
-
-        if (titleInput) titleInput.value = "";
-        if (statusInput) statusInput.value = "active";
-        if (filesInput) filesInput.value = "";
-        if (preview) preview.innerHTML = "";
-        if (count) count.textContent = "0 Bilder ausgewählt";
-        if (statusEl) statusEl.textContent = "";
+        resetGalleryForm();
 
         await renderAdmin(root);
       } catch (err) {
         console.error(err);
-        toast(err.message || "Galerie konnte nicht erstellt werden", "bad");
+        toast(err.message || "Galerie konnte nicht gespeichert werden", "bad");
       } finally {
         if (saveBtn) saveBtn.disabled = false;
       }
@@ -1461,15 +1640,19 @@ export async function renderAdmin(root) {
           const current = galleries.find((g) => String(g.id) === String(id));
           if (!current) return;
 
-          const status = prompt("Status (active/archived)?", current.status ?? "active");
-          if (!status) return;
+          const section = root.querySelector("#admin-galleries");
+          const body = section?.querySelector(".admin-section__body");
+          const toggle = section?.querySelector(".admin-section__toggle");
 
-          await updateGallery(id, { status });
-          toast("Galerie aktualisiert", "ok");
-          await renderAdmin(root);
+          body?.classList.remove("hidden");
+          toggle?.classList.add("active");
+          if (toggle) toggle.textContent = "Einklappen";
+
+          fillGalleryForm(current);
+          section?.scrollIntoView({ behavior: "smooth", block: "start" });
         } catch (err) {
           console.error(err);
-          toast("Galerie konnte nicht aktualisiert werden", "bad");
+          toast("Galerie konnte nicht geladen werden", "bad");
         }
       });
     });
@@ -1717,8 +1900,59 @@ export async function renderAdmin(root) {
      HOME TICKER
   ----------------------------------------------------------- */
   if (isEditor) {
+    const resetTickerForm = () => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value;
+      };
+
+      setValue("#tickerEditId", "");
+      setValue("#tickerTextDe", "");
+      setValue("#tickerTextTr", "");
+      setValue("#tickerTextEn", "");
+      setValue("#tickerColor", "neutral");
+      setValue("#tickerDisplayType", "info");
+      setValue("#tickerSortOrder", "");
+
+      const activeInput = root.querySelector("#tickerActive");
+      if (activeInput) activeInput.checked = true;
+
+      root.querySelector("#tickerEditModeInfo")?.classList.add("hidden");
+      root.querySelector("#cancelTickerEditBtn")?.classList.add("hidden");
+
+      const saveBtn = root.querySelector("#addTickerBtn");
+      if (saveBtn) saveBtn.textContent = "Ticker hinzufügen";
+    };
+
+    const fillTickerForm = (item) => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value;
+      };
+
+      setValue("#tickerEditId", item.id || "");
+      setValue("#tickerTextDe", item.text?.de || "");
+      setValue("#tickerTextTr", item.text?.tr || "");
+      setValue("#tickerTextEn", item.text?.en || "");
+      setValue("#tickerColor", item.color || "neutral");
+      setValue("#tickerDisplayType", item.display_type || "info");
+      setValue("#tickerSortOrder", String(item.sort_order ?? ""));
+
+      const activeInput = root.querySelector("#tickerActive");
+      if (activeInput) activeInput.checked = item.active !== false;
+
+      root.querySelector("#tickerEditModeInfo")?.classList.remove("hidden");
+      root.querySelector("#cancelTickerEditBtn")?.classList.remove("hidden");
+
+      const saveBtn = root.querySelector("#addTickerBtn");
+      if (saveBtn) saveBtn.textContent = "Aktualisieren";
+    };
+
+    root.querySelector("#cancelTickerEditBtn")?.addEventListener("click", resetTickerForm);
+
     root.querySelector("#addTickerBtn")?.addEventListener("click", async () => {
       try {
+        const editId = root.querySelector("#tickerEditId")?.value || "";
         const de = root.querySelector("#tickerTextDe")?.value.trim() || "";
         const tr = root.querySelector("#tickerTextTr")?.value.trim() || "";
         const en = root.querySelector("#tickerTextEn")?.value.trim() || "";
@@ -1732,19 +1966,26 @@ export async function renderAdmin(root) {
           return;
         }
 
-        await createHomeTicker({
+        const payload = {
           text: { de, tr, en },
           color,
           display_type: displayType,
           sort_order: sortOrder,
           active
-        });
+        };
 
-        toast("Ticker hinzugefügt", "ok");
+        if (editId) {
+          await updateHomeTicker(editId, payload);
+          toast("Ticker aktualisiert", "ok");
+        } else {
+          await createHomeTicker(payload);
+          toast("Ticker hinzugefügt", "ok");
+        }
+
         await renderAdmin(root);
       } catch (err) {
         console.error(err);
-        toast("Ticker konnte nicht erstellt werden", "bad");
+        toast("Ticker konnte nicht gespeichert werden", "bad");
       }
     });
 
@@ -1755,29 +1996,19 @@ export async function renderAdmin(root) {
           const current = tickerItems.find((item) => String(item.id) === String(id));
           if (!current) return;
 
-          const de = prompt("Ticker Text DE?", current.text?.de ?? "");
-          if (!de) return;
+          const section = root.querySelector("#admin-home-ticker");
+          const body = section?.querySelector(".admin-section__body");
+          const toggle = section?.querySelector(".admin-section__toggle");
 
-          const tr = prompt("Ticker Text TR?", current.text?.tr ?? "") ?? "";
-          const en = prompt("Ticker Text EN?", current.text?.en ?? "") ?? "";
-          const color = prompt("Farbe? (green/yellow/red/neutral)", current.color ?? "neutral") ?? "neutral";
-          const displayType = prompt("Anzeige-Typ? (info/urgent/future/today)", current.display_type ?? "info") ?? "info";
-          const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
-          const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
+          body?.classList.remove("hidden");
+          toggle?.classList.add("active");
+          if (toggle) toggle.textContent = "Einklappen";
 
-          await updateHomeTicker(id, {
-            text: { de, tr, en },
-            color,
-            display_type: displayType,
-            sort_order: sortOrder,
-            active: activeText.toLowerCase() === "yes"
-          });
-
-          toast("Ticker aktualisiert", "ok");
-          await renderAdmin(root);
+          fillTickerForm(current);
+          section?.scrollIntoView({ behavior: "smooth", block: "start" });
         } catch (err) {
           console.error(err);
-          toast("Ticker konnte nicht aktualisiert werden", "bad");
+          toast("Ticker konnte nicht geladen werden", "bad");
         }
       });
     });
@@ -1804,8 +2035,94 @@ export async function renderAdmin(root) {
      HOME TILES
   ----------------------------------------------------------- */
   if (isEditor) {
+    const resetTileForm = () => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value;
+      };
+
+      setValue("#tileEditId", "");
+      setValue("#tileTitleDe", "");
+      setValue("#tileTitleTr", "");
+      setValue("#tileTitleEn", "");
+      setValue("#tileTextDe", "");
+      setValue("#tileTextTr", "");
+      setValue("#tileTextEn", "");
+      setValue("#tileButtonTextDe", "");
+      setValue("#tileButtonTextTr", "");
+      setValue("#tileButtonTextEn", "");
+      setValue("#tileLinkUrl", "");
+      setValue("#tilePopupSlug", "");
+      setValue("#tileSortOrder", "");
+      setValue("#tileLayoutWidth", "third");
+      setValue("#tileLayoutHeight", "medium");
+
+      const imageInput = root.querySelector("#tileImageFile");
+      if (imageInput) imageInput.value = "";
+
+      const imageInfo = root.querySelector("#tileImageInfo");
+      if (imageInfo) imageInfo.textContent = "Kein Bild ausgewählt";
+
+      const activeInput = root.querySelector("#tileActive");
+      if (activeInput) activeInput.checked = true;
+
+      root.querySelector("#tileEditModeInfo")?.classList.add("hidden");
+      root.querySelector("#cancelTileEditBtn")?.classList.add("hidden");
+
+      const saveBtn = root.querySelector("#addTileBtn");
+      if (saveBtn) saveBtn.textContent = "Kachel hinzufügen";
+    };
+
+    const fillTileForm = (tile) => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value;
+      };
+
+      setValue("#tileEditId", tile.id || "");
+      setValue("#tileTitleDe", tile.title?.de || "");
+      setValue("#tileTitleTr", tile.title?.tr || "");
+      setValue("#tileTitleEn", tile.title?.en || "");
+      setValue("#tileTextDe", tile.text?.de || "");
+      setValue("#tileTextTr", tile.text?.tr || "");
+      setValue("#tileTextEn", tile.text?.en || "");
+      setValue("#tileButtonTextDe", tile.button_text?.de || "");
+      setValue("#tileButtonTextTr", tile.button_text?.tr || "");
+      setValue("#tileButtonTextEn", tile.button_text?.en || "");
+      setValue("#tileLinkUrl", tile.link_url || "");
+      setValue("#tilePopupSlug", tile.popup_slug || "");
+      setValue("#tileSortOrder", String(tile.sort_order ?? ""));
+      setValue("#tileLayoutWidth", normalizeTileWidth(tile.layout_width || "third"));
+      setValue("#tileLayoutHeight", normalizeTileHeight(tile.layout_height || "medium"));
+
+      const imageInput = root.querySelector("#tileImageFile");
+      if (imageInput) imageInput.value = "";
+
+      const imageInfo = root.querySelector("#tileImageInfo");
+      if (imageInfo) {
+        imageInfo.textContent = tile.image_url
+          ? "Aktuelles Bild bleibt erhalten, falls kein neues ausgewählt wird."
+          : "Kein Bild ausgewählt";
+      }
+
+      const activeInput = root.querySelector("#tileActive");
+      if (activeInput) activeInput.checked = tile.active !== false;
+
+      root.querySelector("#tileEditModeInfo")?.classList.remove("hidden");
+      root.querySelector("#cancelTileEditBtn")?.classList.remove("hidden");
+
+      const saveBtn = root.querySelector("#addTileBtn");
+      if (saveBtn) saveBtn.textContent = "Aktualisieren";
+    };
+
+    root.querySelector("#cancelTileEditBtn")?.addEventListener("click", resetTileForm);
+
     root.querySelector("#addTileBtn")?.addEventListener("click", async () => {
       try {
+        const editId = root.querySelector("#tileEditId")?.value || "";
+        const current = editId
+          ? homeTiles.find((tile) => String(tile.id) === String(editId))
+          : null;
         const titleDe = root.querySelector("#tileTitleDe")?.value.trim() || "";
         const titleTr = root.querySelector("#tileTitleTr")?.value.trim() || "";
         const titleEn = root.querySelector("#tileTitleEn")?.value.trim() || "";
@@ -1831,7 +2148,7 @@ export async function renderAdmin(root) {
           return;
         }
 
-        let imageUrl = "";
+        let imageUrl = current?.image_url || "";
         if (tileImageFile) {
           try {
             imageUrl = await uploadTileImage(tileImageFile);
@@ -1842,7 +2159,7 @@ export async function renderAdmin(root) {
           }
         }
 
-        await createHomeTile({
+        const payload = {
           title: { de: titleDe, tr: titleTr, en: titleEn },
           text: { de: textDe, tr: textTr, en: textEn },
           button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
@@ -1853,13 +2170,20 @@ export async function renderAdmin(root) {
           layout_width: layoutWidth,
           layout_height: layoutHeight,
           active
-        });
+        };
 
-        toast("Kachel hinzugefügt", "ok");
+        if (editId) {
+          await updateHomeTile(editId, payload);
+          toast("Kachel aktualisiert", "ok");
+        } else {
+          await createHomeTile(payload);
+          toast("Kachel hinzugefügt", "ok");
+        }
+
         await renderAdmin(root);
       } catch (err) {
         console.error(err);
-        toast("Kachel konnte nicht erstellt werden", "bad");
+        toast("Kachel konnte nicht gespeichert werden", "bad");
       }
     });
 
@@ -1870,46 +2194,19 @@ export async function renderAdmin(root) {
           const current = homeTiles.find((tile) => String(tile.id) === String(id));
           if (!current) return;
 
-          const titleDe = prompt("Titel DE?", current.title?.de ?? "");
-          if (!titleDe) return;
+          const section = root.querySelector("#admin-home-tiles");
+          const body = section?.querySelector(".admin-section__body");
+          const toggle = section?.querySelector(".admin-section__toggle");
 
-          const titleTr = prompt("Titel TR?", current.title?.tr ?? "") ?? "";
-          const titleEn = prompt("Titel EN?", current.title?.en ?? "") ?? "";
+          body?.classList.remove("hidden");
+          toggle?.classList.add("active");
+          if (toggle) toggle.textContent = "Einklappen";
 
-          const textDe = prompt("Text DE?", current.text?.de ?? "") ?? "";
-          const textTr = prompt("Text TR?", current.text?.tr ?? "") ?? "";
-          const textEn = prompt("Text EN?", current.text?.en ?? "") ?? "";
-
-          const buttonDe = prompt("Button Text DE?", current.button_text?.de ?? "") ?? "";
-          const buttonTr = prompt("Button Text TR?", current.button_text?.tr ?? "") ?? "";
-          const buttonEn = prompt("Button Text EN?", current.button_text?.en ?? "") ?? "";
-
-          const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
-          const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
-          const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
-          const popupSlug = prompt("Popup Slug?", current.popup_slug ?? "") ?? "";
-          const layoutWidth = normalizeTileWidth(prompt("Breite? (full/half/third/quarter/fifth)", current.layout_width ?? "third") ?? "third");
-          const layoutHeight = normalizeTileHeight(prompt("Höhe? (small/medium/large)", current.layout_height ?? "medium") ?? "medium");
-          const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
-
-          await updateHomeTile(id, {
-            title: { de: titleDe, tr: titleTr, en: titleEn },
-            text: { de: textDe, tr: textTr, en: textEn },
-            button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
-            link_url: linkUrl,
-            popup_slug: popupSlug,
-            image_url: imageUrl,
-            sort_order: sortOrder,
-            layout_width: layoutWidth,
-            layout_height: layoutHeight,
-            active: activeText.toLowerCase() === "yes"
-          });
-
-          toast("Kachel aktualisiert", "ok");
-          await renderAdmin(root);
+          fillTileForm(current);
+          section?.scrollIntoView({ behavior: "smooth", block: "start" });
         } catch (err) {
           console.error(err);
-          toast("Kachel konnte nicht aktualisiert werden", "bad");
+          toast("Kachel konnte nicht geladen werden", "bad");
         }
       });
     });
@@ -1936,8 +2233,82 @@ export async function renderAdmin(root) {
      INFO POPUPS
   ----------------------------------------------------------- */
   if (isEditor) {
+    const resetPopupForm = () => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value;
+      };
+
+      setValue("#popupEditId", "");
+      setValue("#popupSlug", "");
+      setValue("#popupTitleDe", "");
+      setValue("#popupTitleTr", "");
+      setValue("#popupTitleEn", "");
+      setValue("#popupContentDe", "");
+      setValue("#popupContentTr", "");
+      setValue("#popupContentEn", "");
+      setValue("#popupSortOrder", "");
+
+      const imageInput = root.querySelector("#popupImageFile");
+      if (imageInput) imageInput.value = "";
+
+      const imageInfo = root.querySelector("#popupImageInfo");
+      if (imageInfo) imageInfo.textContent = "Kein Bild ausgewählt";
+
+      const activeInput = root.querySelector("#popupActive");
+      if (activeInput) activeInput.checked = true;
+
+      root.querySelector("#popupEditModeInfo")?.classList.add("hidden");
+      root.querySelector("#cancelPopupEditBtn")?.classList.add("hidden");
+
+      const saveBtn = root.querySelector("#addPopupBtn");
+      if (saveBtn) saveBtn.textContent = "Popup hinzufügen";
+    };
+
+    const fillPopupForm = (popup) => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value;
+      };
+
+      setValue("#popupEditId", popup.id || "");
+      setValue("#popupSlug", popup.slug || "");
+      setValue("#popupTitleDe", popup.title?.de || "");
+      setValue("#popupTitleTr", popup.title?.tr || "");
+      setValue("#popupTitleEn", popup.title?.en || "");
+      setValue("#popupContentDe", popup.content?.de || "");
+      setValue("#popupContentTr", popup.content?.tr || "");
+      setValue("#popupContentEn", popup.content?.en || "");
+      setValue("#popupSortOrder", String(popup.sort_order ?? ""));
+
+      const imageInput = root.querySelector("#popupImageFile");
+      if (imageInput) imageInput.value = "";
+
+      const imageInfo = root.querySelector("#popupImageInfo");
+      if (imageInfo) {
+        imageInfo.textContent = popup.image_url
+          ? "Aktuelles Bild bleibt erhalten, falls kein neues ausgewählt wird."
+          : "Kein Bild ausgewählt";
+      }
+
+      const activeInput = root.querySelector("#popupActive");
+      if (activeInput) activeInput.checked = popup.is_active !== false;
+
+      root.querySelector("#popupEditModeInfo")?.classList.remove("hidden");
+      root.querySelector("#cancelPopupEditBtn")?.classList.remove("hidden");
+
+      const saveBtn = root.querySelector("#addPopupBtn");
+      if (saveBtn) saveBtn.textContent = "Aktualisieren";
+    };
+
+    root.querySelector("#cancelPopupEditBtn")?.addEventListener("click", resetPopupForm);
+
     root.querySelector("#addPopupBtn")?.addEventListener("click", async () => {
       try {
+        const editId = root.querySelector("#popupEditId")?.value || "";
+        const current = editId
+          ? infoPopups.find((popup) => String(popup.id) === String(editId))
+          : null;
         const slug = root.querySelector("#popupSlug")?.value.trim() || "";
         const titleDe = root.querySelector("#popupTitleDe")?.value.trim() || "";
         const titleTr = root.querySelector("#popupTitleTr")?.value.trim() || "";
@@ -1947,8 +2318,8 @@ export async function renderAdmin(root) {
         const contentTr = root.querySelector("#popupContentTr")?.value.trim() || "";
         const contentEn = root.querySelector("#popupContentEn")?.value.trim() || "";
 
-        const popupImageFile = root.querySelector("#popupImageFile")?.files?.[0] || null; 
-        let imageUrl ="";
+        const popupImageFile = root.querySelector("#popupImageFile")?.files?.[0] || null;
+        let imageUrl = current?.image_url || "";
         try {
           if (popupImageFile) {
             imageUrl = await uploadInfoPopupImage(popupImageFile);
@@ -1956,8 +2327,7 @@ export async function renderAdmin(root) {
         } catch (err) {
           console.warn("Bild Upload fehlgeschlagen: ", err);
         }
-        if (popupImageFile) {imageUrl =await uploadInfoPopupImage(popupImageFile); 
-                            }
+
         const sortOrder = Number(root.querySelector("#popupSortOrder")?.value || "0") || 0;
         const isActive = !!root.querySelector("#popupActive")?.checked;
 
@@ -1971,7 +2341,7 @@ export async function renderAdmin(root) {
           return;
         }
 
-        await createInfoPopup({
+        const payload = {
           slug,
           title: { de: titleDe, tr: titleTr, en: titleEn },
           content: { de: contentDe, tr: contentTr, en: contentEn },
@@ -1979,13 +2349,20 @@ export async function renderAdmin(root) {
           image_url: imageUrl,
           is_active: isActive,
           sort_order: sortOrder
-        });
+        };
 
-        toast("Popup hinzugefügt", "ok");
+        if (editId) {
+          await updateInfoPopup(editId, payload);
+          toast("Popup aktualisiert", "ok");
+        } else {
+          await createInfoPopup(payload);
+          toast("Popup hinzugefügt", "ok");
+        }
+
         await renderAdmin(root);
       } catch (err) {
         console.error(err);
-        toast("Popup konnte nicht erstellt werden", "bad");
+        toast("Popup konnte nicht gespeichert werden", "bad");
       }
     });
 
@@ -1996,35 +2373,19 @@ export async function renderAdmin(root) {
           const current = infoPopups.find((x) => String(x.id) === String(id));
           if (!current) return;
 
-          const slug = prompt("Slug?", current.slug ?? "") ?? "";
-          if (!slug) return;
+          const section = root.querySelector("#admin-info-popups");
+          const body = section?.querySelector(".admin-section__body");
+          const toggle = section?.querySelector(".admin-section__toggle");
 
-          const titleDe = prompt("Titel DE?", current.title?.de ?? "") ?? "";
-          const titleTr = prompt("Titel TR?", current.title?.tr ?? "") ?? "";
-          const titleEn = prompt("Titel EN?", current.title?.en ?? "") ?? "";
+          body?.classList.remove("hidden");
+          toggle?.classList.add("active");
+          if (toggle) toggle.textContent = "Einklappen";
 
-          const contentDe = prompt("Text DE?", current.content?.de ?? "") ?? "";
-          const contentTr = prompt("Text TR?", current.content?.tr ?? "") ?? "";
-          const contentEn = prompt("Text EN?", current.content?.en ?? "") ?? "";
-
-          const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
-          const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
-          const activeText = prompt("Aktiv? (yes/no)", current.is_active ? "yes" : "no") ?? "yes";
-
-          await updateInfoPopup(id, {
-            slug,
-            title: { de: titleDe, tr: titleTr, en: titleEn },
-            content: { de: contentDe, tr: contentTr, en: contentEn },
-            image_url: imageUrl,
-            sort_order: sortOrder,
-            is_active: activeText.toLowerCase() === "yes"
-          });
-
-          toast("Popup aktualisiert", "ok");
-          await renderAdmin(root);
+          fillPopupForm(current);
+          section?.scrollIntoView({ behavior: "smooth", block: "start" });
         } catch (err) {
           console.error(err);
-          toast("Popup konnte nicht aktualisiert werden", "bad");
+          toast("Popup konnte nicht geladen werden", "bad");
         }
       });
     });

@@ -30,6 +30,8 @@ create table if not exists events (
   start_time timestamptz not null,
   end_time timestamptz,
   category text,
+  preview_image_url text,
+  display_type text default 'auto',
   created_by uuid references auth.users(id),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
