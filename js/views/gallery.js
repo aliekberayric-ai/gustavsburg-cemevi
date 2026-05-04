@@ -62,7 +62,6 @@ export async function renderGallery(root) {
         ${
           galleries.map((g) => {
             const title = g.title?.[lang] ?? g.title?.de ?? "—";
-            const desc = g.description?.[lang] ?? g.description?.de ?? "";
             const badge = g.status === "archived"
               ? `<span class="gallery-status-badge archived">${t("gallery.archived")}</span>`
               : `<span class="gallery-status-badge active">${t("gallery.active")}</span>`;
@@ -82,10 +81,6 @@ export async function renderGallery(root) {
 
                 <div class="gallery-card-body">
                   <h3 class="gallery-card-title">${escapeHtml(title)}</h3>
-                  <div class="gallery-card-meta">${escapeHtml(desc)}</div>
-                  <div style="margin-top:10px;color:var(--muted)">
-                    ${t("gallery.hintAdmin")}
-                  </div>
                 </div>
               </article>
             `;

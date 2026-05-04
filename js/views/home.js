@@ -34,6 +34,28 @@ function getEmptyTilesText(lang) {
   return "Keine Startseiten-Kacheln vorhanden.";
 }
 
+function getTileWidthClass(value) {
+  const widthMap = {
+    "1/1": "tile-width-full",
+    "1/2": "tile-width-half",
+    "1/3": "tile-width-third",
+    "1/4": "tile-width-quarter",
+    "1/5": "tile-width-fifth",
+    full: "tile-width-full",
+    half: "tile-width-half",
+    third: "tile-width-third",
+    quarter: "tile-width-quarter",
+    fifth: "tile-width-fifth"
+  };
+
+  return widthMap[value] || "tile-width-third";
+}
+
+function getTileHeightClass(value) {
+  const height = ["small", "medium", "large"].includes(value) ? value : "medium";
+  return `tile-height-${height}`;
+}
+
 function getTodayStart() {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
@@ -116,22 +138,27 @@ function buildTickerRow(items, reverse = false) {
     return sum + String(item.text || "").length + String(item.label || "").length + 10;
   }, 0);
 
-  const duration = Math.max(18, Math.ceil(totalChars / 6));
+  const groupCopies = Math.max(2, Math.ceil(140 / Math.max(totalChars, 1)));
+  const groupItems = Array.from({ length: groupCopies }, () => items).flat();
+  const duration = Math.max(20, Math.ceil((totalChars * groupCopies) / 7));
+
+  const groupHtml = groupItems.map((item) => `
+    <span class="home-ticker-item">
+      <span class="ticker-icon">${item.icon}</span>
+      <span class="ticker-label ticker-label-${escapeHtml(item.color)}">
+        ${escapeHtml(item.label)}
+      </span>
+      <span class="ticker-text">
+        ${escapeHtml(item.text)}
+      </span>
+    </span>
+  `).join("");
 
   return `
     <div class="home-ticker ${reverse ? "home-ticker--reverse" : ""}" style="--ticker-duration:${duration}s">
       <div class="home-ticker-track">
-        ${items.map((item) => `
-          <span class="home-ticker-item">
-            <span class="ticker-icon">${item.icon}</span>
-            <span class="ticker-label ticker-label-${escapeHtml(item.color)}">
-              ${escapeHtml(item.label)}
-            </span>
-            <span class="ticker-text">
-              ${escapeHtml(item.text)}
-            </span>
-          </span>
-        `).join("")}
+        <div class="home-ticker-group">${groupHtml}</div>
+        <div class="home-ticker-group" aria-hidden="true">${groupHtml}</div>
       </div>
     </div>
   `;
@@ -244,23 +271,8 @@ export async function renderHome(root) {
                   const title = pickLocalized(tile.title, lang);
                   const text = pickLocalized(tile.text, lang);
                   const button = pickLocalized(tile.button_text, lang) || getDefaultButtonText(lang);
-
- const widthMap = {
-  "1/1": "tile-width-full",
-  "1/2": "tile-width-half",
-  "1/3": "tile-width-third",
-  "1/4": "tile-width-quarter",
-  "1/5": "tile-width-fifth",
-
-  full: "tile-width-full",
-  half: "tile-width-half",
-  third: "tile-width-third",
-  quarter: "tile-width-quarter",
-  fifth: "tile-width-fifth"
-};
-
-const widthClass = widthMap[tile.layout_width] || "tile-width-third";
-                  const heightClass = tile.layout_height ? `tile-height-${tile.layout_height}` : "tile-height-medium";
+                  const widthClass = getTileWidthClass(tile.layout_width);
+                  const heightClass = getTileHeightClass(tile.layout_height);
                   
                   return `
                     <div class="home-tile-card ${escapeHtml(widthClass)} ${escapeHtml(heightClass)}">
@@ -270,26 +282,24 @@ const widthClass = widthMap[tile.layout_width] || "tile-width-third";
                           : ""
                       }
 
-<div class="home-tile-body">
-  <h3>${escapeHtml(title)}</h3>
-  <p>${escapeHtml(text)}</p>
+                      <div class="home-tile-body">
+                        <h3>${escapeHtml(title)}</h3>
+                        ${text ? `<p>${escapeHtml(text)}</p>` : ""}
 
+                        ${
+                          tile.popup_slug
+                            ? `<button class="btn btn--accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
+                                ${escapeHtml(button)}
+                              </button>`
+                            : ""
+                        }
 
-${
-  tile.popup_slug
-    ?  `<button class="btn btn--accent home-popup-btn" data-popup-slug="${escapeHtml(tile.popup_slug)}">
-        ${escapeHtml(button)}
-      </button>`
-    : ""
-}
-                                  
-
-  ${
-    tile.link_url
-      ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
-      : ""
-  }
-</div
+                        ${
+                          tile.link_url
+                            ? `<a href="${escapeHtml(tile.link_url)}" class="btn btn--accent">${escapeHtml(button)}</a>`
+                            : ""
+                        }
+                      </div>
                     </div>
                   `;
                 }).join("")}

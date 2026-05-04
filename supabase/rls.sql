@@ -5,6 +5,7 @@ alter table galleries enable row level security;
 alter table gallery_items enable row level security;
 alter table form_submissions enable row level security;
 alter table audit_logs enable row level security;
+alter table home_tiles enable row level security;
 
 create or replace function has_role(role_name text)
 returns boolean language sql stable as $$
@@ -79,6 +80,19 @@ for select using (can_edit());
 
 create policy "forms_admin_update" on form_submissions
 for update using (can_edit());
+
+-- home tiles: public read active/visible content, editor/admin manage
+create policy "home_tiles_public_read" on home_tiles
+for select using (true);
+
+create policy "home_tiles_write_editor_admin" on home_tiles
+for insert with check (can_edit());
+
+create policy "home_tiles_update_editor_admin" on home_tiles
+for update using (can_edit());
+
+create policy "home_tiles_delete_admin" on home_tiles
+for delete using (has_role('admin'));
 
 -- audit logs: admin only
 create policy "audit_admin_only" on audit_logs

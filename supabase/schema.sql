@@ -83,6 +83,26 @@ create table if not exists form_submissions (
   created_at timestamptz not null default now()
 );
 
+-- HOME TILES (start page window tiles)
+create table if not exists home_tiles (
+  id uuid primary key default gen_random_uuid(),
+  title jsonb not null,                -- {de:"",tr:"",en:""}
+  text jsonb,
+  button_text jsonb,
+  link_url text,
+  popup_slug text,
+  image_url text,
+  layout_width text not null default 'third'
+    check (layout_width in ('full', 'half', 'third', 'quarter', 'fifth', '1/1', '1/2', '1/3', '1/4', '1/5')),
+  layout_height text not null default 'medium'
+    check (layout_height in ('small', 'medium', 'large')),
+  sort_order int not null default 0,
+  active boolean not null default true,
+  created_by uuid references auth.users(id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 -- updated_at helper
 create or replace function set_updated_at()
 returns trigger language plpgsql as $$
@@ -105,6 +125,10 @@ for each row execute function set_updated_at();
 
 create trigger trg_gallery_items_updated_at
 before update on gallery_items
+for each row execute function set_updated_at();
+
+create trigger trg_home_tiles_updated_at
+before update on home_tiles
 for each row execute function set_updated_at();
 
 -- Audit trigger function
@@ -145,4 +169,8 @@ for each row execute function audit_row_changes();
 
 create trigger audit_gallery_items
 after insert or update or delete on gallery_items
+for each row execute function audit_row_changes();
+
+create trigger audit_home_tiles
+after insert or update or delete on home_tiles
 for each row execute function audit_row_changes();

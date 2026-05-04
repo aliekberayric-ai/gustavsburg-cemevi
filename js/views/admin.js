@@ -70,6 +70,128 @@ function pickLocalized(obj, lang) {
   return obj?.[lang] ?? obj?.de ?? obj?.tr ?? obj?.en ?? "";
 }
 
+function getTileWidthLabel(value) {
+  const labels = {
+    full: "Ganze Breite",
+    half: "1/2",
+    third: "1/3",
+    quarter: "1/4",
+    fifth: "1/5",
+    "1/1": "Ganze Breite",
+    "1/2": "1/2",
+    "1/3": "1/3",
+    "1/4": "1/4",
+    "1/5": "1/5"
+  };
+
+  return labels[value] || "1/3";
+}
+
+function getTileHeightLabel(value) {
+  const labels = {
+    small: "Flach",
+    medium: "Mittel",
+    large: "Groß"
+  };
+
+  return labels[value] || "Mittel";
+}
+
+function normalizeTileWidth(value) {
+  const aliases = {
+    "1/1": "full",
+    "1/2": "half",
+    "1/3": "third",
+    "1/4": "quarter",
+    "1/5": "fifth"
+  };
+  const normalized = aliases[value] || value;
+  return ["full", "half", "third", "quarter", "fifth"].includes(normalized)
+    ? normalized
+    : "third";
+}
+
+function normalizeTileHeight(value) {
+  return ["small", "medium", "large"].includes(value) ? value : "medium";
+}
+
+function getPersonHierarchyLevel(person) {
+  const value = person?.hierarchy_level ?? person?.tasks?.hierarchy_level ?? 4;
+  const level = Number(value);
+  return Number.isFinite(level) && level >= 1 && level <= 4 ? level : 4;
+}
+
+function getPersonHierarchyLabel(level) {
+  const normalized = Number(level);
+  if (normalized === 1) return "Yönetim";
+  if (normalized === 2) return "Inanckurumu";
+  if (normalized === 3) return "Administration/Finanz";
+  return "Team";
+}
+
+function buildPersonTasks(currentTasks, level) {
+  const base = currentTasks && !Array.isArray(currentTasks) && typeof currentTasks === "object"
+    ? currentTasks
+    : {};
+
+  return {
+    ...base,
+    hierarchy_level: Number(level) || 4
+  };
+}
+
+function renderTeamHierarchyPreview(people, lang, draft = null) {
+  const visiblePeople = people
+    .filter((person) => person.is_visible)
+    .filter((person) => !draft?.id || String(person.id) !== String(draft.id))
+    .map((person) => ({
+      id: person.id,
+      name: safeText(person.name),
+      role: pickLocalized(person.role_title, lang),
+      sort_order: Number(person.sort_order ?? 0),
+      hierarchy_level: getPersonHierarchyLevel(person),
+      isDraft: false
+    }));
+
+  const previewPeople = draft?.name && draft?.is_visible !== false
+    ? [
+        ...visiblePeople,
+        {
+          ...draft,
+          sort_order: Number(draft.sort_order ?? 0),
+          hierarchy_level: Number(draft.hierarchy_level ?? 4),
+          isDraft: true
+        }
+      ]
+    : visiblePeople;
+
+  const levels = [1, 2, 3, 4].map((level) => {
+    const members = previewPeople
+      .filter((person) => person.hierarchy_level === level)
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+    return `
+      <div class="admin-team-preview__level">
+        <div class="admin-team-preview__level-title">${escapeHtml(getPersonHierarchyLabel(level))}</div>
+        <div class="admin-team-preview__members">
+          ${
+            members.length
+              ? members.map((person) => `
+                  <div class="admin-team-preview__person ${person.isDraft ? "is-draft" : ""}">
+                    <strong>${escapeHtml(person.name || "Neues Teammitglied")}</strong>
+                    <span>${escapeHtml(person.role || "Aufgabe")}</span>
+                  </div>
+                `).join("")
+              : `<div class="admin-team-preview__empty">Noch leer</div>`
+          }
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  return `<div class="admin-team-preview">${levels}</div>`;
+}
+
 function parseEventDateTime(date, time) {
   if (!date || !time) return null;
 
@@ -305,7 +427,7 @@ function bindSectionNavigation(root) {
   if (firstBtn) firstBtn.classList.add("active");
 }
 
-function sectionCard(id, title, badgeHtml, innerHtml, startOpen = true) {
+function sectionCard(id, title, badgeHtml, innerHtml, startOpen = false) {
   return `
     <div id="${id}" class="card card__pad admin-section">
       <div class="admin-section__head" style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
@@ -597,6 +719,8 @@ export async function renderAdmin(root) {
     `
       ${isEditor ? `
         <div class="grid" style="gap:8px;width:100%">
+          <input id="personEditId" type="hidden" value="" />
+          <div id="personEditModeInfo" class="badge badge--warn hidden">Bearbeitungsmodus</div>
           <input id="personName" class="input" placeholder="Name" />
           <input id="personImageFile" class="input" type="file" accept="image/*" />
           <div id="personImageInfo" class="mono">Kein Bild ausgewählt</div>
@@ -609,13 +733,30 @@ export async function renderAdmin(root) {
           <textarea id="personBioTr" class="input" placeholder="Beschreibung TR" rows="4"></textarea>
           <textarea id="personBioEn" class="input" placeholder="Beschreibung EN" rows="4"></textarea>
 
+          <select id="personHierarchyLevel" class="input">
+            <option value="1">Ebene 1 – Yönetim</option>
+            <option value="2">Ebene 2 – Inanckurumu</option>
+            <option value="3">Ebene 3 – Administration/Finanz</option>
+            <option value="4" selected>Ebene 4 – Team</option>
+          </select>
+
           <input id="personSortOrder" class="input" type="number" placeholder="Reihenfolge (z.B. 1, 2, 3)" />
           <label style="display:flex;align-items:center;gap:8px">
             <input id="personVisible" type="checkbox" checked />
             Sichtbar
           </label>
 
-          <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
+          <div>
+            <div class="mono" style="margin-bottom:8px">Vorschau vor dem Speichern</div>
+            <div id="personHierarchyPreview">
+              ${renderTeamHierarchyPreview(people, lang)}
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="addPersonBtn" class="btn btn--accent">${t("admin.add")}</button>
+            <button id="cancelPersonEditBtn" class="btn hidden" type="button">Abbrechen</button>
+          </div>
         </div>
       ` : ""}
 
@@ -623,6 +764,7 @@ export async function renderAdmin(root) {
         <thead>
           <tr>
             <th>${t("admin.name")}</th>
+            <th>Ebene</th>
             <th>${t("admin.visible")}</th>
             <th class="mono">ID</th>
             <th></th>
@@ -632,6 +774,7 @@ export async function renderAdmin(root) {
           ${people.map((p) => `
             <tr>
               <td>${escapeHtml(safeText(p.name))}</td>
+              <td>${escapeHtml(getPersonHierarchyLabel(getPersonHierarchyLevel(p)))}</td>
               <td>${p.is_visible ? `<span class="badge badge--ok">yes</span>` : `<span class="badge badge--warn">no</span>`}</td>
               <td class="mono">${escapeHtml(String(p.id))}</td>
               <td style="white-space:nowrap">
@@ -765,6 +908,8 @@ export async function renderAdmin(root) {
             <th>Titel</th>
             <th>Aktiv</th>
             <th>Reihenfolge</th>
+            <th>Breite</th>
+            <th>Höhe</th>
             <th class="mono">ID</th>
             <th></th>
           </tr>
@@ -777,6 +922,8 @@ export async function renderAdmin(root) {
                 <td>${escapeHtml(title)}</td>
                 <td>${tile.active ? "ja" : "nein"}</td>
                 <td>${Number(tile.sort_order ?? 0)}</td>
+                <td>${escapeHtml(getTileWidthLabel(tile.layout_width))}</td>
+                <td>${escapeHtml(getTileHeightLabel(tile.layout_height))}</td>
                 <td class="mono">${escapeHtml(String(tile.id))}</td>
                 <td style="white-space:nowrap">
                   <button class="btn" data-edit-tile="${tile.id}">Bearbeiten</button>
@@ -939,7 +1086,6 @@ export async function renderAdmin(root) {
       <div class="admin-grid">
         <div class="card card__pad">
           <h2>${t("admin.sections")}</h2>
-          <p class="mono">${t("admin.rolesHint")}</p>
 
           <div style="display:grid;gap:8px">
             <button type="button" class="btn" data-scroll-target="admin-branding">Branding</button>
@@ -1307,8 +1453,127 @@ export async function renderAdmin(root) {
      PEOPLE
   ----------------------------------------------------------- */
   if (isEditor) {
+    const refreshPersonPreview = () => {
+      const preview = root.querySelector("#personHierarchyPreview");
+      if (!preview) return;
+
+      const draft = {
+        id: root.querySelector("#personEditId")?.value || "",
+        name: root.querySelector("#personName")?.value.trim() || "",
+        role: root.querySelector("#personRoleDe")?.value.trim() || "",
+        hierarchy_level: Number(root.querySelector("#personHierarchyLevel")?.value || "4") || 4,
+        sort_order: Number(root.querySelector("#personSortOrder")?.value || "0") || 0,
+        is_visible: !!root.querySelector("#personVisible")?.checked
+      };
+
+      preview.innerHTML = renderTeamHierarchyPreview(people, lang, draft);
+    };
+
+    const resetPersonForm = () => {
+      const fields = [
+        "#personEditId",
+        "#personName",
+        "#personRoleDe",
+        "#personRoleTr",
+        "#personRoleEn",
+        "#personBioDe",
+        "#personBioTr",
+        "#personBioEn",
+        "#personSortOrder"
+      ];
+
+      fields.forEach((selector) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = "";
+      });
+
+      const imageInput = root.querySelector("#personImageFile");
+      if (imageInput) imageInput.value = "";
+
+      const hierarchy = root.querySelector("#personHierarchyLevel");
+      if (hierarchy) hierarchy.value = "4";
+
+      const visible = root.querySelector("#personVisible");
+      if (visible) visible.checked = true;
+
+      const info = root.querySelector("#personImageInfo");
+      if (info) info.textContent = "Kein Bild ausgewählt";
+
+      root.querySelector("#personEditModeInfo")?.classList.add("hidden");
+      root.querySelector("#cancelPersonEditBtn")?.classList.add("hidden");
+
+      const saveBtn = root.querySelector("#addPersonBtn");
+      if (saveBtn) saveBtn.textContent = t("admin.add");
+
+      refreshPersonPreview();
+    };
+
+    const fillPersonForm = (person) => {
+      const setValue = (selector, value) => {
+        const field = root.querySelector(selector);
+        if (field) field.value = value ?? "";
+      };
+
+      setValue("#personEditId", person.id);
+      setValue("#personName", person.name ?? "");
+      setValue("#personRoleDe", person.role_title?.de ?? "");
+      setValue("#personRoleTr", person.role_title?.tr ?? "");
+      setValue("#personRoleEn", person.role_title?.en ?? "");
+      setValue("#personBioDe", person.bio?.de ?? "");
+      setValue("#personBioTr", person.bio?.tr ?? "");
+      setValue("#personBioEn", person.bio?.en ?? "");
+      setValue("#personSortOrder", String(person.sort_order ?? 0));
+
+      const hierarchy = root.querySelector("#personHierarchyLevel");
+      if (hierarchy) hierarchy.value = String(getPersonHierarchyLevel(person));
+
+      const visible = root.querySelector("#personVisible");
+      if (visible) visible.checked = !!person.is_visible;
+
+      const imageInput = root.querySelector("#personImageFile");
+      if (imageInput) imageInput.value = "";
+
+      const info = root.querySelector("#personImageInfo");
+      if (info) {
+        info.textContent = person.avatar_url
+          ? "Aktuelles Bild bleibt erhalten, falls kein neues ausgewählt wird."
+          : "Kein Bild ausgewählt";
+      }
+
+      root.querySelector("#personEditModeInfo")?.classList.remove("hidden");
+      root.querySelector("#cancelPersonEditBtn")?.classList.remove("hidden");
+
+      const saveBtn = root.querySelector("#addPersonBtn");
+      if (saveBtn) saveBtn.textContent = "Änderungen speichern";
+
+      refreshPersonPreview();
+    };
+
+    [
+      "#personName",
+      "#personRoleDe",
+      "#personHierarchyLevel",
+      "#personSortOrder",
+      "#personVisible"
+    ].forEach((selector) => {
+      root.querySelector(selector)?.addEventListener("input", refreshPersonPreview);
+      root.querySelector(selector)?.addEventListener("change", refreshPersonPreview);
+    });
+
+    root.querySelector("#personImageFile")?.addEventListener("change", () => {
+      const file = root.querySelector("#personImageFile")?.files?.[0] || null;
+      const info = root.querySelector("#personImageInfo");
+      if (info) info.textContent = file ? file.name : "Kein Bild ausgewählt";
+    });
+
+    root.querySelector("#cancelPersonEditBtn")?.addEventListener("click", resetPersonForm);
+
     root.querySelector("#addPersonBtn")?.addEventListener("click", async () => {
       try {
+        const editId = root.querySelector("#personEditId")?.value || "";
+        const current = editId
+          ? people.find((p) => String(p.id) === String(editId))
+          : null;
         const name = root.querySelector("#personName")?.value.trim() || "";
         const imageFile = root.querySelector("#personImageFile")?.files?.[0] || null;
 
@@ -1321,6 +1586,7 @@ export async function renderAdmin(root) {
         const bioEn = root.querySelector("#personBioEn")?.value.trim() || "";
 
         const sortOrder = Number(root.querySelector("#personSortOrder")?.value || "0") || 0;
+        const hierarchyLevel = Number(root.querySelector("#personHierarchyLevel")?.value || "4") || 4;
         const isVisible = !!root.querySelector("#personVisible")?.checked;
 
         if (!name) {
@@ -1328,25 +1594,33 @@ export async function renderAdmin(root) {
           return;
         }
 
-        let avatarUrl = "";
+        let avatarUrl = current?.avatar_url || "";
         if (imageFile) {
           avatarUrl = await uploadPersonImage(imageFile);
         }
 
-        await createPerson({
+        const payload = {
           name,
           role_title: { de: roleDe, tr: roleTr, en: roleEn },
           bio: { de: bioDe, tr: bioTr, en: bioEn },
+          tasks: buildPersonTasks(current?.tasks, hierarchyLevel),
           avatar_url: avatarUrl,
           sort_order: sortOrder,
           is_visible: isVisible
-        });
+        };
 
-        toast("Teammitglied erstellt", "ok");
+        if (editId) {
+          await updatePerson(editId, payload);
+          toast("Teammitglied aktualisiert", "ok");
+        } else {
+          await createPerson(payload);
+          toast("Teammitglied erstellt", "ok");
+        }
+
         await renderAdmin(root);
       } catch (err) {
         console.error(err);
-        toast("Teammitglied konnte nicht erstellt werden", "bad");
+        toast("Teammitglied konnte nicht gespeichert werden", "bad");
       }
     });
 
@@ -1357,35 +1631,19 @@ export async function renderAdmin(root) {
           const current = people.find((p) => String(p.id) === String(id));
           if (!current) return;
 
-          const name = prompt("Name?", current.name ?? "") ?? "";
-          if (!name) return;
+          const section = root.querySelector("#admin-people");
+          const body = section?.querySelector(".admin-section__body");
+          const toggle = section?.querySelector(".admin-section__toggle");
 
-          const roleDe = prompt("Aufgabe DE?", current.role_title?.de ?? "") ?? "";
-          const roleTr = prompt("Aufgabe TR?", current.role_title?.tr ?? "") ?? "";
-          const roleEn = prompt("Aufgabe EN?", current.role_title?.en ?? "") ?? "";
+          body?.classList.remove("hidden");
+          toggle?.classList.add("active");
+          if (toggle) toggle.textContent = "Einklappen";
 
-          const bioDe = prompt("Beschreibung DE?", current.bio?.de ?? "") ?? "";
-          const bioTr = prompt("Beschreibung TR?", current.bio?.tr ?? "") ?? "";
-          const bioEn = prompt("Beschreibung EN?", current.bio?.en ?? "") ?? "";
-
-          const avatarUrl = prompt("Bild-URL?", current.avatar_url ?? "") ?? "";
-          const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
-          const visibleText = prompt("Sichtbar? (yes/no)", current.is_visible ? "yes" : "no") ?? "yes";
-
-          await updatePerson(id, {
-            name,
-            role_title: { de: roleDe, tr: roleTr, en: roleEn },
-            bio: { de: bioDe, tr: bioTr, en: bioEn },
-            avatar_url: avatarUrl,
-            sort_order: sortOrder,
-            is_visible: visibleText.toLowerCase() === "yes"
-          });
-
-          toast("Teammitglied aktualisiert", "ok");
-          await renderAdmin(root);
+          fillPersonForm(current);
+          section?.scrollIntoView({ behavior: "smooth", block: "start" });
         } catch (err) {
           console.error(err);
-          toast("Teammitglied konnte nicht aktualisiert werden", "bad");
+          toast("Teammitglied konnte nicht geladen werden", "bad");
         }
       });
     });
@@ -1519,8 +1777,8 @@ export async function renderAdmin(root) {
         const popupSlug = root.querySelector("#tilePopupSlug")?.value.trim() || "";
         const tileImageFile = root.querySelector("#tileImageFile")?.files?.[0] || null;
         const sortOrder = Number(root.querySelector("#tileSortOrder")?.value || "0") || 0;
-        const layoutWidth = root.querySelector("#tileLayoutWidth")?.value || "third";
-        const layoutHeight = root.querySelector("#tileLayoutHeight")?.value || "medium";
+        const layoutWidth = normalizeTileWidth(root.querySelector("#tileLayoutWidth")?.value || "third");
+        const layoutHeight = normalizeTileHeight(root.querySelector("#tileLayoutHeight")?.value || "medium");
         const active = !!root.querySelector("#tileActive")?.checked;
 
         if (!titleDe) {
@@ -1584,8 +1842,9 @@ export async function renderAdmin(root) {
           const linkUrl = prompt("Link URL?", current.link_url ?? "") ?? "";
           const imageUrl = prompt("Bild-URL?", current.image_url ?? "") ?? "";
           const sortOrder = Number(prompt("Reihenfolge?", String(current.sort_order ?? 0)) ?? "0") || 0;
-          const layoutWidth = prompt("Breite? (full/half/third/quarter/fifth)", current.layout_width ?? "third") ?? "third";
-          const layoutHeight = prompt("Höhe? (small/medium/large)", current.layout_height ?? "medium") ?? "medium";
+          const popupSlug = prompt("Popup Slug?", current.popup_slug ?? "") ?? "";
+          const layoutWidth = normalizeTileWidth(prompt("Breite? (full/half/third/quarter/fifth)", current.layout_width ?? "third") ?? "third");
+          const layoutHeight = normalizeTileHeight(prompt("Höhe? (small/medium/large)", current.layout_height ?? "medium") ?? "medium");
           const activeText = prompt("Aktiv? (yes/no)", current.active ? "yes" : "no") ?? "yes";
 
           await updateHomeTile(id, {
@@ -1593,6 +1852,7 @@ export async function renderAdmin(root) {
             text: { de: textDe, tr: textTr, en: textEn },
             button_text: { de: buttonDe, tr: buttonTr, en: buttonEn },
             link_url: linkUrl,
+            popup_slug: popupSlug,
             image_url: imageUrl,
             sort_order: sortOrder,
             layout_width: layoutWidth,

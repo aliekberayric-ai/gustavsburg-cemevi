@@ -1,6 +1,7 @@
 import { getSiteSettings } from "./modules/siteSettings.js";
 import { initRouter } from "./router.js";
 import { initInfoPopup } from "./infoPopup.js";
+import { initAuth } from "./auth.js";
 import {
   initI18n,
   setLangFromStorage,
@@ -36,9 +37,10 @@ async function applyBranding() {
 
 async function main() {
   try {
-    initI18n();
+    await initI18n();
     setLangFromStorage();
     bindLangButtons();
+    await initAuth();
 
     initInfoPopup();
 

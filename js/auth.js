@@ -71,7 +71,7 @@ function paintAuthPill() {
   const pill = document.querySelector("#auth-pill");
   if (!pill) return;
 
-  const dot = pill.querySelector(".dot");
+  const dot = pill.querySelector(".auth-pill__dot");
   const txt = pill.querySelector(".auth-pill__text");
   if (!dot || !txt) return;
 
