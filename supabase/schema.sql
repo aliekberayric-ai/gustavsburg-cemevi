@@ -83,6 +83,16 @@ create table if not exists form_submissions (
   created_at timestamptz not null default now()
 );
 
+-- SITE SETTINGS (branding)
+create table if not exists site_settings (
+  id int primary key default 1,
+  site_title text not null default 'Gustavsburg Cem Evi',
+  logo_url text,
+  favicon_url text,
+  updated_at timestamptz not null default now(),
+  constraint site_settings_singleton check (id = 1)
+);
+
 -- HOME TILES (start page window tiles)
 create table if not exists home_tiles (
   id uuid primary key default gen_random_uuid(),
@@ -125,6 +135,10 @@ for each row execute function set_updated_at();
 
 create trigger trg_gallery_items_updated_at
 before update on gallery_items
+for each row execute function set_updated_at();
+
+create trigger trg_site_settings_updated_at
+before update on site_settings
 for each row execute function set_updated_at();
 
 create trigger trg_home_tiles_updated_at

@@ -1,7 +1,7 @@
 import { t, getLang } from "../i18n.js";
 import { getAuth, signIn, signOut, requireRole } from "../auth.js";
 import { toast, confirmBox, fmtDateTime, escapeHtml } from "../ui.js";
-import { getSiteSettings, updateSiteSettings, uploadBrandLogo } from "../modules/siteSettings.js";
+import { getSiteSettings, updateSiteSettings, uploadBrandLogo, uploadBrandFavicon } from "../modules/siteSettings.js";
 import { uploadTileImage } from "../modules/homeTiles.js";
 
 import {
@@ -490,7 +490,7 @@ export async function renderAdmin(root) {
 
   const lang = getLang();
 
-  let siteSettings = { site_title: "Gustavsburg Cem Evi", logo_url: "" };
+  let siteSettings = { site_title: "Gustavsburg Cem Evi", logo_url: "", favicon_url: "" };
   let events = [];
   let galleries = [];
   let people = [];
@@ -556,12 +556,30 @@ export async function renderAdmin(root) {
           />
         </div>
 
+        <div>
+          <label for="siteFaviconInput">Favicon hochladen</label>
+          <input
+            id="siteFaviconInput"
+            class="input"
+            type="file"
+            accept="image/png,image/jpeg,image/svg+xml,image/x-icon,.ico"
+            ${isEditor ? "" : "disabled"}
+          />
+          <div class="mono" style="margin-top:6px">Empfohlen: quadratisch, z.B. 32x32 oder 64x64.</div>
+        </div>
+
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <img
             id="siteLogoPreview"
             src="${escapeHtml(siteSettings?.logo_url || "")}"
             alt="Logo Preview"
             style="width:64px;height:64px;object-fit:contain;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,0.04);${siteSettings?.logo_url ? "" : "display:none;"}"
+          />
+          <img
+            id="siteFaviconPreview"
+            src="${escapeHtml(siteSettings?.favicon_url || "")}"
+            alt="Favicon Preview"
+            style="width:42px;height:42px;object-fit:contain;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,0.04);padding:5px;${siteSettings?.favicon_url ? "" : "display:none;"}"
           />
           ${isEditor ? `<button id="saveBrandingBtn" class="btn btn--accent">Branding speichern</button>` : ""}
         </div>
@@ -1123,10 +1141,13 @@ export async function renderAdmin(root) {
   if (isEditor) {
     const siteTitleInput = root.querySelector("#siteTitleInput");
     const siteLogoInput = root.querySelector("#siteLogoInput");
+    const siteFaviconInput = root.querySelector("#siteFaviconInput");
     const siteLogoPreview = root.querySelector("#siteLogoPreview");
+    const siteFaviconPreview = root.querySelector("#siteFaviconPreview");
     const saveBrandingBtn = root.querySelector("#saveBrandingBtn");
 
     let uploadedLogoUrl = siteSettings?.logo_url || "";
+    let uploadedFaviconUrl = siteSettings?.favicon_url || "";
 
     siteLogoInput?.addEventListener("change", async (e) => {
       const file = e.target.files?.[0];
@@ -1148,11 +1169,35 @@ export async function renderAdmin(root) {
       }
     });
 
+    siteFaviconInput?.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      try {
+        const faviconUrl = await uploadBrandFavicon(file);
+        uploadedFaviconUrl = faviconUrl;
+
+        if (siteFaviconPreview) {
+          siteFaviconPreview.src = faviconUrl;
+          siteFaviconPreview.style.display = "block";
+        }
+
+        const faviconEl = document.querySelector('link[rel="icon"]');
+        if (faviconEl) faviconEl.href = faviconUrl;
+
+        toast("Favicon hochgeladen", "ok");
+      } catch (err) {
+        console.error(err);
+        toast("Favicon konnte nicht hochgeladen werden", "bad");
+      }
+    });
+
     saveBrandingBtn?.addEventListener("click", async () => {
       try {
         await updateSiteSettings({
           site_title: siteTitleInput?.value.trim() || "Gustavsburg Cem Evi",
-          logo_url: uploadedLogoUrl || ""
+          logo_url: uploadedLogoUrl || "",
+          favicon_url: uploadedFaviconUrl || ""
         });
 
         toast("Branding gespeichert", "ok");

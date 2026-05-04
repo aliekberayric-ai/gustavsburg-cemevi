@@ -14,9 +14,11 @@ async function applyBranding() {
 
     const titleEl = document.querySelector("#brandTitle");
     const logoEl = document.querySelector("#brandLogo");
+    const faviconEl = document.querySelector('link[rel="icon"]');
 
     const siteTitle = settings?.site_title || "Gustavsburg Cem Evi";
     const logoUrl = settings?.logo_url || "";
+    const faviconUrl = settings?.favicon_url || "";
 
     if (titleEl) {
       titleEl.textContent = siteTitle;
@@ -29,6 +31,10 @@ async function applyBranding() {
       } else {
         logoEl.classList.add("hidden");
       }
+    }
+
+    if (faviconEl && faviconUrl) {
+      faviconEl.href = faviconUrl;
     }
   } catch (err) {
     console.error("Branding Fehler:", err);

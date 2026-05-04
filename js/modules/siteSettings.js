@@ -4,7 +4,8 @@ import { toast } from "../ui.js";
 const DEFAULT_SETTINGS = {
   id: 1,
   site_title: "Gustavsburg Cem Evi",
-  logo_url: ""
+  logo_url: "",
+  favicon_url: ""
 };
 
 /* -----------------------------------------------------------
@@ -120,6 +121,46 @@ export async function uploadBrandLogo(file) {
     return publicUrl;
   } catch (err) {
     console.error("uploadBrandLogo catch:", err);
+    throw err;
+  }
+}
+
+export async function uploadBrandFavicon(file) {
+  try {
+    if (!file) {
+      throw new Error("Keine Datei ausgewählt");
+    }
+
+    const safeName = sanitizeFileName(file.name || "favicon.png");
+    const path = `favicon/${Date.now()}_${safeName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("branding")
+      .upload(path, file, {
+        cacheControl: "3600",
+        upsert: true
+      });
+
+    if (uploadError) {
+      console.error("uploadBrandFavicon upload error:", uploadError);
+      toast("Favicon konnte nicht hochgeladen werden", "bad");
+      throw uploadError;
+    }
+
+    const { data: publicData } = supabase.storage
+      .from("branding")
+      .getPublicUrl(path);
+
+    const publicUrl = publicData?.publicUrl || "";
+
+    if (!publicUrl) {
+      throw new Error("Keine öffentliche URL für das Favicon erhalten");
+    }
+
+    toast("Favicon erfolgreich hochgeladen", "ok");
+    return publicUrl;
+  } catch (err) {
+    console.error("uploadBrandFavicon catch:", err);
     throw err;
   }
 }

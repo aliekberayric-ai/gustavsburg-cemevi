@@ -6,6 +6,7 @@ alter table gallery_items enable row level security;
 alter table form_submissions enable row level security;
 alter table audit_logs enable row level security;
 alter table home_tiles enable row level security;
+alter table site_settings enable row level security;
 
 create or replace function has_role(role_name text)
 returns boolean language sql stable as $$
@@ -93,6 +94,16 @@ for update using (can_edit());
 
 create policy "home_tiles_delete_admin" on home_tiles
 for delete using (has_role('admin'));
+
+-- site settings: public read, editor/admin manage branding
+create policy "site_settings_public_read" on site_settings
+for select using (true);
+
+create policy "site_settings_write_editor_admin" on site_settings
+for insert with check (can_edit());
+
+create policy "site_settings_update_editor_admin" on site_settings
+for update using (can_edit());
 
 -- audit logs: admin only
 create policy "audit_admin_only" on audit_logs
