@@ -1919,21 +1919,24 @@ body.lang-fade #app {
 .site-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .site-brand span,
 #brandTitle {
-  font-size:20px;      /* 🔥 Schrift größer */
+  font-size: clamp(14px, 1.45vw, 20px);
   font-weight: 800;
-  color: #ffffff;       /* 🔥 Farbe ändern */
+  color: #ffffff;
   line-height: 1.1;
+  white-space: nowrap;
 }
 
 .site-brand img,
 #brandLogo {
-  width: 100px;
-  height: 100px;
+  width: clamp(42px, 6vw, 78px);
+  height: clamp(42px, 6vw, 78px);
   object-fit: contain;
   border-radius: 12px;
   display: block;
@@ -2963,36 +2966,81 @@ body.lang-fade #app {
 ----------------------------------------------------------- */
 
 .topbar .page > div {
-  flex-wrap: wrap !important;
-  gap: 14px 22px !important;
+  flex-wrap: nowrap !important;
+  gap: clamp(8px, 1.5vw, 18px) !important;
 }
 
 .main-nav {
-  flex: 1 1 520px !important;
-  flex-wrap: wrap !important;
-  min-width: 280px !important;
+  flex: 1 1 auto !important;
+  flex-wrap: nowrap !important;
+  min-width: 0 !important;
+  justify-content: center !important;
+  gap: clamp(4px, 0.9vw, 10px) !important;
 }
 
 .nav-link {
-  font-size: clamp(16px, 1.7vw, 22px) !important;
+  font-size: clamp(13px, 1.45vw, 22px) !important;
+  padding: clamp(5px, 0.8vw, 8px) clamp(6px, 1vw, 14px) !important;
   white-space: nowrap !important;
+}
+
+.topbar-tools {
+  flex: 0 0 auto !important;
+  min-width: max-content !important;
 }
 
 .lang-switch {
   flex: 0 0 auto !important;
+  gap: clamp(4px, 0.8vw, 10px) !important;
 }
 
-@media (max-width: 760px) {
-  .site-brand {
-    flex: 1 1 100% !important;
+@media (max-width: 860px) {
+  #brandTitle {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .main-nav {
-    flex: 1 1 100% !important;
-    order: 3 !important;
+  .auth-pill {
+    display: none !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .topbar .page {
+    width: calc(100% - 16px);
+  }
+
+  .topbar-row {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .topbar-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-brand img,
+  #brandLogo {
+    width: 38px;
+    height: 38px;
+  }
+
+  #brandTitle {
+    display: none;
   }
 
   .nav-link {
-    padding: 7px 10px !important;
+    font-size: 14px !important;
+    padding: 6px 7px !important;
+  }
+
+  .lang-btn {
+    padding: 4px !important;
+  }
+
+  .lang-btn img {
+    width: 24px !important;
+    height: 17px !important;
   }
 }

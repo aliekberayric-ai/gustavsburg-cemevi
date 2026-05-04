@@ -46,14 +46,14 @@
 <body>
   <header class="topbar">
     <div class="page" style="padding-top:12px;padding-bottom:12px;">
-      <div style="display:flex;align-items:center;justify-content:flex-start;gap:18px 28px;flex-wrap:wrap;">
+      <div class="topbar-row" style="display:flex;align-items:center;justify-content:flex-start;gap:18px;flex-wrap:nowrap;">
 
         <a href="#/" class="site-brand" style="text-decoration:none;color:inherit;">
           <img id="brandLogo" class="hidden" src="" alt="Logo" />
           <span id="brandTitle">Gustavsburg Cem Evi</span>
         </a>
 
-        <nav class="main-nav" style="display:flex;align-items:center;justify-content:flex-start;gap:10px 14px;flex-wrap:wrap;">
+        <nav class="main-nav" style="display:flex;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:nowrap;">
           <a href="#/" class="nav-link">Start</a>
           <a href="#/gallery" class="nav-link">Galerie</a>
           <a href="#/calendar" class="nav-link">Kalender</a>
@@ -62,7 +62,7 @@
           <a href="#/admin" class="nav-link">Admin</a>
         </nav>
 
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto;">
+        <div class="topbar-tools" style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;margin-left:auto;">
           <div class="lang-switch">
             <button type="button" class="lang-btn active" data-lang="de" aria-label="Deutsch">
               <img src="https://flagcdn.com/w40/de.png" alt="Deutsch">
@@ -75,10 +75,6 @@
             </button>
           </div>
 
-          <div id="auth-pill" class="auth-pill">
-            <span class="auth-pill__dot"></span>
-            <span class="auth-pill__text">Offline</span>
-          </div>
         </div>
 
       </div>
