@@ -68,6 +68,26 @@
       "h": "Funeral Planning",
       "p": "Securely store wishes and edit them later."
     },
+    "pdf": {
+      "h": "PDF to fill, print and send",
+      "p": "The PDF contains membership registration and funeral planning. You can open it, print it, fill it out and send it by email to info@alevi-gg.de.",
+      "open": "Open / print PDF",
+      "download": "Download PDF",
+      "email": "Prepare email",
+      "note": "Note: The file must be attached manually in your mail app.",
+      "mailSubject": "Completed form",
+      "mailBody": "Hello,\\n\\nI am sending the completed form as an attachment.\\n\\nKind regards"
+    },
+    "memberFile": {
+      "h": "Membership Application",
+      "p": "Open, print and fill out the membership application, then send it by email to info@alevi-gg.de.",
+      "open": "Open / print application",
+      "download": "Download application",
+      "email": "Prepare email",
+      "note": "Note: The file must be attached manually in your mail app.",
+      "mailSubject": "Membership application",
+      "mailBody": "Hello,\\n\\nI am sending the completed membership application as an attachment.\\n\\nKind regards"
+    },
     "firstName": "First Name",
     "lastName": "Last Name",
     "fullName": "Full Name",

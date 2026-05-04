@@ -68,6 +68,26 @@
       "h": "Cenaze Planlama",
       "p": "İstekleri güvenli şekilde kaydet ve sonra düzenle."
     },
+    "pdf": {
+      "h": "Doldurmak, yazdırmak ve göndermek için PDF",
+      "p": "PDF üyelik başvurusu ve cenaze planlama bölümlerini içerir. Açabilir, yazdırabilir, doldurabilir ve info@alevi-gg.de adresine e-posta ile gönderebilirsiniz.",
+      "open": "PDF aç / yazdır",
+      "download": "PDF indir",
+      "email": "E-posta hazırla",
+      "note": "Not: Dosya e-posta programında manuel olarak eklenmelidir.",
+      "mailSubject": "Doldurulmuş form",
+      "mailBody": "Merhaba,\\n\\nDoldurulmuş formu ek olarak gönderiyorum.\\n\\nSaygılarımla"
+    },
+    "memberFile": {
+      "h": "Üyelik Başvurusu",
+      "p": "Üyelik başvurusunu açın, yazdırın, doldurun ve info@alevi-gg.de adresine e-posta ile gönderin.",
+      "open": "Başvuruyu aç / yazdır",
+      "download": "Başvuruyu indir",
+      "email": "E-posta hazırla",
+      "note": "Not: Dosya e-posta programında manuel olarak eklenmelidir.",
+      "mailSubject": "Üyelik başvurusu",
+      "mailBody": "Merhaba,\\n\\nDoldurulmuş üyelik başvurusunu ek olarak gönderiyorum.\\n\\nSaygılarımla"
+    },
     "firstName": "Ad",
     "lastName": "Soyad",
     "fullName": "Ad Soyad",

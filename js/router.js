@@ -6,12 +6,12 @@
  * - Smooth Scroll nach oben
  */
 
-import { renderHome } from "./views/home.js?v=108";
-import { renderGallery } from "./views/gallery.js?v=108";
-import { renderCalendar } from "./views/calendar.js?v=108";
-import { renderPeople } from "./views/people.js?v=108";
-import { renderForms } from "./views/forms.js";
-import { renderAdmin } from "./views/admin.js?v=108";
+import { renderHome } from "./views/home.js?v=110";
+import { renderGallery } from "./views/gallery.js?v=110";
+import { renderCalendar } from "./views/calendar.js?v=110";
+import { renderPeople } from "./views/people.js?v=110";
+import { renderForms } from "./views/forms.js?v=110";
+import { renderAdmin } from "./views/admin.js?v=110";
 
 import { applyTranslations } from "./i18n.js";
 

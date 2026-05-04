@@ -68,6 +68,26 @@
       "h": "Bestattungsvorsorge",
       "p": "Vorsorge-Wünsche sicher ablegen und später bearbeiten."
     },
+    "pdf": {
+      "h": "PDF zum Ausfüllen, Drucken und Senden",
+      "p": "Die PDF enthält Mitgliedsanmeldung und Bestattungsvorsorge. Du kannst sie öffnen, ausdrucken, ausfüllen und per E-Mail an info@alevi-gg.de senden.",
+      "open": "PDF öffnen / drucken",
+      "download": "PDF herunterladen",
+      "email": "E-Mail vorbereiten",
+      "note": "Hinweis: Die Datei muss im Mailprogramm manuell angehängt werden.",
+      "mailSubject": "Ausgefülltes Formular",
+      "mailBody": "Hallo,\\n\\nim Anhang sende ich das ausgefüllte Formular.\\n\\nViele Grüße"
+    },
+    "memberFile": {
+      "h": "Mitgliedsantrag",
+      "p": "Den Mitgliedsantrag öffnen, ausdrucken, ausfüllen und per E-Mail an info@alevi-gg.de senden.",
+      "open": "Antrag öffnen / drucken",
+      "download": "Antrag herunterladen",
+      "email": "E-Mail vorbereiten",
+      "note": "Hinweis: Die Datei muss im Mailprogramm manuell angehängt werden.",
+      "mailSubject": "Mitgliedsantrag",
+      "mailBody": "Hallo,\\n\\nim Anhang sende ich den ausgefüllten Mitgliedsantrag.\\n\\nViele Grüße"
+    },
     "firstName": "Vorname",
     "lastName": "Nachname",
     "fullName": "Vor- und Nachname",
