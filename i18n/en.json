@@ -59,14 +59,15 @@
   },
   "forms": {
     "h1": "Forms",
-    "p": "Fill out online and store directly (Supabase).",
+    "p": "Open, fill out, print and send forms.",
     "member": {
       "h": "Membership Registration",
       "p": "Data is stored and can later be filtered/printed."
     },
     "funeral": {
       "h": "Funeral Planning",
-      "p": "Securely store wishes and edit them later."
+      "p": "Securely store wishes and edit them later.",
+      "disabled": "Currently not enabled for editing."
     },
     "pdf": {
       "h": "PDF to fill, print and send",
@@ -74,7 +75,6 @@
       "open": "Open / print PDF",
       "download": "Download PDF",
       "email": "Prepare email",
-      "note": "Note: The file must be attached manually in your mail app.",
       "mailSubject": "Completed form",
       "mailBody": "Hello,\\n\\nI am sending the completed form as an attachment.\\n\\nKind regards"
     },
@@ -84,7 +84,6 @@
       "open": "Open / print application",
       "download": "Download application",
       "email": "Prepare email",
-      "note": "Note: The file must be attached manually in your mail app.",
       "mailSubject": "Membership application",
       "mailBody": "Hello,\\n\\nI am sending the completed membership application as an attachment.\\n\\nKind regards"
     },
@@ -105,7 +104,6 @@
     "ageGroup": "Age Group",
     "funeralWishes": "Wishes / Notes",
     "send": "Submit",
-    "hint": "Note: Admin can review, filter and print entries later.",
     "sent": "Submitted ✅"
   },
   "admin": {

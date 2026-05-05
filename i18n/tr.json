@@ -59,14 +59,15 @@
   },
   "forms": {
     "h1": "Formlar",
-    "p": "Online doldur ve doğrudan kaydet (Supabase).",
+    "p": "Formları açın, doldurun, yazdırın ve gönderin.",
     "member": {
       "h": "Üyelik Başvurusu",
       "p": "Veriler kaydedilir ve daha sonra filtrelenip yazdırılabilir."
     },
     "funeral": {
       "h": "Cenaze Planlama",
-      "p": "İstekleri güvenli şekilde kaydet ve sonra düzenle."
+      "p": "İstekleri güvenli şekilde kaydet ve sonra düzenle.",
+      "disabled": "Şu anda düzenleme için açık değildir."
     },
     "pdf": {
       "h": "Doldurmak, yazdırmak ve göndermek için PDF",
@@ -74,7 +75,6 @@
       "open": "PDF aç / yazdır",
       "download": "PDF indir",
       "email": "E-posta hazırla",
-      "note": "Not: Dosya e-posta programında manuel olarak eklenmelidir.",
       "mailSubject": "Doldurulmuş form",
       "mailBody": "Merhaba,\\n\\nDoldurulmuş formu ek olarak gönderiyorum.\\n\\nSaygılarımla"
     },
@@ -84,7 +84,6 @@
       "open": "Başvuruyu aç / yazdır",
       "download": "Başvuruyu indir",
       "email": "E-posta hazırla",
-      "note": "Not: Dosya e-posta programında manuel olarak eklenmelidir.",
       "mailSubject": "Üyelik başvurusu",
       "mailBody": "Merhaba,\\n\\nDoldurulmuş üyelik başvurusunu ek olarak gönderiyorum.\\n\\nSaygılarımla"
     },
@@ -105,7 +104,6 @@
     "ageGroup": "Yaş Grubu",
     "funeralWishes": "İstekler / Notlar",
     "send": "Gönder",
-    "hint": "Not: Admin daha sonra inceleyebilir, filtreleyebilir ve yazdırabilir.",
     "sent": "Gönderildi ✅"
   },
   "admin": {

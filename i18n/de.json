@@ -59,14 +59,15 @@
   },
   "forms": {
     "h1": "Formulare",
-    "p": "Online ausfüllen und direkt archivieren (Supabase).",
+    "p": "Formulare öffnen, ausfüllen, drucken und senden.",
     "member": {
       "h": "Mitgliedsanmeldung",
       "p": "Daten werden gespeichert und können später gefiltert/gedruckt werden."
     },
     "funeral": {
       "h": "Bestattungsvorsorge",
-      "p": "Vorsorge-Wünsche sicher ablegen und später bearbeiten."
+      "p": "Vorsorge-Wünsche sicher ablegen und später bearbeiten.",
+      "disabled": "Momentan nicht zur Bearbeitung freigegeben."
     },
     "pdf": {
       "h": "PDF zum Ausfüllen, Drucken und Senden",
@@ -74,7 +75,6 @@
       "open": "PDF öffnen / drucken",
       "download": "PDF herunterladen",
       "email": "E-Mail vorbereiten",
-      "note": "Hinweis: Die Datei muss im Mailprogramm manuell angehängt werden.",
       "mailSubject": "Ausgefülltes Formular",
       "mailBody": "Hallo,\\n\\nim Anhang sende ich das ausgefüllte Formular.\\n\\nViele Grüße"
     },
@@ -84,7 +84,6 @@
       "open": "Antrag öffnen / drucken",
       "download": "Antrag herunterladen",
       "email": "E-Mail vorbereiten",
-      "note": "Hinweis: Die Datei muss im Mailprogramm manuell angehängt werden.",
       "mailSubject": "Mitgliedsantrag",
       "mailBody": "Hallo,\\n\\nim Anhang sende ich den ausgefüllten Mitgliedsantrag.\\n\\nViele Grüße"
     },
@@ -105,7 +104,6 @@
     "ageGroup": "Altersgruppe",
     "funeralWishes": "Wünsche / Hinweise",
     "send": "Senden",
-    "hint": "Hinweis: Admin kann die Einträge später prüfen, filtern und drucken.",
     "sent": "Gesendet ✅"
   },
   "admin": {
