@@ -56,7 +56,7 @@ import {
   updateInfoPopup,
   deleteInfoPopup,
   uploadInfoPopupImage
-} from "../modules/infoPopups.js?v=116"; 
+} from "../modules/infoPopups.js?v=117"; 
 
 /* -----------------------------------------------------------
    HELPERS
@@ -1004,9 +1004,10 @@ export async function renderAdmin(root) {
         </label>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="addPopupBtn" class="btn btn--accent">Popup hinzufügen</button>
+          <button id="addPopupBtn" class="btn btn--accent" type="button">Popup hinzufügen</button>
           <button id="cancelPopupEditBtn" class="btn hidden" type="button">Abbrechen</button>
         </div>
+        <div id="popupSaveStatus" class="mono" aria-live="polite"></div>
       </div>
 
       <table class="table" style="margin-top:14px">
@@ -2233,6 +2234,16 @@ export async function renderAdmin(root) {
      INFO POPUPS
   ----------------------------------------------------------- */
   if (isEditor) {
+    const setPopupStatus = (message = "", kind = "info") => {
+      const status = root.querySelector("#popupSaveStatus");
+      if (!status) return;
+      status.textContent = message;
+      status.style.color =
+        kind === "ok" ? "var(--ok)" :
+        kind === "bad" ? "var(--bad)" :
+        "var(--muted)";
+    };
+
     const resetPopupForm = () => {
       const setValue = (selector, value) => {
         const field = root.querySelector(selector);
@@ -2254,6 +2265,8 @@ export async function renderAdmin(root) {
 
       const imageInfo = root.querySelector("#popupImageInfo");
       if (imageInfo) imageInfo.textContent = "Kein Bild ausgewählt";
+
+      setPopupStatus("");
 
       const activeInput = root.querySelector("#popupActive");
       if (activeInput) activeInput.checked = true;
@@ -2304,7 +2317,11 @@ export async function renderAdmin(root) {
     root.querySelector("#cancelPopupEditBtn")?.addEventListener("click", resetPopupForm);
 
     root.querySelector("#addPopupBtn")?.addEventListener("click", async () => {
+      const saveBtn = root.querySelector("#addPopupBtn");
       try {
+        setPopupStatus("Speichern läuft ...");
+        if (saveBtn) saveBtn.disabled = true;
+
         const editId = root.querySelector("#popupEditId")?.value || "";
         const current = editId
           ? infoPopups.find((popup) => String(popup.id) === String(editId))
@@ -2332,11 +2349,13 @@ export async function renderAdmin(root) {
         const isActive = !!root.querySelector("#popupActive")?.checked;
 
         if (!slug) {
+          setPopupStatus("Slug fehlt.", "bad");
           toast("Slug fehlt", "bad");
           return;
         }
 
         if (!titleDe) {
+          setPopupStatus("Titel DE fehlt.", "bad");
           toast("Titel DE fehlt", "bad");
           return;
         }
@@ -2352,16 +2371,21 @@ export async function renderAdmin(root) {
 
         if (editId) {
           await updateInfoPopup(editId, payload);
+          setPopupStatus("Popup wurde aktualisiert.", "ok");
           toast("Popup aktualisiert", "ok");
         } else {
           await createInfoPopup(payload);
+          setPopupStatus("Popup wurde gespeichert.", "ok");
           toast("Popup hinzugefügt", "ok");
         }
 
-        await renderAdmin(root);
+        setTimeout(() => renderAdmin(root), 650);
       } catch (err) {
         console.error(err);
+        setPopupStatus(err?.message || "Popup konnte nicht gespeichert werden.", "bad");
         toast(err?.message || "Popup konnte nicht gespeichert werden", "bad");
+      } finally {
+        if (saveBtn) saveBtn.disabled = false;
       }
     });
 

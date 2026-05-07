@@ -61,7 +61,7 @@ create policy "info_popups_write_editor_admin" on info_popups
 for insert with check (can_edit());
 
 create policy "info_popups_update_editor_admin" on info_popups
-for update using (can_edit());
+for update using (can_edit()) with check (can_edit());
 
 create policy "info_popups_delete_admin" on info_popups
 for delete using (has_role('admin'));
