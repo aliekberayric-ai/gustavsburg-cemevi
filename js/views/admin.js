@@ -56,7 +56,7 @@ import {
   updateInfoPopup,
   deleteInfoPopup,
   uploadInfoPopupImage
-} from "../modules/infoPopups.js"; 
+} from "../modules/infoPopups.js?v=116"; 
 
 /* -----------------------------------------------------------
    HELPERS
@@ -2345,7 +2345,6 @@ export async function renderAdmin(root) {
           slug,
           title: { de: titleDe, tr: titleTr, en: titleEn },
           content: { de: contentDe, tr: contentTr, en: contentEn },
-          button_text: { de: "Mehr erfahren", tr: "Daha fazla", en: "Learn more" },
           image_url: imageUrl,
           is_active: isActive,
           sort_order: sortOrder
@@ -2362,7 +2361,7 @@ export async function renderAdmin(root) {
         await renderAdmin(root);
       } catch (err) {
         console.error(err);
-        toast("Popup konnte nicht gespeichert werden", "bad");
+        toast(err?.message || "Popup konnte nicht gespeichert werden", "bad");
       }
     });
 

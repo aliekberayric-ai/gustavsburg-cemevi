@@ -1,5 +1,5 @@
 import { getSiteSettings } from "./modules/siteSettings.js";
-import { initRouter } from "./router.js?v=115";
+import { initRouter } from "./router.js?v=116";
 import { initInfoPopup } from "./infoPopup.js";
 import { initAuth } from "./auth.js";
 import {

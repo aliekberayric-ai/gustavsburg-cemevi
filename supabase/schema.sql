@@ -115,6 +115,20 @@ create table if not exists home_tiles (
   updated_at timestamptz not null default now()
 );
 
+-- INFO POPUPS (popup windows opened from home tiles/buttons)
+create table if not exists info_popups (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  title jsonb not null default '{"de":"","tr":"","en":""}'::jsonb,
+  content jsonb not null default '{"de":"","tr":"","en":""}'::jsonb,
+  image_url text,
+  sort_order int not null default 0,
+  is_active boolean not null default true,
+  created_by uuid references auth.users(id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 -- updated_at helper
 create or replace function set_updated_at()
 returns trigger language plpgsql as $$
@@ -145,6 +159,10 @@ for each row execute function set_updated_at();
 
 create trigger trg_home_tiles_updated_at
 before update on home_tiles
+for each row execute function set_updated_at();
+
+create trigger trg_info_popups_updated_at
+before update on info_popups
 for each row execute function set_updated_at();
 
 -- Audit trigger function
@@ -189,4 +207,8 @@ for each row execute function audit_row_changes();
 
 create trigger audit_home_tiles
 after insert or update or delete on home_tiles
+for each row execute function audit_row_changes();
+
+create trigger audit_info_popups
+after insert or update or delete on info_popups
 for each row execute function audit_row_changes();

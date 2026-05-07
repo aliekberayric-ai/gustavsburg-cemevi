@@ -1,5 +1,12 @@
 import { supabase } from "../api.js";
 
+function popupError(action, error) {
+  const details = [error?.message, error?.details, error?.hint, error?.code]
+    .filter(Boolean)
+    .join(" | ");
+  return new Error(`${action}: ${details || "Unbekannter Supabase-Fehler"}`);
+}
+
 export async function listInfoPopups() {
   const { data, error } = await supabase
     .from("info_popups")
@@ -7,7 +14,7 @@ export async function listInfoPopups() {
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
 
-  if (error) throw error;
+  if (error) throw popupError("Info-Popups konnten nicht geladen werden", error);
   return data || [];
 }
 
@@ -19,7 +26,7 @@ export async function getInfoPopupBySlug(slug) {
     .eq("is_active", true)
     .maybeSingle();
 
-  if (error) throw error;
+  if (error) throw popupError("Info-Popup konnte nicht geladen werden", error);
   return data || null;
 }
 
@@ -29,7 +36,7 @@ export async function listInfoPopupsAdmin() {
     .select("*")
     .order("sort_order", { ascending: true });
 
-  if (error) throw error;
+  if (error) throw popupError("Info-Popups konnten nicht geladen werden", error);
   return data || [];
 }
 
@@ -40,7 +47,7 @@ export async function createInfoPopup(payload) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) throw popupError("Info-Popup konnte nicht erstellt werden", error);
   return data;
 }
 
@@ -52,7 +59,7 @@ export async function updateInfoPopup(id, payload) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) throw popupError("Info-Popup konnte nicht aktualisiert werden", error);
   return data;
 }
 
@@ -62,7 +69,7 @@ export async function deleteInfoPopup(id) {
     .delete()
     .eq("id", id);
 
-  if (error) throw error;
+  if (error) throw popupError("Info-Popup konnte nicht geloescht werden", error);
   return true;
 }
 
@@ -80,7 +87,7 @@ export async function uploadInfoPopupImage(file) {
       upsert: false
     });
 
-  if (error) throw error;
+  if (error) throw popupError("Info-Popup-Bild konnte nicht hochgeladen werden", error);
 
   const { data } = supabase.storage
     .from("info-popups")

@@ -7,6 +7,7 @@ alter table form_submissions enable row level security;
 alter table audit_logs enable row level security;
 alter table home_tiles enable row level security;
 alter table site_settings enable row level security;
+alter table info_popups enable row level security;
 
 create or replace function has_role(role_name text)
 returns boolean language sql stable as $$
@@ -104,6 +105,19 @@ for insert with check (can_edit());
 
 create policy "site_settings_update_editor_admin" on site_settings
 for update using (can_edit());
+
+-- info popups: public can read active popups, editor/admin manage
+create policy "info_popups_public_read" on info_popups
+for select using (true);
+
+create policy "info_popups_write_editor_admin" on info_popups
+for insert with check (can_edit());
+
+create policy "info_popups_update_editor_admin" on info_popups
+for update using (can_edit());
+
+create policy "info_popups_delete_admin" on info_popups
+for delete using (has_role('admin'));
 
 -- audit logs: admin only
 create policy "audit_admin_only" on audit_logs
