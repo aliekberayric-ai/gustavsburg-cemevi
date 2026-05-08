@@ -52,32 +52,28 @@ export async function listInfoPopupsAdmin() {
 }
 
 export async function createInfoPopup(payload) {
-  const { data, error } = await withTimeout(
+  const { error } = await withTimeout(
     supabase
       .from("info_popups")
-      .insert([payload])
-      .select()
-      .single(),
+      .insert([payload]),
     "Info-Popup konnte nicht erstellt werden"
   );
 
   if (error) throw popupError("Info-Popup konnte nicht erstellt werden", error);
-  return data;
+  return true;
 }
 
 export async function updateInfoPopup(id, payload) {
-  const { data, error } = await withTimeout(
+  const { error } = await withTimeout(
     supabase
       .from("info_popups")
       .update(payload)
-      .eq("id", id)
-      .select()
-      .single(),
+      .eq("id", id),
     "Info-Popup konnte nicht aktualisiert werden"
   );
 
   if (error) throw popupError("Info-Popup konnte nicht aktualisiert werden", error);
-  return data;
+  return true;
 }
 
 export async function deleteInfoPopup(id) {
