@@ -1,5 +1,5 @@
 import { getSiteSettings } from "./modules/siteSettings.js";
-import { initRouter } from "./router.js?v=122";
+import { initRouter } from "./router.js?v=123";
 import { initInfoPopup } from "./infoPopup.js";
 import { initAuth } from "./auth.js";
 import {
@@ -42,8 +42,15 @@ async function applyBranding() {
 }
 
 async function main() {
+  let i18nReady = false;
+
   try {
-    await initI18n();
+    await Promise.race([
+      initI18n().then(() => {
+        i18nReady = true;
+      }),
+      new Promise((resolve) => setTimeout(resolve, 1500))
+    ]);
   } catch (err) {
     console.error("i18n Fehler:", err);
   }
@@ -69,6 +76,15 @@ async function main() {
     if (app) {
       app.innerHTML = `<div class="page"><h1>Fehler beim Laden</h1><p>Die Seite konnte nicht aufgebaut werden.</p></div>`;
     }
+  }
+
+  if (!i18nReady) {
+    initI18n()
+      .then(() => {
+        setLangFromStorage();
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      })
+      .catch((err) => console.error("i18n Nachladen Fehler:", err));
   }
 
   try {

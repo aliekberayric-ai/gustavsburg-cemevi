@@ -56,7 +56,7 @@ import {
   updateInfoPopup,
   deleteInfoPopup,
   uploadInfoPopupImage
-} from "../modules/infoPopups.js?v=122"; 
+} from "../modules/infoPopups.js?v=123"; 
 
 /* -----------------------------------------------------------
    HELPERS
