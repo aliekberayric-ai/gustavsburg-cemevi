@@ -53,9 +53,15 @@ export async function listInfoPopupsAdmin() {
 
 export async function createInfoPopup(payload) {
   const { error } = await withTimeout(
-    supabase
-      .from("info_popups")
-      .insert([payload]),
+    supabase.rpc("save_info_popup", {
+      p_id: null,
+      p_slug: payload.slug,
+      p_title: payload.title,
+      p_content: payload.content,
+      p_image_url: payload.image_url || "",
+      p_sort_order: Number(payload.sort_order ?? 0),
+      p_is_active: payload.is_active !== false
+    }),
     "Info-Popup konnte nicht erstellt werden"
   );
 
@@ -65,10 +71,15 @@ export async function createInfoPopup(payload) {
 
 export async function updateInfoPopup(id, payload) {
   const { error } = await withTimeout(
-    supabase
-      .from("info_popups")
-      .update(payload)
-      .eq("id", id),
+    supabase.rpc("save_info_popup", {
+      p_id: id,
+      p_slug: payload.slug,
+      p_title: payload.title,
+      p_content: payload.content,
+      p_image_url: payload.image_url || "",
+      p_sort_order: Number(payload.sort_order ?? 0),
+      p_is_active: payload.is_active !== false
+    }),
     "Info-Popup konnte nicht aktualisiert werden"
   );
 
