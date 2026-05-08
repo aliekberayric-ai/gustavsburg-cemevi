@@ -7,6 +7,17 @@ function popupError(action, error) {
   return new Error(`${action}: ${details || "Unbekannter Supabase-Fehler"}`);
 }
 
+function withTimeout(promise, action, ms = 12000) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error(`${action}: Keine Antwort von Supabase nach ${Math.round(ms / 1000)} Sekunden. Bitte Internet, Login und Supabase-Rechte prüfen.`));
+    }, ms);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 export async function listInfoPopups() {
   const { data, error } = await supabase
     .from("info_popups")
@@ -41,23 +52,29 @@ export async function listInfoPopupsAdmin() {
 }
 
 export async function createInfoPopup(payload) {
-  const { data, error } = await supabase
-    .from("info_popups")
-    .insert([payload])
-    .select()
-    .single();
+  const { data, error } = await withTimeout(
+    supabase
+      .from("info_popups")
+      .insert([payload])
+      .select()
+      .single(),
+    "Info-Popup konnte nicht erstellt werden"
+  );
 
   if (error) throw popupError("Info-Popup konnte nicht erstellt werden", error);
   return data;
 }
 
 export async function updateInfoPopup(id, payload) {
-  const { data, error } = await supabase
-    .from("info_popups")
-    .update(payload)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await withTimeout(
+    supabase
+      .from("info_popups")
+      .update(payload)
+      .eq("id", id)
+      .select()
+      .single(),
+    "Info-Popup konnte nicht aktualisiert werden"
+  );
 
   if (error) throw popupError("Info-Popup konnte nicht aktualisiert werden", error);
   return data;

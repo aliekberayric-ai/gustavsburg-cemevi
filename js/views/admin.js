@@ -56,7 +56,7 @@ import {
   updateInfoPopup,
   deleteInfoPopup,
   uploadInfoPopupImage
-} from "../modules/infoPopups.js?v=117"; 
+} from "../modules/infoPopups.js?v=118"; 
 
 /* -----------------------------------------------------------
    HELPERS
@@ -2368,6 +2368,8 @@ export async function renderAdmin(root) {
           is_active: isActive,
           sort_order: sortOrder
         };
+
+        console.info("Info-Popup speichern", { editId, payload });
 
         if (editId) {
           await updateInfoPopup(editId, payload);
