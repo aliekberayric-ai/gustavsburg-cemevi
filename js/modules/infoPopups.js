@@ -1,4 +1,4 @@
-import { supabase } from "../api.js";
+import { supabase, SUPABASE_ANON_KEY, SUPABASE_URL } from "../api.js";
 
 function popupError(action, error) {
   const details = [error?.message, error?.details, error?.hint, error?.code]
@@ -16,6 +16,56 @@ function withTimeout(promise, action, ms = 12000) {
   });
 
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+async function callSaveInfoPopup(params, action) {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData?.session?.access_token;
+
+  if (!token) {
+    throw new Error(`${action}: Du bist nicht mehr eingeloggt. Bitte im Admin-Bereich neu anmelden.`);
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20000);
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/save_info_popup`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(params),
+      signal: controller.signal
+    });
+
+    const text = await response.text();
+
+    if (!response.ok) {
+      let message = text;
+      try {
+        const parsed = JSON.parse(text);
+        message = [parsed.message, parsed.details, parsed.hint, parsed.code]
+          .filter(Boolean)
+          .join(" | ");
+      } catch {
+        // Keep raw response text.
+      }
+
+      throw new Error(`${action}: ${message || `HTTP ${response.status}`}`);
+    }
+
+    return text ? JSON.parse(text) : true;
+  } catch (err) {
+    if (err?.name === "AbortError") {
+      throw new Error(`${action}: Supabase antwortet nicht. Bitte SQL-Funktion save_info_popup prüfen und danach neu einloggen.`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export async function listInfoPopups() {
@@ -52,8 +102,8 @@ export async function listInfoPopupsAdmin() {
 }
 
 export async function createInfoPopup(payload) {
-  const { error } = await withTimeout(
-    supabase.rpc("save_info_popup", {
+  await callSaveInfoPopup(
+    {
       p_id: null,
       p_slug: payload.slug,
       p_title: payload.title,
@@ -61,17 +111,15 @@ export async function createInfoPopup(payload) {
       p_image_url: payload.image_url || "",
       p_sort_order: Number(payload.sort_order ?? 0),
       p_is_active: payload.is_active !== false
-    }),
+    },
     "Info-Popup konnte nicht erstellt werden"
   );
-
-  if (error) throw popupError("Info-Popup konnte nicht erstellt werden", error);
   return true;
 }
 
 export async function updateInfoPopup(id, payload) {
-  const { error } = await withTimeout(
-    supabase.rpc("save_info_popup", {
+  await callSaveInfoPopup(
+    {
       p_id: id,
       p_slug: payload.slug,
       p_title: payload.title,
@@ -79,11 +127,9 @@ export async function updateInfoPopup(id, payload) {
       p_image_url: payload.image_url || "",
       p_sort_order: Number(payload.sort_order ?? 0),
       p_is_active: payload.is_active !== false
-    }),
+    },
     "Info-Popup konnte nicht aktualisiert werden"
   );
-
-  if (error) throw popupError("Info-Popup konnte nicht aktualisiert werden", error);
   return true;
 }
 

@@ -56,7 +56,7 @@ import {
   updateInfoPopup,
   deleteInfoPopup,
   uploadInfoPopupImage
-} from "../modules/infoPopups.js?v=120"; 
+} from "../modules/infoPopups.js?v=122"; 
 
 /* -----------------------------------------------------------
    HELPERS
@@ -2309,6 +2309,7 @@ export async function renderAdmin(root) {
 
       root.querySelector("#popupEditModeInfo")?.classList.remove("hidden");
       root.querySelector("#cancelPopupEditBtn")?.classList.remove("hidden");
+      setPopupStatus(`Bearbeiten aktiv: ${popup.slug || popup.id}`);
 
       const saveBtn = root.querySelector("#addPopupBtn");
       if (saveBtn) saveBtn.textContent = "Aktualisieren";
@@ -2322,8 +2323,8 @@ export async function renderAdmin(root) {
         setPopupStatus("Speichern läuft ...");
         if (saveBtn) saveBtn.disabled = true;
 
-        const editId = root.querySelector("#popupEditId")?.value || "";
-        const current = editId
+        let editId = root.querySelector("#popupEditId")?.value || "";
+        let current = editId
           ? infoPopups.find((popup) => String(popup.id) === String(editId))
           : null;
         const slug = root.querySelector("#popupSlug")?.value.trim() || "";
@@ -2360,6 +2361,11 @@ export async function renderAdmin(root) {
           return;
         }
 
+        if (!editId && slug) {
+          current = infoPopups.find((popup) => String(popup.slug).toLowerCase() === slug.toLowerCase()) || null;
+          editId = current?.id || "";
+        }
+
         const payload = {
           slug,
           title: { de: titleDe, tr: titleTr, en: titleEn },
@@ -2369,7 +2375,7 @@ export async function renderAdmin(root) {
           sort_order: sortOrder
         };
 
-        console.info("Info-Popup speichern", { editId, payload });
+        console.info("Info-Popup speichern", { mode: editId ? "update" : "create", editId, payload });
 
         if (editId) {
           await updateInfoPopup(editId, payload);

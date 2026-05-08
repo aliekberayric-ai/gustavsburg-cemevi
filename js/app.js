@@ -1,5 +1,5 @@
 import { getSiteSettings } from "./modules/siteSettings.js";
-import { initRouter } from "./router.js?v=120";
+import { initRouter } from "./router.js?v=122";
 import { initInfoPopup } from "./infoPopup.js";
 import { initAuth } from "./auth.js";
 import {
@@ -44,16 +44,46 @@ async function applyBranding() {
 async function main() {
   try {
     await initI18n();
+  } catch (err) {
+    console.error("i18n Fehler:", err);
+  }
+
+  try {
     setLangFromStorage();
     bindLangButtons();
-    await initAuth();
+  } catch (err) {
+    console.error("Sprachbuttons Fehler:", err);
+  }
 
+  try {
     initInfoPopup();
+  } catch (err) {
+    console.error("Info-Popup Init Fehler:", err);
+  }
 
-    await applyBranding();
+  try {
     initRouter();
   } catch (err) {
-    console.error("App Fehler:", err);
+    console.error("Router Start Fehler:", err);
+    const app = document.querySelector("#app");
+    if (app) {
+      app.innerHTML = `<div class="page"><h1>Fehler beim Laden</h1><p>Die Seite konnte nicht aufgebaut werden.</p></div>`;
+    }
+  }
+
+  try {
+    await Promise.race([
+      initAuth(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Auth Timeout")), 5000))
+    ]);
+  } catch (err) {
+    console.error("Auth Fehler:", err);
+  }
+
+  try {
+    await applyBranding();
+  } catch (err) {
+    console.error("Branding Fehler:", err);
   }
 }
 
