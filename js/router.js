@@ -6,12 +6,12 @@
  * - Smooth Scroll nach oben
  */
 
-import { renderHome } from "./views/home.js?v=123";
-import { renderGallery } from "./views/gallery.js?v=123";
-import { renderCalendar } from "./views/calendar.js?v=123";
-import { renderPeople } from "./views/people.js?v=123";
-import { renderForms } from "./views/forms.js?v=123";
-import { renderAdmin } from "./views/admin.js?v=123";
+import { renderHome } from "./views/home.js?v=124";
+import { renderGallery } from "./views/gallery.js?v=124";
+import { renderCalendar } from "./views/calendar.js?v=124";
+import { renderPeople } from "./views/people.js?v=124";
+import { renderForms } from "./views/forms.js?v=124";
+import { renderAdmin } from "./views/admin.js?v=124";
 
 import { applyTranslations } from "./i18n.js";
 
@@ -58,20 +58,18 @@ async function navigate() {
 
   try {
     // -----------------------
-    // FADE OUT
-    // -----------------------
-    app.classList.add("fade-out");
-    await sleep(120);
-
-    // -----------------------
     // CLEAR CONTENT
     // -----------------------
+    app.classList.remove("fade-out", "fade-in");
     app.innerHTML = "";
 
     // -----------------------
     // RENDER VIEW
     // -----------------------
-    await view(app);
+    await Promise.race([
+      view(app),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Seite braucht zu lange zum Laden.")), 10000))
+    ]);
 
     // -----------------------
     // 🔥 i18n FIX (WICHTIG)
@@ -97,13 +95,19 @@ async function navigate() {
 
   } catch (err) {
     console.error("Router Fehler:", err);
+    app.classList.remove("fade-out", "fade-in");
 
     app.innerHTML = `
-      <div style="padding:40px; text-align:center;">
-        <h2>⚠️ Fehler beim Laden der Seite</h2>
-        <p>${err.message}</p>
+      <div class="page" style="padding:40px;">
+        <h1>Fehler beim Laden der Seite</h1>
+        <p>${err?.message || "Unbekannter Fehler"}</p>
+        <p>Bitte die Seite neu laden oder eine andere Seite im Menü öffnen.</p>
       </div>
     `;
+  } finally {
+    app.classList.remove("fade-out", "fade-in");
+    app.style.opacity = "1";
+    app.style.transform = "none";
   }
 }
 
