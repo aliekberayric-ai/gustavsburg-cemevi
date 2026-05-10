@@ -56,7 +56,7 @@ import {
   updateInfoPopup,
   deleteInfoPopup,
   uploadInfoPopupImage
-} from "../modules/infoPopups.js?v=124"; 
+} from "../modules/infoPopups.js?v=125"; 
 
 /* -----------------------------------------------------------
    HELPERS
@@ -990,9 +990,9 @@ export async function renderAdmin(root) {
         <input id="popupTitleTr" class="input" placeholder="Titel TR" />
         <input id="popupTitleEn" class="input" placeholder="Titel EN" />
 
-        <textarea id="popupContentDe" class="input" placeholder="Text DE" rows="4"></textarea>
-        <textarea id="popupContentTr" class="input" placeholder="Text TR" rows="4"></textarea>
-        <textarea id="popupContentEn" class="input" placeholder="Text EN" rows="4"></textarea>
+        <textarea id="popupContentDe" class="input admin-popup-textarea" placeholder="Text DE" rows="10"></textarea>
+        <textarea id="popupContentTr" class="input admin-popup-textarea" placeholder="Text TR" rows="10"></textarea>
+        <textarea id="popupContentEn" class="input admin-popup-textarea" placeholder="Text EN" rows="10"></textarea>
 
         <input id="popupImageFile" class="input" type="file" accept="image/*" />
         <div id="popupImageInfo" class="mono">Kein Bild ausgewählt</div>

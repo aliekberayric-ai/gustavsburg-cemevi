@@ -227,6 +227,13 @@ select:focus {
   box-shadow: 0 0 0 4px rgba(255,255,255,0.05);
 }
 
+.admin-popup-textarea {
+  min-height: 220px;
+  line-height: 1.55;
+  resize: vertical;
+  white-space: pre-wrap;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
